@@ -155,7 +155,36 @@
     "instant_processing": "Instant Processing",
     "secure_escrow": "Secure Escrow",
     "fixed_fee": "Fixed 2.5% Fee",
-    "support_24_7": "24/7 Support"
+    "support_24_7": "24/7 Support",
+    "buttons": {
+      "markAsPaid": "Mark As Paid",
+      "releaseCrypto": "Release Crypto",
+      "dispute": "Dispute",
+      "cancelOrder": "Cancel Order",
+      "rateTrade": "Rate Trade",
+      "sendMessage": "Send",
+      "viewDetails": "View Details"
+    },
+    "status": {
+      "pending_payment": "Awaiting Payment",
+      "waitingForPayment": "Awaiting Payment",
+      "payment_made": "Payment Sent",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "disputed": "Disputed",
+      "pending_escrow": "Pending Escrow"
+    },
+    "order": {
+      "title": "Order Details",
+      "amount": "Amount",
+      "price": "Price",
+      "total": "Total",
+      "timer": "Time Remaining",
+      "seller": "Seller",
+      "buyer": "Buyer",
+      "paymentMethod": "Payment Method",
+      "chat": "Chat with Seller"
+    }
   },
   "trading": {
     "title": "Spot Trading",
