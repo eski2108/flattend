@@ -390,7 +390,29 @@ class WAFEngine:
         return True, "ok", total_score
     
     async def _check_replay(self, request: Request, body: Optional[str]) -> Tuple[bool, str]:
-        """Detect replay attacks using request signatures"""
+        """
+        Detect replay attacks using request signatures.
+        
+        NOTE: Replay detection is disabled for auth endpoints since:
+        - Multiple users legitimately send similar login requests
+        - Retry logic may re-send requests
+        - CSRF tokens already protect against actual replay attacks
+        """
+        path = request.url.path
+        
+        # Skip replay detection for auth, p2p, and other high-traffic endpoints
+        # These endpoints have their own security (rate limiting, idempotency keys)
+        skip_paths = [
+            "/api/auth/",
+            "/api/p2p/",
+            "/api/wallet/",
+            "/api/trading/",
+            "/api/user/",
+            "/api/orders/",
+        ]
+        if any(path.startswith(skip) for skip in skip_paths):
+            return False, ""
+        
         now = time.time()
         
         # Clean old signatures
@@ -398,8 +420,9 @@ class WAFEngine:
         for k in expired:
             del self._request_signatures[k]
         
-        # Generate signature
-        sig_data = f"{request.method}:{request.url.path}:{body or ''}"
+        # Generate signature - include IP to allow same requests from different users
+        ip = request.client.host if request.client else "unknown"
+        sig_data = f"{ip}:{request.method}:{request.url.path}:{body or ''}"
         signature = hashlib.sha256(sig_data.encode()).hexdigest()[:32]
         
         if signature in self._request_signatures:
