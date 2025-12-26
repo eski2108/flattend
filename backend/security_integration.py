@@ -40,28 +40,16 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     to all incoming requests.
     """
     
-    # Paths to skip (health checks, static, monitoring, public data, etc.)
+    # RESTRICTED SKIP PATHS - Only truly public/read-only endpoints
+    # All authenticated or sensitive endpoints MUST go through WAF
     SKIP_PATHS = [
         "/api/health",
         "/api/ready",
         "/api/metrics",
-        "/api/prices",
-        "/api/exchange-rates",
-        "/api/exchange",
-        "/api/coins",
-        "/api/p2p",
-        "/api/savings",
-        "/api/bots",
-        "/api/nowpayments",
-        "/api/instant-buy",
-        "/api/express-buy",
-        "/api/currencies",
-        "/api/platform",
-        "/api/system",
-        "/api/trades",
-        "/api/orders",
-        "/api/wallet",
-        "/api/auth",
+        "/api/prices",           # Public price data (read-only)
+        "/api/exchange-rates",   # Public rates (read-only)
+        "/api/coins",            # Public coin list (read-only)
+        "/api/currencies",       # Public currency list (read-only)
         "/health",
         "/ready",
         "/metrics",
