@@ -929,13 +929,196 @@ PLATFORM_CONFIG = {
     "admin_email": "admin@coinhubx.com"
 }
 
-# Badge system functions
+# ============================================================
+# P2P BADGE & COLLATERAL CONFIG (Single source of truth)
+# ============================================================
+P2P_BADGE_CONFIG = {
+    # Badge thresholds (tunable)
+    "pro_trader_min_trades": 100,
+    "pro_trader_min_completion": 98.0,
+    "high_completion_min": 95.0,
+    "high_volume_min_fiat": 10000,  # £10,000
+    "fast_trader_max_release_sec": 300,  # 5 minutes
+    
+    # Collateral config
+    "collateral_unlock_cooldown_hours": 24,
+    "collateral_min_amount_gbp": 100,
+}
+
+async def compute_seller_badges(db, seller_id: str, seller_data: dict = None, stats_30d: dict = None):
+    """
+    Compute badges for a seller. Single source of truth.
+    Returns array of badge objects with key, label, priority, variant.
+    """
+    badges = []
+    
+    # Get seller data if not provided
+    if not seller_data:
+        seller_data = await db.users.find_one({"user_id": seller_id}) or {}
+    
+    # Get 30-day stats if not provided
+    if not stats_30d:
+        stats_30d = await compute_seller_stats_30d(db, seller_id)
+    
+    # Check collateral status
+    collateral = await db.p2p_collateral.find_one({"user_id": seller_id, "status": "active"})
+    
+    # 1. DEPOSIT_SECURED badge (highest priority)
+    if collateral and collateral.get("status") == "active":
+        badges.append({
+            "key": "deposit_secured",
+            "label": "Deposit Secured",
+            "priority": 95,
+            "variant": "shield"
+        })
+    
+    # 2. VERIFIED badge
+    if seller_data.get("kyc_verified") or seller_data.get("is_verified"):
+        badges.append({
+            "key": "verified",
+            "label": "Verified",
+            "priority": 90,
+            "variant": "success"
+        })
+    
+    # 3. PRO_TRADER badge
+    total_trades = stats_30d.get("trades_total", 0)
+    completion_rate = stats_30d.get("completion_rate", 0)
+    if (total_trades >= P2P_BADGE_CONFIG["pro_trader_min_trades"] and 
+        completion_rate >= P2P_BADGE_CONFIG["pro_trader_min_completion"]):
+        badges.append({
+            "key": "pro_trader",
+            "label": "Pro Trader",
+            "priority": 85,
+            "variant": "gold"
+        })
+    
+    # 4. HIGH_COMPLETION badge
+    elif completion_rate >= P2P_BADGE_CONFIG["high_completion_min"]:
+        badges.append({
+            "key": "high_completion",
+            "label": "High Completion",
+            "priority": 80,
+            "variant": "info"
+        })
+    
+    # 5. HIGH_VOLUME badge
+    volume = stats_30d.get("volume_fiat_total", 0)
+    if volume >= P2P_BADGE_CONFIG["high_volume_min_fiat"]:
+        badges.append({
+            "key": "high_volume",
+            "label": "High Volume",
+            "priority": 75,
+            "variant": "purple"
+        })
+    
+    # 6. FAST_TRADER badge
+    avg_release = stats_30d.get("avg_release_time_sec", 9999)
+    if avg_release > 0 and avg_release <= P2P_BADGE_CONFIG["fast_trader_max_release_sec"] and total_trades >= 10:
+        badges.append({
+            "key": "fast_trader",
+            "label": "Fast Trader",
+            "priority": 70,
+            "variant": "warning"
+        })
+    
+    # 7. TRUSTED badge (legacy - from user flags)
+    if seller_data.get("is_trusted_seller") or seller_data.get("is_trusted"):
+        badges.append({
+            "key": "trusted",
+            "label": "Trusted",
+            "priority": 65,
+            "variant": "info"
+        })
+    
+    # Sort by priority descending
+    badges.sort(key=lambda x: x["priority"], reverse=True)
+    
+    return badges
+
+
+async def compute_seller_stats_30d(db, seller_id: str):
+    """
+    Compute 30-day seller statistics. Returns raw stats for tuning.
+    """
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    
+    # Get all trades in last 30 days
+    trades_30d = await db.p2p_trades.find({
+        "$or": [{"seller_id": seller_id}, {"buyer_id": seller_id}],
+        "created_at": {"$gte": thirty_days_ago.isoformat()}
+    }).to_list(10000)
+    
+    # Get completed trades
+    completed_trades = [t for t in trades_30d if t.get("status") == "completed"]
+    cancelled_trades = [t for t in trades_30d if t.get("status") in ["cancelled", "disputed"]]
+    
+    # Calculate stats
+    trades_total = len(trades_30d)
+    completed_count = len(completed_trades)
+    completion_rate = (completed_count / trades_total * 100) if trades_total > 0 else 100.0
+    
+    # Buy/sell counts (where user was buyer vs seller)
+    buy_count = len([t for t in trades_30d if t.get("buyer_id") == seller_id])
+    sell_count = len([t for t in trades_30d if t.get("seller_id") == seller_id])
+    
+    # Unique counterparties
+    counterparties = set()
+    for t in trades_30d:
+        if t.get("buyer_id") == seller_id:
+            counterparties.add(t.get("seller_id"))
+        else:
+            counterparties.add(t.get("buyer_id"))
+    counterparties.discard(None)
+    
+    # Volume calculation
+    volume_fiat_total = sum(float(t.get("fiat_amount", 0) or t.get("total_fiat", 0) or 0) for t in completed_trades)
+    
+    # Average release time (seller releases crypto after payment)
+    release_times = []
+    payment_times = []
+    for t in completed_trades:
+        if t.get("completed_at") and t.get("payment_marked_at"):
+            try:
+                completed = datetime.fromisoformat(str(t["completed_at"]).replace('Z', '+00:00'))
+                marked = datetime.fromisoformat(str(t["payment_marked_at"]).replace('Z', '+00:00'))
+                diff_sec = (completed - marked).total_seconds()
+                if diff_sec > 0:
+                    release_times.append(diff_sec)
+            except:
+                pass
+        if t.get("payment_marked_at") and t.get("created_at"):
+            try:
+                marked = datetime.fromisoformat(str(t["payment_marked_at"]).replace('Z', '+00:00'))
+                created = datetime.fromisoformat(str(t["created_at"]).replace('Z', '+00:00'))
+                diff_sec = (marked - created).total_seconds()
+                if diff_sec > 0:
+                    payment_times.append(diff_sec)
+            except:
+                pass
+    
+    avg_release_time_sec = sum(release_times) / len(release_times) if release_times else 0
+    avg_payment_time_sec = sum(payment_times) / len(payment_times) if payment_times else 0
+    
+    return {
+        "trades_total": trades_total,
+        "completion_rate": round(completion_rate, 1),
+        "buy_count": buy_count,
+        "sell_count": sell_count,
+        "counterparties_count": len(counterparties),
+        "avg_release_time_sec": round(avg_release_time_sec),
+        "avg_payment_time_sec": round(avg_payment_time_sec),
+        "volume_fiat_total": round(volume_fiat_total, 2)
+    }
+
+
+# Legacy functions (kept for compatibility)
 def get_trader_badges(user_stats):
-    """Get trader badges for user"""
+    """Get trader badges for user - DEPRECATED, use compute_seller_badges"""
     return []
 
 def calculate_trader_badges(user_id):
-    """Calculate badges"""
+    """Calculate badges - DEPRECATED, use compute_seller_badges"""
     return []
 
 BADGE_DEFINITIONS = {}
