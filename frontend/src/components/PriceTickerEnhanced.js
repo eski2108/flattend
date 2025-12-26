@@ -190,24 +190,42 @@ export default function PriceTickerEnhanced() {
         background: 'linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), rgba(0, 229, 255, 0.9), rgba(0, 229, 255, 0.6), transparent)'
       }} />
       
-      <div className="ticker-scroll-container" style={{ height: '48px', maxHeight: '48px', overflow: 'hidden', position: 'relative' }}>
+      <div className="ticker-scroll-container" style={{ 
+        height: '48px', 
+        maxHeight: '48px', 
+        minHeight: '48px',
+        overflow: 'hidden', 
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%'
+      }}>
         <style>{`
           @keyframes tickerScroll {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            100% { transform: translateX(-33.33%); }
           }
           .ticker-scroll-track {
             display: inline-flex !important;
             flex-wrap: nowrap !important;
-            animation: tickerScroll 30s linear infinite;
+            animation: tickerScroll 60s linear infinite;
             white-space: nowrap !important;
             width: max-content !important;
+            align-items: center !important;
+            height: 48px !important;
           }
           .ticker-scroll-track:hover {
             animation-play-state: paused;
           }
         `}</style>
-        <div className="ticker-scroll-track" style={{ display: 'inline-flex', flexWrap: 'nowrap', alignItems: 'center', height: '48px', whiteSpace: 'nowrap', width: 'max-content' }}>
+        <div className="ticker-scroll-track" style={{ 
+          display: 'inline-flex', 
+          flexWrap: 'nowrap', 
+          alignItems: 'center', 
+          height: '48px', 
+          whiteSpace: 'nowrap', 
+          width: 'max-content' 
+        }}>
         {[...coins, ...coins, ...coins].map((coin, idx) => {
           const isPositive = coin.change >= 0;
           
