@@ -169,6 +169,7 @@
       "pending_payment": "Awaiting Payment",
       "waitingForPayment": "Awaiting Payment",
       "payment_made": "Payment Sent",
+      "paymentMade": "Payment Sent",
       "completed": "Completed",
       "cancelled": "Cancelled",
       "disputed": "Disputed",
