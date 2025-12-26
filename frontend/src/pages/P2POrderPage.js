@@ -378,7 +378,8 @@ export default function P2POrderPage() {
   const counterparty = isBuyer ? 'Seller' : 'Buyer';
 
   return (
-    <div style={{ minHeight: '100vh', padding: '40px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 100%)' }}>
+    <>
+      <div style={{ minHeight: '100vh', padding: '40px 20px', background: 'linear-gradient(180deg, #05121F 0%, #071E2C 100%)' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           {/* Header */}
