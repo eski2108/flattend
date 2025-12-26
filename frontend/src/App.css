@@ -8368,11 +8368,23 @@ a[class*="btn"] {
   border-radius: 50%;
 }
 
-/* PRICE TICKER - SINGLE ROW */
-.ticker-track {
-  display: flex !important;
+/* PRICE TICKER - SINGLE ROW ONLY */
+#price-ticker-root {
+  height: 44px !important;
+  max-height: 44px !important;
+  min-height: 44px !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+.single-ticker-track {
+  display: inline-flex !important;
   flex-wrap: nowrap !important;
   align-items: center !important;
   height: 44px !important;
+  white-space: nowrap !important;
+}
+.ticker-coin-item {
+  display: inline-flex !important;
+  flex-shrink: 0 !important;
   white-space: nowrap !important;
 }
