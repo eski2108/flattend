@@ -8368,42 +8368,11 @@ a[class*="btn"] {
   border-radius: 50%;
 }
 
-/* PRICE TICKER - SINGLE ROW FIX */
-.price-ticker-single {
-  height: 48px !important;
-  max-height: 48px !important;
-  overflow: hidden !important;
-}
-.price-ticker-single .rfm-marquee-container {
-  height: 48px !important;
-  max-height: 48px !important;
-  overflow: hidden !important;
-  flex-wrap: nowrap !important;
-}
-.price-ticker-single .rfm-marquee {
-  height: 48px !important;
-  max-height: 48px !important;
-}
-.price-ticker-single .rfm-initial-child-container {
-  height: 48px !important;
+/* PRICE TICKER - SINGLE ROW */
+.ticker-track {
   display: flex !important;
-  align-items: center !important;
-}
-
-/* CSS TICKER FIX - SINGLE ROW */
-.ticker-scroll-container {
-  height: 48px !important;
-  max-height: 48px !important;
-  overflow: hidden !important;
-}
-.ticker-scroll-track {
-  display: inline-flex !important;
   flex-wrap: nowrap !important;
-  white-space: nowrap !important;
-  height: 48px !important;
-}
-.ticker-scroll-track > div {
-  display: inline-flex !important;
-  flex-shrink: 0 !important;
+  align-items: center !important;
+  height: 44px !important;
   white-space: nowrap !important;
 }
