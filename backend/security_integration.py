@@ -134,11 +134,14 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         try:
             action = self.PATH_TO_ACTION.get(path)
             if action:
-                passed, result = await self.rate_limiter.check_and_update(action, user_id or ip)
-                if not passed:
+                rl_allowed, rl_reason, retry_after = await advanced_rate_limiter.check_rate_limit(
+                    ip, user_id, action
+                )
+                if not rl_allowed:
                     return JSONResponse(
                         status_code=429,
-                        content={"detail": result.get("message", "Rate limit exceeded")}
+                        content={"detail": rl_reason or "Rate limit exceeded"},
+                        headers={"Retry-After": str(retry_after)}
                     )
         except Exception as e:
             logger.error(f"Rate limit check error: {e}")
