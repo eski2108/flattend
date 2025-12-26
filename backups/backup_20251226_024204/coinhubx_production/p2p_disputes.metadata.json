@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"48a4f3ac49e4426f85a17395669dfa59","collectionName":"p2p_disputes","type":"collection"}
