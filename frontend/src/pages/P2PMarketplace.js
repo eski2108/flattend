@@ -3121,6 +3121,315 @@ function P2PMarketplace() {
             </div>
           </div>
         )}
+
+        {/* ========== CONFIRM TRADE MODAL (per specification) ========== */}
+        {showConfirmModal && selectedOffer && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10001,
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div style={{
+              background: 'linear-gradient(135deg, #0D1F2D 0%, #0A1628 100%)',
+              borderRadius: '24px',
+              padding: isMobile ? '24px' : '32px',
+              width: isMobile ? '95%' : '520px',
+              maxWidth: '520px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid rgba(0, 198, 255, 0.2)',
+              boxShadow: '0 25px 80px rgba(0, 0, 0, 0.6)'
+            }}>
+              {/* Modal Header */}
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginBottom: '24px',
+                paddingBottom: '16px',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <h2 style={{ 
+                  color: '#FFFFFF', 
+                  fontSize: '22px', 
+                  fontWeight: '700',
+                  margin: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  {activeTab === 'buy' ? '🛒' : '💰'} Confirm {activeTab === 'buy' ? 'Purchase' : 'Sale'}
+                </h2>
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  style={{
+                    background: 'rgba(143, 155, 179, 0.2)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    color: '#8F9BB3',
+                    fontSize: '22px',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Seller Info Card */}
+              <div style={{
+                background: 'rgba(0, 198, 255, 0.05)',
+                borderRadius: '16px',
+                padding: '20px',
+                marginBottom: '20px',
+                border: '1px solid rgba(0, 198, 255, 0.1)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <div style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    fontWeight: '700',
+                    fontSize: '18px'
+                  }}>
+                    {(selectedOffer.seller_info?.username || selectedOffer.seller_name || 'S')[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+                      {selectedOffer.seller_info?.username || selectedOffer.seller_name || 'Seller'}
+                    </div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>⭐ {selectedOffer.seller_info?.rating?.toFixed(1) || '5.0'}</span>
+                      <span>•</span>
+                      <span>{selectedOffer.seller_info?.total_trades || 0} trades</span>
+                      {selectedOffer.seller_info?.verified && (
+                        <>
+                          <span>•</span>
+                          <span style={{ color: '#10B981' }}>✓ Verified</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price and Payment Methods */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginBottom: '4px' }}>Price per {selectedCrypto}</div>
+                    <div style={{ color: '#22C55E', fontWeight: '700', fontSize: '18px' }}>
+                      {selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}
+                      {(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '12px', marginBottom: '4px' }}>Payment Methods</div>
+                    <div style={{ color: '#fff', fontWeight: '600', fontSize: '14px' }}>
+                      {(selectedOffer.payment_methods || [selectedOffer.payment_method || 'Bank Transfer']).slice(0, 2).join(', ')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Limits */}
+              <div style={{
+                background: 'rgba(143, 155, 179, 0.1)',
+                borderRadius: '12px',
+                padding: '14px 16px',
+                marginBottom: '20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                fontSize: '13px'
+              }}>
+                <span style={{ color: 'rgba(255, 255, 255, 0.6)' }}>Order Limits</span>
+                <span style={{ color: '#fff', fontWeight: '600' }}>
+                  {selectedOffer.min_order_limit || selectedOffer.min_amount || '0.001'} - {selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || '?'} {selectedCrypto}
+                </span>
+              </div>
+
+              {/* Amount Input in Modal (pre-filled from widget) */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ 
+                  display: 'block', 
+                  color: 'rgba(255, 255, 255, 0.7)', 
+                  fontSize: '13px', 
+                  marginBottom: '8px',
+                  fontWeight: '600'
+                }}>
+                  {amountMode === 'pay' ? 'You Pay' : 'You Receive'}
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type="number"
+                    step={amountMode === 'pay' ? '0.01' : '0.00000001'}
+                    value={inputAmount}
+                    onChange={(e) => handleAmountInputChange(e.target.value)}
+                    placeholder="Enter amount"
+                    style={{
+                      width: '100%',
+                      height: '56px',
+                      padding: '0 80px 0 20px',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: amountError ? '2px solid #EF4444' : '2px solid rgba(0, 198, 255, 0.3)',
+                      borderRadius: '14px',
+                      color: '#fff',
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                  <div style={{
+                    position: 'absolute',
+                    right: '20px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: 'rgba(255, 255, 255, 0.6)',
+                    fontSize: '16px',
+                    fontWeight: '600'
+                  }}>
+                    {amountMode === 'pay' ? selectedInputFiat : selectedCrypto}
+                  </div>
+                </div>
+                {amountError && (
+                  <div style={{ color: '#EF4444', fontSize: '13px', marginTop: '6px' }}>
+                    ⚠️ {amountError}
+                  </div>
+                )}
+              </div>
+
+              {/* Conversion Breakdown */}
+              <div style={{
+                background: 'rgba(16, 185, 129, 0.08)',
+                borderRadius: '14px',
+                padding: '20px',
+                marginBottom: '24px',
+                border: '1px solid rgba(16, 185, 129, 0.2)'
+              }}>
+                <div style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.6)', marginBottom: '12px', fontWeight: '600' }}>
+                  Order Summary
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>You {amountMode === 'pay' ? 'pay' : 'receive'}</span>
+                  <span style={{ color: '#fff', fontWeight: '700', fontSize: '16px' }}>
+                    {amountMode === 'pay' 
+                      ? `${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${parseFloat(inputAmount || 0).toLocaleString()}`
+                      : `${parseFloat(inputAmount || 0).toFixed(getCryptoDecimals(selectedCrypto))} ${selectedCrypto}`
+                    }
+                  </span>
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>You {amountMode === 'pay' ? 'receive' : 'pay'}</span>
+                  <span style={{ color: '#00C6FF', fontWeight: '700', fontSize: '16px' }}>
+                    {amountMode === 'pay'
+                      ? `${convertedAmount || '0'} ${selectedCrypto}`
+                      : `${selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}${parseFloat(convertedAmount || 0).toLocaleString()}`
+                    }
+                  </span>
+                </div>
+                
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  paddingTop: '10px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                }}>
+                  <span style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Rate</span>
+                  <span style={{ color: '#22C55E', fontWeight: '600' }}>
+                    1 {selectedCrypto} = {selectedInputFiat === 'GBP' ? '£' : selectedInputFiat === 'USD' ? '$' : '€'}
+                    {(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '16px',
+                    background: 'rgba(143, 155, 179, 0.15)',
+                    border: '1px solid rgba(143, 155, 179, 0.3)',
+                    borderRadius: '14px',
+                    color: '#8F9BB3',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmTrade}
+                  disabled={confirmProcessing || !inputAmount || parseFloat(inputAmount) <= 0 || !!amountError}
+                  style={{
+                    flex: 2,
+                    padding: '16px',
+                    background: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError)
+                      ? 'rgba(143, 155, 179, 0.3)'
+                      : activeTab === 'buy'
+                        ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                        : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                    border: 'none',
+                    borderRadius: '14px',
+                    color: '#FFFFFF',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError) ? 'not-allowed' : 'pointer',
+                    boxShadow: (!inputAmount || parseFloat(inputAmount) <= 0 || !!amountError)
+                      ? 'none'
+                      : activeTab === 'buy'
+                        ? '0 0 30px rgba(16, 185, 129, 0.5)'
+                        : '0 0 30px rgba(239, 68, 68, 0.5)',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {confirmProcessing ? (
+                    <>
+                      <div style={{
+                        width: '18px',
+                        height: '18px',
+                        border: '2px solid rgba(255,255,255,0.3)',
+                        borderTopColor: '#fff',
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite'
+                      }} />
+                      Processing...
+                    </>
+                  ) : (
+                    `Confirm ${activeTab === 'buy' ? 'Buy' : 'Sell'}`
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* ========== END CONFIRM TRADE MODAL ========== */}
       </div>
   );
 }
