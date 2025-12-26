@@ -145,20 +145,6 @@ class SecurityMiddleware(BaseHTTPMiddleware):
         
         # All checks passed, proceed
         return await call_next(request)
-                    status_code=429,
-                    content={
-                        "error": "rate_limit_exceeded",
-                        "reason": rl_reason,
-                        "retry_after": retry_after
-                    },
-                    headers={"Retry-After": str(retry_after)}
-                )
-        except Exception as e:
-            logger.error(f"Rate limit check error: {e}")
-        
-        # Continue to endpoint
-        response = await call_next(request)
-        return response
 
 
 # ══════════════════════════════════════════════════════════════════════
