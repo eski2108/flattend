@@ -440,8 +440,28 @@ function P2PMarketplace() {
       return;
     }
     
+    // Set the selected offer first (needed for conversion calculation)
+    setSelectedOffer(offer);
+    
+    // If user has entered amount, recalculate with this offer's price
+    const isBuyMode = activeTab === 'buy';
+    if (isBuyMode && fiatAmount) {
+      const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
+      if (offerPrice > 0) {
+        const crypto = parseFloat(fiatAmount) / offerPrice;
+        setCryptoAmount(crypto.toFixed(getCryptoDecimals(selectedCrypto)));
+      }
+    } else if (!isBuyMode && cryptoAmount) {
+      const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
+      if (offerPrice > 0) {
+        const fiat = parseFloat(cryptoAmount) * offerPrice;
+        setFiatAmount(fiat.toFixed(2));
+      }
+    }
+    
     // Validate amount if entered
-    if (inputAmount) {
+    const inputValue = isBuyMode ? fiatAmount : cryptoAmount;
+    if (inputValue) {
       const validation = validateAmount(offer);
       if (!validation.valid) {
         setAmountError(validation.error);
@@ -450,7 +470,6 @@ function P2PMarketplace() {
       }
     }
     
-    setSelectedOffer(offer);
     setShowConfirmModal(true);
   };
 
@@ -461,7 +480,10 @@ function P2PMarketplace() {
       return;
     }
     
-    if (!inputAmount) {
+    const isBuyMode = activeTab === 'buy';
+    const inputValue = isBuyMode ? fiatAmount : cryptoAmount;
+    
+    if (!inputValue) {
       toast.error('Please enter an amount');
       return;
     }
@@ -486,14 +508,15 @@ function P2PMarketplace() {
       const user = JSON.parse(userData);
       const offerPrice = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
       
-      // Calculate amounts based on mode
-      let fiatAmount, cryptoAmount;
-      if (amountMode === 'pay') {
-        fiatAmount = parseFloat(inputAmount);
-        cryptoAmount = fiatAmount / offerPrice;
-      } else {
-        cryptoAmount = parseFloat(inputAmount);
-        fiatAmount = cryptoAmount * offerPrice;
+      // Calculate amounts - use the values already calculated
+      let finalFiatAmount = parseFloat(fiatAmount) || 0;
+      let finalCryptoAmount = parseFloat(cryptoAmount) || 0;
+      
+      // Ensure both are calculated
+      if (isBuyMode && finalFiatAmount > 0) {
+        finalCryptoAmount = finalFiatAmount / offerPrice;
+      } else if (!isBuyMode && finalCryptoAmount > 0) {
+        finalFiatAmount = finalCryptoAmount * offerPrice;
       }
       
       // Generate idempotency key
@@ -507,8 +530,8 @@ function P2PMarketplace() {
         offer_id: selectedOffer.offer_id,
         side: activeTab.toUpperCase(),
         fiat_currency: selectedInputFiat,
-        fiat_amount: fiatAmount,
-        crypto_amount: cryptoAmount,
+        fiat_amount: finalFiatAmount,
+        crypto_amount: finalCryptoAmount,
         crypto_currency: selectedCrypto,
         price: offerPrice,
         payment_method: selectedOffer.payment_methods?.[0] || selectedOffer.payment_method || 'Bank Transfer',
