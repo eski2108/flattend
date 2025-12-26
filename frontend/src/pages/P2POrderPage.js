@@ -504,15 +504,16 @@ export default function P2POrderPage() {
                     onClick={() => setShowFeedbackModal(true)}
                     style={{
                       flex: 1,
-                      padding: '16px',
-                      background: 'linear-gradient(135deg, #FFA500, #FF8C00)',
+                      padding: '16px 24px',
+                      background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
                       border: 'none',
                       borderRadius: '12px',
-                      color: '#FFFFFF',
+                      color: '#0A0E17',
                       fontSize: '16px',
                       fontWeight: '700',
                       cursor: 'pointer',
-                      boxShadow: '0 0 20px rgba(255, 165, 0, 0.4)'
+                      boxShadow: '0 0 25px rgba(255, 215, 0, 0.4)',
+                      transition: 'all 0.3s ease'
                     }}
                   >
                     ⭐ {t('p2p.buttons.rateTrade')}
