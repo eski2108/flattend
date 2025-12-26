@@ -294,10 +294,12 @@ function P2PMarketplace() {
 
   // Open buy modal when clicking "Buy BTC" on an offer
   // =====================================================
-  // AMOUNT WIDGET LOGIC (per specification)
+  // AMOUNT WIDGET LOGIC (FINAL SPEC - NO PAY/RECEIVE TOGGLE)
+  // BUY mode: User edits fiat (You pay), crypto auto-calculates
+  // SELL mode: User edits crypto, fiat auto-calculates
   // =====================================================
   
-  // Get decimal places based on crypto
+  // Get decimal places based on crypto (NO EXCEPTIONS)
   const getCryptoDecimals = (crypto) => {
     switch (crypto) {
       case 'BTC': return 8;
@@ -308,88 +310,88 @@ function P2PMarketplace() {
     }
   };
 
-  // Calculate conversion based on offer price (NOT global ticker)
-  const calculateConversion = (amount, offer, mode) => {
-    if (!amount || !offer) return '';
-    const numAmount = parseFloat(amount);
-    if (isNaN(numAmount) || numAmount <= 0) return '';
-    
-    const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
-    if (offerPrice <= 0) return '';
-    
-    if (mode === 'pay') {
-      // User entered fiat, calculate crypto
-      const cryptoAmount = numAmount / offerPrice;
-      return cryptoAmount.toFixed(getCryptoDecimals(selectedCrypto));
-    } else {
-      // User entered crypto, calculate fiat
-      const fiatAmount = numAmount * offerPrice;
-      return fiatAmount.toFixed(2);
+  // Get fiat symbol
+  const getFiatSymbol = (currency) => {
+    switch (currency) {
+      case 'GBP': return '£';
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      default: return '£';
     }
   };
 
-  // Get average price from offers for preview conversion (before offer selected)
-  const getAverageOfferPrice = () => {
-    if (!offers || offers.length === 0) return 0;
-    const prices = offers
-      .map(o => parseFloat(o.price_per_unit || o.price || 0))
-      .filter(p => p > 0);
-    if (prices.length === 0) return 0;
-    return prices.reduce((a, b) => a + b, 0) / prices.length;
-  };
-
-  // Handle amount input change (from the widget above offers)
-  const handleAmountInputChange = (value) => {
-    setInputAmount(value);
+  // Handle fiat amount change (BUY mode - "You pay")
+  // Uses SELECTED OFFER PRICE, not global ticker or averages
+  const handleFiatAmountChange = (value) => {
+    setFiatAmount(value);
     setAmountError('');
     
-    // Calculate preview conversion using average price (or selected offer if any)
-    const price = selectedOffer 
-      ? parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0)
-      : getAverageOfferPrice();
+    if (!selectedOffer) {
+      // No offer selected yet - show preview but don't calculate
+      setCryptoAmount('');
+      return;
+    }
     
-    if (price > 0 && value) {
+    const offerPrice = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+    if (offerPrice > 0 && value) {
       const numValue = parseFloat(value);
       if (!isNaN(numValue) && numValue > 0) {
-        if (amountMode === 'pay') {
-          const cryptoAmount = numValue / price;
-          setConvertedAmount(cryptoAmount.toFixed(getCryptoDecimals(selectedCrypto)));
-        } else {
-          const fiatAmount = numValue * price;
-          setConvertedAmount(fiatAmount.toFixed(2));
-        }
+        // BUY: crypto_amount = fiat_amount / offer.price
+        const crypto = numValue / offerPrice;
+        setCryptoAmount(crypto.toFixed(getCryptoDecimals(selectedCrypto)));
       } else {
-        setConvertedAmount('');
+        setCryptoAmount('');
       }
     } else {
-      setConvertedAmount('');
+      setCryptoAmount('');
     }
   };
 
-  // Handle chip click
-  const handleChipClick = (value) => {
-    handleAmountInputChange(value.toString());
-  };
-
-  // Handle MAX click
-  const handleMaxClick = () => {
-    if (selectedOffer) {
-      const available = parseFloat(selectedOffer.crypto_amount || selectedOffer.available_amount || 0);
-      if (amountMode === 'receive') {
-        handleAmountInputChange(available.toFixed(getCryptoDecimals(selectedCrypto)));
+  // Handle crypto amount change (SELL mode - "You sell")
+  // Uses SELECTED OFFER PRICE, not global ticker or averages
+  const handleCryptoAmountChange = (value) => {
+    setCryptoAmount(value);
+    setAmountError('');
+    
+    if (!selectedOffer) {
+      // No offer selected yet
+      setFiatAmount('');
+      return;
+    }
+    
+    const offerPrice = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+    if (offerPrice > 0 && value) {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue) && numValue > 0) {
+        // SELL: fiat_amount = crypto_amount * offer.price
+        const fiat = numValue * offerPrice;
+        setFiatAmount(fiat.toFixed(2));
       } else {
-        const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
-        const maxFiat = available * price;
-        handleAmountInputChange(maxFiat.toFixed(2));
+        setFiatAmount('');
       }
+    } else {
+      setFiatAmount('');
     }
+  };
+
+  // Handle fiat chip click (BUY mode)
+  const handleFiatChipClick = (value) => {
+    handleFiatAmountChange(value.toString());
+  };
+
+  // Handle crypto chip click (SELL mode)
+  const handleCryptoChipClick = (value) => {
+    handleCryptoAmountChange(value.toString());
   };
 
   // Validate amount against offer limits
   const validateAmount = (offer) => {
-    if (!inputAmount || !offer) return { valid: false, error: 'Enter an amount' };
+    const isBuyMode = activeTab === 'buy';
+    const inputValue = isBuyMode ? fiatAmount : cryptoAmount;
     
-    const amount = parseFloat(inputAmount);
+    if (!inputValue || !offer) return { valid: false, error: 'Enter an amount' };
+    
+    const amount = parseFloat(inputValue);
     if (isNaN(amount) || amount <= 0) return { valid: false, error: 'Enter a valid amount' };
     
     const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
@@ -397,23 +399,25 @@ function P2PMarketplace() {
     const minLimit = parseFloat(offer.min_order_limit || offer.min_amount || 0);
     const maxLimit = parseFloat(offer.max_order_limit || offer.max_amount || availableAmount);
     
-    // Convert input to crypto amount for validation
-    let cryptoAmount;
-    if (amountMode === 'pay') {
-      cryptoAmount = amount / offerPrice;
+    // Convert to crypto amount for validation
+    let cryptoAmt;
+    if (isBuyMode) {
+      cryptoAmt = amount / offerPrice;
     } else {
-      cryptoAmount = amount;
+      cryptoAmt = amount;
     }
     
-    if (minLimit > 0 && cryptoAmount < minLimit) {
-      return { valid: false, error: `Minimum is ${minLimit} ${selectedCrypto}` };
+    if (minLimit > 0 && cryptoAmt < minLimit) {
+      const minFiat = minLimit * offerPrice;
+      return { valid: false, error: `Minimum is ${getFiatSymbol(selectedInputFiat)}${minFiat.toFixed(2)} (${minLimit} ${selectedCrypto})` };
     }
     
-    if (maxLimit > 0 && cryptoAmount > maxLimit) {
-      return { valid: false, error: `Maximum is ${maxLimit} ${selectedCrypto}` };
+    if (maxLimit > 0 && cryptoAmt > maxLimit) {
+      const maxFiat = maxLimit * offerPrice;
+      return { valid: false, error: `Maximum is ${getFiatSymbol(selectedInputFiat)}${maxFiat.toFixed(2)} (${maxLimit} ${selectedCrypto})` };
     }
     
-    if (cryptoAmount > availableAmount) {
+    if (cryptoAmt > availableAmount) {
       return { valid: false, error: `Seller only has ${availableAmount.toFixed(getCryptoDecimals(selectedCrypto))} ${selectedCrypto} available` };
     }
     
