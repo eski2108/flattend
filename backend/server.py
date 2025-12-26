@@ -3923,10 +3923,15 @@ async def get_my_collateral(user_id: str):
                             {"$set": {"status": "released", "released_at": datetime.now(timezone.utc).isoformat()}}
                         )
                         
-                        # Return funds to user
-                        await db.users.update_one(
-                            {"user_id": user_id},
-                            {"$inc": {f"wallets.{collateral['asset']}.available_balance": collateral["amount"]}}
+                        # Return funds to user (wallets collection is source of truth)
+                        await db.wallets.update_one(
+                            {"user_id": user_id, "currency": collateral['asset']},
+                            {"$inc": {"available_balance": collateral["amount"]}}
+                        )
+                        await db.internal_balances.update_one(
+                            {"user_id": user_id, "currency": collateral['asset']},
+                            {"$inc": {"available_balance": collateral["amount"]}},
+                            upsert=True
                         )
                         
                         collateral["status"] = "released"
