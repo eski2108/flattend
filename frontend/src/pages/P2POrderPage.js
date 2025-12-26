@@ -217,10 +217,19 @@ export default function P2POrderPage() {
     
     setProcessing(true);
     try {
+      const idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      
       const response = await axios.post(`${API}/api/p2p/trade/dispute`, {
         trade_id: tradeId,
         user_id: currentUser.user_id,
         reason: disputeReason
+      }, {
+        headers: {
+          'Idempotency-Key': idempotencyKey
+        }
       });
       
       if (response.data.success) {
