@@ -482,15 +482,17 @@ export default function P2POrderPage() {
                     disabled={processing}
                     style={{
                       flex: 1,
-                      padding: '16px',
-                      background: 'linear-gradient(135deg, #22C55E, #16A34A)',
+                      padding: '16px 24px',
+                      background: 'linear-gradient(135deg, #00E5FF 0%, #7B2CFF 50%, #00F0FF 100%)',
                       border: 'none',
                       borderRadius: '12px',
                       color: '#FFFFFF',
                       fontSize: '16px',
                       fontWeight: '700',
                       cursor: processing ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 0 20px rgba(34, 197, 94, 0.4)'
+                      boxShadow: '0 0 25px rgba(0, 229, 255, 0.4), 0 0 50px rgba(123, 44, 255, 0.2)',
+                      transition: 'all 0.3s ease',
+                      opacity: processing ? 0.7 : 1
                     }}
                   >
                     {t('p2p.buttons.releaseCrypto')}
