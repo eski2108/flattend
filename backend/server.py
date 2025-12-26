@@ -3013,13 +3013,17 @@ async def get_enhanced_offers(
         }
     
     # Build query for p2p_ads collection
+    # NOTE: p2p_ads uses "crypto" and "fiat" fields, not "crypto_currency" and "fiat_currency"
     p2p_ads_query = {"status": "active"}
     if ad_type:
-        p2p_ads_query["ad_type"] = ad_type.lower()
+        # p2p_ads might use "type" or "ad_type"
+        p2p_ads_query["$or"] = [{"ad_type": ad_type.lower()}, {"type": ad_type.lower()}, {"type": ad_type.upper()}]
     if crypto_currency:
-        p2p_ads_query["crypto_currency"] = crypto_currency
+        # p2p_ads uses "crypto" field
+        p2p_ads_query["crypto"] = crypto_currency
     if fiat_currency:
-        p2p_ads_query["fiat_currency"] = fiat_currency
+        # p2p_ads uses "fiat" field
+        p2p_ads_query["fiat"] = fiat_currency
     if payment_method:
         p2p_ads_query["payment_methods"] = payment_method
     
