@@ -993,8 +993,8 @@ async def compute_seller_badges(db, seller_id: str, seller_data: dict = None, st
             "variant": "gold"
         })
     
-    # 4. HIGH_COMPLETION badge
-    elif completion_rate >= P2P_BADGE_CONFIG["high_completion_min"]:
+    # 4. HIGH_COMPLETION badge (only if trades >= 5)
+    elif completion_rate >= P2P_BADGE_CONFIG["high_completion_min"] and total_trades >= 5:
         badges.append({
             "key": "high_completion",
             "label": "High Completion",
