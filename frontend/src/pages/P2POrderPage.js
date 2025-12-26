@@ -120,6 +120,11 @@ export default function P2POrderPage() {
     
     setProcessing(true);
     try {
+      const idempotencyKey = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+      
       const formData = new FormData();
       formData.append('trade_id', tradeId);
       formData.append('sender_id', currentUser.user_id);
@@ -129,7 +134,10 @@ export default function P2POrderPage() {
       }
       
       const response = await axios.post(`${API}/api/p2p/trade/message`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Idempotency-Key': idempotencyKey
+        }
       });
       
       if (response.data.success) {
