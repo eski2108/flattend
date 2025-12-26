@@ -71,6 +71,12 @@ function P2PMarketplace() {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  
+  // Buy modal state
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
+  const [buyAmount, setBuyAmount] = useState('');
+  const [buyAmountFiat, setBuyAmountFiat] = useState('');
 
   const sortOptions = [
     { value: 'best_price', label: 'Best Price' },
