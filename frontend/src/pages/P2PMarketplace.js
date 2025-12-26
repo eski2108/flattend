@@ -72,11 +72,29 @@ function P2PMarketplace() {
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
-  // Buy modal state
-  const [showBuyModal, setShowBuyModal] = useState(false);
+  // Amount Widget State (MANDATORY per spec)
+  const [amountMode, setAmountMode] = useState('pay'); // 'pay' = fiat input, 'receive' = crypto input
+  const [inputAmount, setInputAmount] = useState('');
+  const [convertedAmount, setConvertedAmount] = useState('');
+  const [selectedInputFiat, setSelectedInputFiat] = useState('GBP');
+  const [amountError, setAmountError] = useState('');
+  
+  // Confirm Trade Modal State
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
+  const [confirmProcessing, setConfirmProcessing] = useState(false);
+  
+  // Legacy buy modal state (kept for compatibility)
+  const [showBuyModal, setShowBuyModal] = useState(false);
   const [buyAmount, setBuyAmount] = useState('');
   const [buyAmountFiat, setBuyAmountFiat] = useState('');
+  
+  // Fiat currencies available
+  const fiatCurrencies = ['GBP', 'USD', 'EUR'];
+  
+  // Quick chips for amount selection
+  const fiatChips = [50, 100, 250, 500, 1000];
+  const cryptoChips = [0.001, 0.005, 0.01, 0.05, 0.1];
 
   const sortOptions = [
     { value: 'best_price', label: 'Best Price' },
