@@ -25,7 +25,7 @@ export default function PriceTickerEnhanced() {
         
         const coinList = Object.entries(prices)
           .filter(([symbol]) => COIN_COLORS[symbol])
-          .slice(0, 15)
+          .slice(0, 12)  // Reduced to prevent overflow
           .map(([symbol, data]) => ({
             symbol,
             price: data.price_usd || data.price || 0,
@@ -51,13 +51,16 @@ export default function PriceTickerEnhanced() {
       <div style={{
         width: '100%',
         height: '44px',
+        maxHeight: '44px',
         background: 'linear-gradient(90deg, #050C1E, #1C1540)',
         borderBottom: '1px solid rgba(0, 229, 255, 0.3)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         color: '#00F0FF',
-        fontSize: '14px'
+        fontSize: '14px',
+        overflow: 'hidden',
+        flexShrink: 0
       }}>
         Loading prices...
       </div>
@@ -65,37 +68,60 @@ export default function PriceTickerEnhanced() {
   }
 
   return (
-    <div style={{
+    <div id="price-ticker-root" style={{
       width: '100%',
       height: '44px',
+      maxHeight: '44px',
+      minHeight: '44px',
       background: 'linear-gradient(90deg, #050C1E, #1C1540)',
       borderBottom: '1px solid rgba(0, 229, 255, 0.3)',
       overflow: 'hidden',
-      position: 'relative'
+      position: 'relative',
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center'
     }}>
       <style>{`
-        @keyframes scroll {
+        #price-ticker-root {
+          height: 44px !important;
+          max-height: 44px !important;
+          min-height: 44px !important;
+          overflow: hidden !important;
+        }
+        @keyframes tickerScroll {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
-        .ticker-track {
-          display: flex;
-          animation: scroll 40s linear infinite;
-          width: fit-content;
+        .single-ticker-track {
+          display: inline-flex !important;
+          flex-wrap: nowrap !important;
+          animation: tickerScroll 35s linear infinite;
+          width: max-content !important;
+          height: 44px !important;
+          align-items: center !important;
+          white-space: nowrap !important;
         }
-        .ticker-track:hover {
+        .single-ticker-track:hover {
           animation-play-state: paused;
         }
+        .ticker-coin-item {
+          display: inline-flex !important;
+          flex-shrink: 0 !important;
+          align-items: center !important;
+          height: 44px !important;
+          white-space: nowrap !important;
+        }
       `}</style>
-      <div className="ticker-track" style={{ display: 'flex', alignItems: 'center', height: '44px' }}>
+      <div className="single-ticker-track">
         {[...coins, ...coins].map((coin, idx) => (
           <div
             key={`${coin.symbol}-${idx}`}
+            className="ticker-coin-item"
             style={{
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '0 24px',
+              padding: '0 20px',
               height: '44px',
               whiteSpace: 'nowrap',
               flexShrink: 0
@@ -114,7 +140,7 @@ export default function PriceTickerEnhanced() {
             <span style={{ 
               color: coin.change >= 0 ? '#22C55E' : '#EF4444',
               fontSize: '13px',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               gap: '2px'
             }}>
