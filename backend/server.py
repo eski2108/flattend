@@ -34644,7 +34644,7 @@ async def approve_address_verification(verification_id: str):
 # Auto-Match System
 @api_router.post("/p2p/auto-match")
 async def auto_match_trade(request: dict):
-    """Auto-match buyer with best seller or vice versa"""
+    """Auto-match buyer with best seller or vice versa - FIXED to use p2p_offers collection"""
     try:
         user_id = request.get("user_id")
         trade_type = request.get("type")  # "buy" or "sell"
@@ -34671,206 +34671,248 @@ async def auto_match_trade(request: dict):
         blocked_users = blocked_doc.get("blocked_users", []) if blocked_doc else []
         
         if trade_type == "buy":
-            # Find best seller
-            pipeline = [
-                {
-                    "$match": {
-                        "crypto": crypto,
-                        "status": "active",
-                        "amount_available": {"$gte": float(amount)},
-                        "$and": [
-                            {"seller_uid": {"$ne": user_id}},
-                            {"seller_uid": {"$nin": blocked_users}}  # Exclude blocked users
-                        ]
-                    }
-                },
-                {
-                    "$lookup": {
-                        "from": "merchant_stats",
-                        "localField": "seller_uid",
-                        "foreignField": "user_id",
-                        "as": "seller_stats"
-                    }
-                },
-                {
-                    "$lookup": {
-                        "from": "merchant_ranks",
-                        "localField": "seller_uid",
-                        "foreignField": "user_id",
-                        "as": "seller_rank"
-                    }
-                },
-                {
-                    "$addFields": {
-                        "completion_rate": {"$arrayElemAt": ["$seller_stats.thirty_day_completion_rate", 0]},
-                        "release_time": {"$arrayElemAt": ["$seller_stats.average_release_time_seconds", 0]},
-                        "rank": {"$arrayElemAt": ["$seller_rank.rank", 0]},
-                        "rank_score": {
-                            "$switch": {
-                                "branches": [
-                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "platinum"]}, "then": 4},
-                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "gold"]}, "then": 3},
-                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "silver"]}, "then": 2},
-                                    {"case": {"$eq": [{"$arrayElemAt": ["$seller_rank.rank", 0]}, "bronze"]}, "then": 1}
-                                ],
-                                "default": 0
-                            }
-                        }
-                    }
-                },
-                {
-                    "$sort": {
-                        "price_fixed": 1,  # Best price first
-                        "completion_rate": -1,
-                        "release_time": 1,
-                        "rank_score": -1,
-                        "amount_available": -1
-                    }
-                },
-                {"$limit": 1}
-            ]
+            # User wants to BUY crypto - find a SELLER (ad_type = SELL)
+            # Query p2p_offers collection with correct schema
+            query = {
+                "status": "active",
+                "crypto_currency": crypto,
+                "available_amount": {"$gte": float(amount)},
+                "seller_id": {"$ne": user_id, "$nin": blocked_users},
+                "$or": [
+                    {"ad_type": "SELL"},
+                    {"ad_type": "sell"}
+                ]
+            }
             
-            results = await db.p2p_listings.aggregate(pipeline).to_list(1)
+            logger.info(f"🔍 Searching p2p_offers with query: {query}")
             
-            if not results:
-                raise HTTPException(status_code=404, detail="No sellers available")
+            # Find best match from p2p_offers
+            offers = await db.p2p_offers.find(query).sort([
+                ("price", 1),  # Lowest price first for buyer
+                ("available_amount", -1)
+            ]).to_list(10)
             
-            best_match = results[0]
+            # Also check p2p_ads collection
+            ads_query = {
+                "status": "active",
+                "crypto": crypto,
+                "seller_id": {"$ne": user_id, "$nin": blocked_users},
+                "$or": [
+                    {"type": "SELL"},
+                    {"type": "sell"}
+                ]
+            }
+            
+            ads = await db.p2p_ads.find(ads_query).sort([("price", 1)]).to_list(10)
+            
+            logger.info(f"📊 Found {len(offers)} offers from p2p_offers, {len(ads)} from p2p_ads")
+            
+            # Combine and normalize results
+            all_matches = []
+            
+            for offer in offers:
+                all_matches.append({
+                    "source": "p2p_offers",
+                    "offer_id": offer.get("offer_id"),
+                    "seller_id": offer.get("seller_id"),
+                    "seller_name": offer.get("seller_name", "P2P Seller"),
+                    "crypto": offer.get("crypto_currency"),
+                    "price": float(offer.get("price", 0)),
+                    "available_amount": float(offer.get("available_amount", 0)),
+                    "fiat_currency": offer.get("fiat_currency", "GBP"),
+                    "payment_methods": offer.get("payment_methods", [])
+                })
+            
+            for ad in ads:
+                all_matches.append({
+                    "source": "p2p_ads",
+                    "offer_id": ad.get("ad_id"),
+                    "seller_id": ad.get("seller_id"),
+                    "seller_name": ad.get("seller_name", "P2P Seller"),
+                    "crypto": ad.get("crypto"),
+                    "price": float(ad.get("price", 0)),
+                    "available_amount": float(ad.get("max_amount", 0)),
+                    "fiat_currency": ad.get("fiat", "GBP"),
+                    "payment_methods": ad.get("payment_methods", [])
+                })
+            
+            # Sort by price (ascending for buyer)
+            all_matches.sort(key=lambda x: x["price"])
+            
+            if not all_matches:
+                logger.warning(f"❌ No sellers available for {crypto}")
+                raise HTTPException(status_code=404, detail="No sellers available for this cryptocurrency")
+            
+            best_match = all_matches[0]
+            logger.info(f"✅ Best match found: {best_match}")
             
             # Create order immediately
             trade_id = f"trade_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            fiat_amount = float(amount) * best_match["price"]
             
             trade = {
                 "trade_id": trade_id,
-                "listing_id": best_match.get("listing_id"),
+                "offer_id": best_match["offer_id"],
                 "buyer_id": user_id,
-                "seller_id": best_match.get("seller_uid"),
+                "seller_id": best_match["seller_id"],
+                "seller_name": best_match["seller_name"],
                 "crypto": crypto,
                 "crypto_amount": float(amount),
                 "crypto_currency": crypto,
-                "fiat_amount": float(amount) * best_match.get("price_fixed", 0),
-                "fiat_currency": "GBP",
+                "fiat_amount": fiat_amount,
+                "fiat_currency": best_match["fiat_currency"],
+                "price_per_unit": best_match["price"],
                 "status": "pending_payment",
                 "created_at": datetime.now(timezone.utc),
                 "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30),
-                "payment_methods": best_match.get("payment_methods", []),
-                "escrow_locked": True
+                "payment_methods": best_match["payment_methods"],
+                "escrow_locked": True,
+                "source_collection": best_match["source"]
             }
             
             await db.p2p_trades.insert_one(trade)
             
-            # Lock listing amount
-            await db.p2p_listings.update_one(
-                {"listing_id": best_match.get("listing_id")},
-                {"$inc": {"amount_available": -float(amount)}}
-            )
+            # Lock offer amount in the source collection
+            if best_match["source"] == "p2p_offers":
+                await db.p2p_offers.update_one(
+                    {"offer_id": best_match["offer_id"]},
+                    {"$inc": {"available_amount": -float(amount)}}
+                )
+            elif best_match["source"] == "p2p_ads":
+                await db.p2p_ads.update_one(
+                    {"ad_id": best_match["offer_id"]},
+                    {"$inc": {"max_amount": -float(amount)}}
+                )
             
-            logger.info(f"✅ Auto-matched buyer {user_id} with seller {best_match.get('seller_uid')} | Trade: {trade_id} | Price: {best_match.get('price_fixed')} | Amount: {amount} {crypto}")
+            logger.info(f"✅ Auto-matched buyer {user_id} with seller {best_match['seller_id']} | Trade: {trade_id} | Price: {best_match['price']} | Amount: {amount} {crypto} | Fiat: {fiat_amount}")
             
             return {
                 "success": True,
                 "trade_id": trade_id,
                 "match": {
-                    "seller_id": best_match.get("seller_uid"),
-                    "price": best_match.get("price_fixed"),
-                    "rank": best_match.get("rank"),
-                    "completion_rate": best_match.get("completion_rate")
+                    "seller_id": best_match["seller_id"],
+                    "seller_name": best_match["seller_name"],
+                    "price": best_match["price"],
+                    "fiat_amount": fiat_amount,
+                    "fiat_currency": best_match["fiat_currency"]
                 },
                 "message": "Matched with best seller"
             }
         
         elif trade_type == "sell":
-            # Find best BUYER (match seller with buyer)
-            # In a real P2P system, we'd match with existing buy orders
-            # For this implementation, we'll find active buy listings
-            pipeline = [
-                {
-                    "$match": {
-                        "crypto": crypto,
-                        "side": "buy",  # Looking for buyers
-                        "status": "active",
-                        "min_limit": {"$lte": float(amount)},
-                        "max_limit": {"$gte": float(amount)},
-                        "buyer_uid": {"$ne": user_id}
-                    }
-                },
-                {
-                    "$lookup": {
-                        "from": "users",
-                        "localField": "buyer_uid",
-                        "foreignField": "user_id",
-                        "as": "buyer_info"
-                    }
-                },
-                {
-                    "$addFields": {
-                        "buyer_rating": {"$arrayElemAt": ["$buyer_info.p2p_rating", 0]},
-                        "buyer_completion": {"$arrayElemAt": ["$buyer_info.p2p_positive_rate", 0]}
-                    }
-                },
-                {
-                    "$sort": {
-                        "price_fixed": -1,  # Highest price first (best for seller)
-                        "buyer_rating": -1,
-                        "buyer_completion": -1
-                    }
-                },
-                {"$limit": 1}
-            ]
+            # User wants to SELL crypto - find a BUYER (ad_type = BUY)
+            query = {
+                "status": "active",
+                "crypto_currency": crypto,
+                "seller_id": {"$ne": user_id, "$nin": blocked_users},
+                "$or": [
+                    {"ad_type": "BUY"},
+                    {"ad_type": "buy"}
+                ]
+            }
             
-            results = await db.p2p_listings.aggregate(pipeline).to_list(1)
+            offers = await db.p2p_offers.find(query).sort([
+                ("price", -1),  # Highest price first for seller
+            ]).to_list(10)
             
-            if not results:
-                raise HTTPException(status_code=404, detail="No buyers available")
+            # Also check p2p_ads
+            ads_query = {
+                "status": "active",
+                "crypto": crypto,
+                "seller_id": {"$ne": user_id, "$nin": blocked_users},
+                "$or": [
+                    {"type": "BUY"},
+                    {"type": "buy"}
+                ]
+            }
             
-            best_match = results[0]
+            ads = await db.p2p_ads.find(ads_query).sort([("price", -1)]).to_list(10)
+            
+            all_matches = []
+            
+            for offer in offers:
+                all_matches.append({
+                    "source": "p2p_offers",
+                    "offer_id": offer.get("offer_id"),
+                    "buyer_id": offer.get("seller_id"),  # In a buy ad, seller_id is actually the buyer
+                    "buyer_name": offer.get("seller_name", "P2P Buyer"),
+                    "crypto": offer.get("crypto_currency"),
+                    "price": float(offer.get("price", 0)),
+                    "fiat_currency": offer.get("fiat_currency", "GBP"),
+                    "payment_methods": offer.get("payment_methods", [])
+                })
+            
+            for ad in ads:
+                all_matches.append({
+                    "source": "p2p_ads",
+                    "offer_id": ad.get("ad_id"),
+                    "buyer_id": ad.get("seller_id"),
+                    "buyer_name": ad.get("seller_name", "P2P Buyer"),
+                    "crypto": ad.get("crypto"),
+                    "price": float(ad.get("price", 0)),
+                    "fiat_currency": ad.get("fiat", "GBP"),
+                    "payment_methods": ad.get("payment_methods", [])
+                })
+            
+            # Sort by price (descending for seller - highest price first)
+            all_matches.sort(key=lambda x: x["price"], reverse=True)
+            
+            if not all_matches:
+                logger.warning(f"❌ No buyers available for {crypto}")
+                raise HTTPException(status_code=404, detail="No buyers available for this cryptocurrency")
+            
+            best_match = all_matches[0]
             
             # Create trade (seller is user, buyer is matched)
             trade_id = f"trade_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            fiat_amount = float(amount) * best_match["price"]
             
             trade = {
                 "trade_id": trade_id,
-                "listing_id": best_match.get("listing_id"),
-                "buyer_id": best_match.get("buyer_uid"),
+                "offer_id": best_match["offer_id"],
+                "buyer_id": best_match["buyer_id"],
+                "buyer_name": best_match["buyer_name"],
                 "seller_id": user_id,
                 "crypto": crypto,
                 "crypto_amount": float(amount),
                 "crypto_currency": crypto,
-                "fiat_amount": float(amount) * best_match.get("price_fixed", 0),
-                "fiat_currency": fiat_currency,
-                "status": "pending_payment",
+                "fiat_amount": fiat_amount,
+                "fiat_currency": best_match["fiat_currency"],
+                "price_per_unit": best_match["price"],
+                "status": "pending_escrow",
                 "created_at": datetime.now(timezone.utc),
                 "expires_at": datetime.now(timezone.utc) + timedelta(minutes=30),
-                "payment_methods": best_match.get("payment_methods", []),
-                "escrow_locked": True
+                "payment_methods": best_match["payment_methods"],
+                "escrow_locked": False,
+                "source_collection": best_match["source"]
             }
-            
-            # Deduct crypto from seller's wallet (escrow)
-            await db.users.update_one(
-                {"user_id": user_id},
-                {"$inc": {f"wallets.{crypto}": -float(amount)}}
-            )
             
             await db.p2p_trades.insert_one(trade)
             
-            logger.info(f"✅ Auto-matched seller {user_id} with buyer {best_match.get('buyer_uid')}")
+            logger.info(f"✅ Auto-matched seller {user_id} with buyer {best_match['buyer_id']} | Trade: {trade_id}")
             
             return {
                 "success": True,
                 "trade_id": trade_id,
                 "match": {
-                    "buyer_id": best_match.get("buyer_uid"),
-                    "price": best_match.get("price_fixed"),
-                    "rating": best_match.get("buyer_rating"),
-                    "completion_rate": best_match.get("buyer_completion")
+                    "buyer_id": best_match["buyer_id"],
+                    "buyer_name": best_match["buyer_name"],
+                    "price": best_match["price"],
+                    "fiat_amount": fiat_amount,
+                    "fiat_currency": best_match["fiat_currency"]
                 },
                 "message": "Matched with best buyer"
             }
+        
+        else:
+            raise HTTPException(status_code=400, detail="Invalid trade type. Must be 'buy' or 'sell'")
         
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error in auto-match: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 # Hook into existing trade completion to update stats
