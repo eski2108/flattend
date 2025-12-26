@@ -102,6 +102,144 @@ function P2PMarketplace() {
   const [buyAmount, setBuyAmount] = useState('');
   const [buyAmountFiat, setBuyAmountFiat] = useState('');
 
+  // Badge rendering helper - renders badges from seller profile
+  const renderBadges = (sellerId, maxBadges = 3) => {
+    const profile = offerSellerProfiles[sellerId];
+    if (!profile || !profile.badges || profile.badges.length === 0) return null;
+    
+    // Sort by priority DESC and take top N
+    const sortedBadges = [...profile.badges].sort((a, b) => b.priority - a.priority).slice(0, maxBadges);
+    const remaining = profile.badges.length - maxBadges;
+    
+    const getBadgeStyle = (variant) => {
+      switch (variant) {
+        case 'shield':
+          return {
+            background: 'rgba(0, 240, 255, 0.15)',
+            border: '1px solid rgba(0, 240, 255, 0.4)',
+            color: '#00F0FF'
+          };
+        case 'success':
+          return {
+            background: 'rgba(34, 197, 94, 0.15)',
+            border: '1px solid rgba(34, 197, 94, 0.4)',
+            color: '#22C55E'
+          };
+        case 'info':
+          return {
+            background: 'rgba(59, 130, 246, 0.15)',
+            border: '1px solid rgba(59, 130, 246, 0.4)',
+            color: '#3B82F6'
+          };
+        case 'gold':
+          return {
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1))',
+            border: '1px solid rgba(255, 215, 0, 0.6)',
+            color: '#FFD700'
+          };
+        case 'purple':
+          return {
+            background: 'rgba(168, 85, 247, 0.15)',
+            border: '1px solid rgba(168, 85, 247, 0.4)',
+            color: '#A855F7'
+          };
+        case 'warning':
+          return {
+            background: 'rgba(252, 211, 77, 0.15)',
+            border: '1px solid rgba(252, 211, 77, 0.4)',
+            color: '#FCD34D'
+          };
+        default:
+          return {
+            background: 'rgba(255, 255, 255, 0.1)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            color: '#fff'
+          };
+      }
+    };
+    
+    const getBadgeIcon = (key) => {
+      switch (key) {
+        case 'deposit_secured': return <IoShield size={9} />;
+        case 'verified': return <CheckCircle size={9} />;
+        case 'fast_trader': return <IoFlash size={9} />;
+        case 'pro_trader': return <IoTrophy size={9} />;
+        default: return null;
+      }
+    };
+    
+    return (
+      <>
+        {sortedBadges.map((badge, idx) => {
+          const style = getBadgeStyle(badge.variant);
+          return (
+            <div
+              key={idx}
+              title={badge.label}
+              style={{
+                padding: '2px 6px',
+                ...style,
+                borderRadius: '4px',
+                fontSize: '9px',
+                fontWeight: '700',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '2px'
+              }}
+            >
+              {getBadgeIcon(badge.key)}
+              {badge.label.toUpperCase()}
+            </div>
+          );
+        })}
+        {remaining > 0 && (
+          <div
+            style={{
+              padding: '2px 6px',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              borderRadius: '4px',
+              fontSize: '9px',
+              fontWeight: '700',
+              color: 'rgba(255, 255, 255, 0.6)'
+            }}
+          >
+            +{remaining}
+          </div>
+        )}
+      </>
+    );
+  };
+  
+  // Render 30-day stats compact line
+  const render30dStatsCompact = (sellerId) => {
+    const profile = offerSellerProfiles[sellerId];
+    if (!profile || !profile.stats_30d) return null;
+    
+    const { trades_total, completion_rate } = profile.stats_30d;
+    
+    // If 0 trades, only show trades count (hide completion to avoid "100% with 0 trades")
+    if (trades_total === 0) {
+      return (
+        <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', marginTop: '4px' }}>
+          30d Trades: 0
+        </div>
+      );
+    }
+    
+    return (
+      <div style={{ fontSize: '11px', color: 'rgba(255, 255, 255, 0.5)', marginTop: '4px' }}>
+        30d Trades: {trades_total} • Completion: {completion_rate}%
+      </div>
+    );
+  };
+  
+  // Convert seconds to minutes for display
+  const formatTimeMinutes = (seconds) => {
+    if (!seconds || seconds === 0) return null;
+    return Math.round(seconds / 60);
+  };
+
   const sortOptions = [
     { value: 'best_price', label: 'Best Price' },
     { value: 'highest_rating', label: 'Highest Rating' },
