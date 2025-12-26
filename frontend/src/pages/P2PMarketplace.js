@@ -1344,13 +1344,13 @@ function P2PMarketplace() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
           }}>
             
-            {/* Row 1: "You pay" - Fiat Input (editable in BUY mode) */}
+            {/* Row 1: "You pay" - Fiat Input (PRIMARY - editable in BUY mode) */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: activeTab === 'buy' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
                 fontSize: '13px',
-                fontWeight: '600',
+                fontWeight: '700',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
@@ -1365,21 +1365,22 @@ function P2PMarketplace() {
                     min="0"
                     value={fiatAmount}
                     onChange={(e) => handleFiatAmountChange(e.target.value)}
-                    placeholder="0.00"
+                    placeholder="Enter amount"
                     disabled={activeTab === 'sell'}
                     style={{
                       width: '100%',
                       height: '52px',
                       padding: '0 16px',
-                      background: activeTab === 'sell' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.4)',
-                      border: amountError ? '2px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.3)',
+                      background: activeTab === 'buy' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.2)',
+                      border: amountError ? '2px solid #EF4444' : activeTab === 'buy' ? '2px solid rgba(0, 240, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '12px',
-                      color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.6)' : '#fff',
+                      color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.4)' : '#fff',
                       fontSize: '18px',
                       fontWeight: '700',
                       outline: 'none',
                       boxSizing: 'border-box',
-                      cursor: activeTab === 'sell' ? 'not-allowed' : 'text'
+                      cursor: activeTab === 'sell' ? 'not-allowed' : 'text',
+                      boxShadow: activeTab === 'buy' ? '0 0 15px rgba(0, 240, 255, 0.2)' : 'none'
                     }}
                   />
                 </div>
@@ -1410,11 +1411,11 @@ function P2PMarketplace() {
               </div>
             </div>
 
-            {/* Row 2: "You receive" - Crypto Output (read-only in BUY mode, editable in SELL mode) */}
+            {/* Row 2: "You receive" - Crypto Output (SECONDARY - READ-ONLY in BUY mode) */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: activeTab === 'sell' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
                 fontSize: '13px',
                 fontWeight: '600',
                 marginBottom: '8px',
@@ -1425,29 +1426,53 @@ function P2PMarketplace() {
               </label>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <div style={{ flex: 1, position: 'relative' }}>
-                  <input
-                    type="number"
-                    step="0.00000001"
-                    min="0"
-                    value={cryptoAmount}
-                    onChange={(e) => handleCryptoAmountChange(e.target.value)}
-                    placeholder={`0.${'0'.repeat(getCryptoDecimals(selectedCrypto) - 1)}1`}
-                    disabled={activeTab === 'buy'}
-                    style={{
-                      width: '100%',
-                      height: '52px',
-                      padding: '0 16px',
-                      background: activeTab === 'buy' ? 'rgba(0, 198, 255, 0.08)' : 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(0, 198, 255, 0.3)',
-                      borderRadius: '12px',
-                      color: activeTab === 'buy' ? '#00C6FF' : '#fff',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      cursor: activeTab === 'buy' ? 'not-allowed' : 'text'
-                    }}
-                  />
+                  {/* READ-ONLY display in BUY mode - NOT an input */}
+                  {activeTab === 'buy' ? (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0 16px',
+                        background: 'rgba(0, 0, 0, 0.15)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        boxSizing: 'border-box',
+                        display: 'flex',
+                        alignItems: 'center',
+                        userSelect: 'none',
+                        pointerEvents: 'none'
+                      }}
+                    >
+                      {cryptoAmount || 'Select offer below'}
+                    </div>
+                  ) : (
+                    <input
+                      type="number"
+                      step="0.00000001"
+                      min="0"
+                      value={cryptoAmount}
+                      onChange={(e) => handleCryptoAmountChange(e.target.value)}
+                      placeholder="Enter amount"
+                      style={{
+                        width: '100%',
+                        height: '52px',
+                        padding: '0 16px',
+                        background: 'rgba(0, 0, 0, 0.5)',
+                        border: '2px solid rgba(0, 240, 255, 0.5)',
+                        borderRadius: '12px',
+                        color: '#fff',
+                        fontSize: '18px',
+                        fontWeight: '700',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        cursor: 'text',
+                        boxShadow: '0 0 15px rgba(0, 240, 255, 0.2)'
+                      }}
+                    />
+                  )}
                 </div>
                 <div style={{
                   width: '100px',
