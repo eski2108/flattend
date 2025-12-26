@@ -996,6 +996,6 @@ export default function P2POrderPage() {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }
