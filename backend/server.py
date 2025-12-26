@@ -3742,21 +3742,29 @@ async def lock_collateral(request: dict):
         if existing:
             raise HTTPException(status_code=400, detail="You already have active collateral locked")
         
-        # Check user has sufficient balance
+        # Check user exists
         user = await db.users.find_one({"user_id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        wallet = user.get("wallets", {}).get(asset, {})
-        available = float(wallet.get("available_balance", 0))
+        # Check user has sufficient balance (wallets collection is source of truth)
+        wallet = await db.wallets.find_one({"user_id": user_id, "currency": asset})
+        available = float(wallet.get("available_balance", 0)) if wallet else 0
         
         if available < amount:
             raise HTTPException(status_code=400, detail=f"Insufficient {asset} balance. Available: {available}")
         
-        # Deduct from user wallet
-        await db.users.update_one(
-            {"user_id": user_id},
-            {"$inc": {f"wallets.{asset}.available_balance": -amount}}
+        # Deduct from wallet (wallets collection)
+        await db.wallets.update_one(
+            {"user_id": user_id, "currency": asset},
+            {"$inc": {"available_balance": -amount}}
+        )
+        
+        # Also sync to internal_balances for consistency
+        await db.internal_balances.update_one(
+            {"user_id": user_id, "currency": asset},
+            {"$inc": {"available_balance": -amount}},
+            upsert=True
         )
         
         # Create collateral record
