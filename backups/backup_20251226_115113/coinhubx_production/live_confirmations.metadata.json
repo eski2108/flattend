@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"acee43c7b7144b269cc6ff3f4b95465d","collectionName":"live_confirmations","type":"collection"}
