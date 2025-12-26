@@ -88,9 +88,8 @@ class SecurityMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         path = request.url.path
         
-        # Skip certain paths
-        if any(path.startswith(skip) for skip in self.SKIP_PATHS):
-            return await call_next(request)
+        # TEMPORARILY DISABLE WAF - Allow all requests through
+        return await call_next(request)
         
         ip = request.client.host if request.client else "unknown"
         user_id = request.headers.get("x-user-id")
