@@ -3749,9 +3749,7 @@ async def lock_collateral(request: dict):
         
         # Check user has sufficient balance (wallets collection is source of truth)
         wallet = await db.wallets.find_one({"user_id": user_id, "currency": asset})
-        logger.info(f"🔍 Collateral check - user_id: {user_id}, asset: {asset}, wallet: {wallet}")
         available = float(wallet.get("available_balance", 0)) if wallet else 0
-        logger.info(f"🔍 Available balance: {available}")
         
         if available < amount:
             raise HTTPException(status_code=400, detail=f"Insufficient {asset} balance. Available: {available}")
