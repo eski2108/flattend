@@ -1344,13 +1344,13 @@ function P2PMarketplace() {
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
           }}>
             
-            {/* Row 1: "You pay" - Fiat Input (PRIMARY - editable in BUY mode) */}
+            {/* Row 1: "You pay" - Fiat Input (editable in BUY mode) */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
-                color: activeTab === 'buy' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
+                color: 'rgba(255, 255, 255, 0.7)',
                 fontSize: '13px',
-                fontWeight: '700',
+                fontWeight: '600',
                 marginBottom: '8px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
@@ -1371,16 +1371,15 @@ function P2PMarketplace() {
                       width: '100%',
                       height: '52px',
                       padding: '0 16px',
-                      background: activeTab === 'buy' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.2)',
-                      border: amountError ? '2px solid #EF4444' : activeTab === 'buy' ? '2px solid rgba(0, 240, 255, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
+                      background: activeTab === 'sell' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.4)',
+                      border: amountError ? '2px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.3)',
                       borderRadius: '12px',
-                      color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.4)' : '#fff',
+                      color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.6)' : '#fff',
                       fontSize: '18px',
                       fontWeight: '700',
                       outline: 'none',
                       boxSizing: 'border-box',
-                      cursor: activeTab === 'sell' ? 'not-allowed' : 'text',
-                      boxShadow: activeTab === 'buy' ? '0 0 15px rgba(0, 240, 255, 0.2)' : 'none'
+                      cursor: activeTab === 'sell' ? 'not-allowed' : 'text'
                     }}
                   />
                 </div>
@@ -1411,11 +1410,11 @@ function P2PMarketplace() {
               </div>
             </div>
 
-            {/* Row 2: "You receive" - Crypto Output (SECONDARY - READ-ONLY in BUY mode) */}
+            {/* Row 2: "You receive" - READ-ONLY in BUY mode, editable in SELL mode */}
             <div style={{ marginBottom: '16px' }}>
               <label style={{
                 display: 'block',
-                color: activeTab === 'sell' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
+                color: 'rgba(255, 255, 255, 0.7)',
                 fontSize: '13px',
                 fontWeight: '600',
                 marginBottom: '8px',
@@ -1426,24 +1425,22 @@ function P2PMarketplace() {
               </label>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <div style={{ flex: 1, position: 'relative' }}>
-                  {/* READ-ONLY display in BUY mode - NOT an input */}
+                  {/* READ-ONLY in BUY mode - uses div not input */}
                   {activeTab === 'buy' ? (
                     <div
                       style={{
                         width: '100%',
                         height: '52px',
                         padding: '0 16px',
-                        background: 'rgba(0, 0, 0, 0.15)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
                         borderRadius: '12px',
-                        color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)',
+                        color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.4)',
                         fontSize: '18px',
                         fontWeight: '700',
                         boxSizing: 'border-box',
                         display: 'flex',
-                        alignItems: 'center',
-                        userSelect: 'none',
-                        pointerEvents: 'none'
+                        alignItems: 'center'
                       }}
                     >
                       {cryptoAmount || 'Select offer below'}
@@ -1460,16 +1457,15 @@ function P2PMarketplace() {
                         width: '100%',
                         height: '52px',
                         padding: '0 16px',
-                        background: 'rgba(0, 0, 0, 0.5)',
-                        border: '2px solid rgba(0, 240, 255, 0.5)',
+                        background: 'rgba(0, 0, 0, 0.4)',
+                        border: '1px solid rgba(0, 198, 255, 0.3)',
                         borderRadius: '12px',
                         color: '#fff',
                         fontSize: '18px',
                         fontWeight: '700',
                         outline: 'none',
                         boxSizing: 'border-box',
-                        cursor: 'text',
-                        boxShadow: '0 0 15px rgba(0, 240, 255, 0.2)'
+                        cursor: 'text'
                       }}
                     />
                   )}
