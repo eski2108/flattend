@@ -1911,8 +1911,8 @@ function P2PMarketplace() {
                           console.error('🚀 Buy BTC BUTTON CLICKED! Offer:', JSON.stringify(offer));
                           console.error('🚀 Processing state:', processing);
                           if (!processing) {
-                            console.error('🚀 Calling handleBuyOffer now...');
-                            handleBuyOffer(offer);
+                            console.error('🚀 Opening buy modal...');
+                            openBuyModal(offer);
                           } else {
                             console.error('🚫 Button disabled - processing is true');
                           }
