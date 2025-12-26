@@ -3614,7 +3614,7 @@ async def get_marketplace_filters():
 
 
 
-@api_router.get("/p2p/seller/profile/{seller_id}")
+@api_router.get("/p2p/sellers/{seller_id}/profile")
 async def get_seller_profile(seller_id: str):
     """
     Get detailed seller profile information.
