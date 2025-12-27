@@ -2351,20 +2351,20 @@ function P2PMarketplace() {
                 </div>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '12px' : '16px' }}>
                 {filteredOffers.map((offer) => (
                   <div
                     key={offer.offer_id}
                     style={{
-                      padding: isMobile ? '20px' : '24px',
+                      padding: isMobile ? '14px' : '24px',
                       background: 'linear-gradient(135deg, rgba(2, 6, 24, 0.6) 0%, rgba(7, 19, 39, 0.4) 100%)',
                       backdropFilter: 'blur(20px)',
                       WebkitBackdropFilter: 'blur(20px)',
                       border: '1px solid rgba(0, 240, 255, 0.15)',
-                      borderRadius: '24px',
+                      borderRadius: isMobile ? '14px' : '24px',
                       display: 'flex',
                       flexDirection: isMobile ? 'column' : 'row',
-                      gap: isMobile ? '20px' : '24px',
+                      gap: isMobile ? '12px' : '24px',
                       alignItems: isMobile ? 'stretch' : 'center',
                       position: 'relative',
                       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
@@ -2372,9 +2372,11 @@ function P2PMarketplace() {
                       cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.02)';
-                      e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
-                      e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                      if (!isMobile) {
+                        e.currentTarget.style.transform = 'scale(1.02)';
+                        e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 240, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08)';
+                        e.currentTarget.style.borderColor = 'rgba(0, 240, 255, 0.4)';
+                      }
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'scale(1)';
@@ -2387,15 +2389,15 @@ function P2PMarketplace() {
                       onClick={(e) => toggleFavorite(offer.seller_id, e)}
                       style={{
                         position: 'absolute',
-                        top: '16px',
-                        right: '16px',
+                        top: isMobile ? '10px' : '16px',
+                        right: isMobile ? '10px' : '16px',
                         background: favorites.includes(offer.seller_id) 
                           ? 'rgba(168, 85, 247, 0.15)' 
                           : 'rgba(255, 255, 255, 0.05)',
                         border: `1px solid ${favorites.includes(offer.seller_id) ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        padding: '6px',
+                        padding: isMobile ? '4px' : '6px',
                         transition: 'all 0.3s ease',
                         display: 'flex',
                         alignItems: 'center',
@@ -2415,7 +2417,7 @@ function P2PMarketplace() {
                       }}
                     >
                       <IoStar 
-                        size={16} 
+                        size={isMobile ? 14 : 16} 
                         color={favorites.includes(offer.seller_id) ? '#A855F7' : 'rgba(255, 255, 255, 0.4)'} 
                         fill={favorites.includes(offer.seller_id) ? '#A855F7' : 'none'}
                       />
