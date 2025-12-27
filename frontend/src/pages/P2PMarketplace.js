@@ -1900,7 +1900,8 @@ function P2PMarketplace() {
               padding: '8px 12px',
               background: 'rgba(0, 0, 0, 0.2)',
               borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.05)'
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              marginBottom: '10px'
             }}>
               <div>
                 <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '2px', textTransform: 'uppercase' }}>
@@ -1911,19 +1912,68 @@ function P2PMarketplace() {
                   fontWeight: '700', 
                   color: (activeTab === 'buy' ? cryptoAmount : fiatAmount) ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)'
                 }}>
-                  {activeTab === 'buy' 
-                    ? (cryptoAmount ? `${cryptoAmount} ${selectedCrypto}` : 'Select offer below')
-                    : (fiatAmount ? `${getFiatSymbol(selectedInputFiat)}${fiatAmount}` : 'Select offer below')
+                  {loadingBestOffer ? (
+                    'Finding best offer...'
+                  ) : activeTab === 'buy' 
+                    ? (cryptoAmount ? `${cryptoAmount} ${selectedCrypto}` : 'Enter amount above')
+                    : (fiatAmount ? `${getFiatSymbol(selectedInputFiat)}${fiatAmount}` : 'Enter amount above')
                   }
                 </div>
               </div>
-              {selectedOffer && (
+              {bestOffer && (
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)' }}>Rate</div>
-                  <div style={{ fontSize: '12px', color: '#fff', fontWeight: '600' }}>
-                    {getFiatSymbol(selectedInputFiat)}{parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
+                  <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)' }}>Best Rate</div>
+                  <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600' }}>
+                    {getFiatSymbol(selectedInputFiat)}{parseFloat(bestOffer.price || 0).toLocaleString()}
                   </div>
                 </div>
+              )}
+            </div>
+
+            {/* CONTINUE BUTTON - Opens confirm modal directly (Binance-style) */}
+            {bestOffer && fiatAmount && parseFloat(fiatAmount) > 0 && (
+              <button
+                onClick={() => {
+                  if (bestOffer) {
+                    setSelectedOffer(bestOffer);
+                    setShowConfirmModal(true);
+                  }
+                }}
+                disabled={loadingBestOffer || !bestOffer}
+                style={{
+                  width: '100%',
+                  height: '44px',
+                  background: loadingBestOffer ? 'rgba(34, 197, 94, 0.5)' : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+                  border: 'none',
+                  borderRadius: '10px',
+                  color: '#fff',
+                  fontSize: '15px',
+                  fontWeight: '700',
+                  cursor: loadingBestOffer ? 'not-allowed' : 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  marginBottom: '8px'
+                }}
+              >
+                {loadingBestOffer ? 'Finding best offer...' : `Buy ${selectedCrypto} @ Best Price`}
+              </button>
+            )}
+
+            {/* View all offers link */}
+            <div style={{ 
+              textAlign: 'center', 
+              fontSize: '12px', 
+              color: 'rgba(255, 255, 255, 0.5)'
+            }}>
+              {filteredOffers.length > 0 && (
+                <span>
+                  Or <a href="#offers" style={{ color: '#00C6FF', textDecoration: 'none' }} onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('offers-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}>view all {filteredOffers.length} offers</a>
+                </span>
               )}
             </div>
 
