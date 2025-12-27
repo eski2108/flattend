@@ -72,6 +72,7 @@ function P2PMarketplace() {
   });
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showAllOffers, setShowAllOffers] = useState(false);  // BINANCE: Default = single match only
   
   // Amount Widget State (BINANCE P2P SPEC)
   // Top box = FILTER ONLY. "You receive" stays empty until seller clicked.
