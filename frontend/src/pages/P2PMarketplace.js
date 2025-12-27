@@ -2490,12 +2490,14 @@ function P2PMarketplace() {
         )}
 
           {/* Offers List */}
-          <div>
+          <div style={{ position: 'relative', zIndex: 0, marginTop: isMobile ? '16px' : '0' }}>
             <div style={{ 
-              marginBottom: '20px', 
+              marginBottom: '16px', 
               fontSize: '13px',
               fontWeight: '600',
-              color: 'rgba(255, 255, 255, 0.7)'
+              color: 'rgba(255, 255, 255, 0.7)',
+              padding: '8px 0',
+              clear: 'both'
             }}
             id="offers-section"
             >
