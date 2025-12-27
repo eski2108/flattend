@@ -10,6 +10,11 @@
  *   - NO footer inside this component
  * - Mobile (<1024px): Redirects to /trading/:symbol for mobile trading experience
  * - Footer is GLOBAL (in Layout.js), NOT in this file
+ * 
+ * BACKEND INTEGRATION:
+ * - Uses unified /api/trading/order endpoint (same as mobile)
+ * - Uses /api/forex/rates for currency conversion
+ * - All validation is server-side
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -31,9 +36,12 @@ export default function SpotTradingPro() {
   });
   const [selectedPair, setSelectedPair] = useState('BTCUSD');
   const [amount, setAmount] = useState('');
+  const [limitPrice, setLimitPrice] = useState('');
   const [orderType, setOrderType] = useState('market');
+  const [quoteCurrency, setQuoteCurrency] = useState('USD');
   const [isLoading, setIsLoading] = useState(false);
   const [userBalance, setUserBalance] = useState({ usd: 0, crypto: 0 });
+  const [forexRates, setForexRates] = useState({ USD: 1 });
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
     high24h: 0,
@@ -41,6 +49,23 @@ export default function SpotTradingPro() {
     volume24h: 0,
     change24h: 0
   });
+
+  // Fetch forex rates from backend (same endpoint as mobile)
+  useEffect(() => {
+    const fetchForexRates = async () => {
+      try {
+        const res = await axios.get(`${API}/api/forex/rates`);
+        if (res.data.success && res.data.rates) {
+          setForexRates(res.data.rates);
+        }
+      } catch (e) {
+        console.error('Error fetching forex rates:', e);
+      }
+    };
+    fetchForexRates();
+    const interval = setInterval(fetchForexRates, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Fetch user wallet balance
   useEffect(() => {
