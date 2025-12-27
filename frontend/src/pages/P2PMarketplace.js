@@ -2169,7 +2169,7 @@ function P2PMarketplace() {
                     setTimeout(() => {
                       document.getElementById('offers-section')?.scrollIntoView({ behavior: 'smooth' });
                     }, 100);
-                  }}>View all {filteredOffers.length} offers</a>
+                  }}>View all {tradeState.offersCount || filteredOffers.length} offers</a>
                 </span>
               )}
             </div>
