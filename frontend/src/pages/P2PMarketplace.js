@@ -1513,16 +1513,16 @@ function P2PMarketplace() {
                 border: activeTab === 'buy' 
                   ? 'none' 
                   : '1px solid rgba(0, 245, 196, 0.2)',
-                borderRadius: '12px',
+                borderRadius: '16px',
                 color: activeTab === 'buy' ? '#0B1F14' : 'rgba(0, 245, 196, 0.65)',
                 fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'buy' 
-                  ? 'inset 0 0 6px rgba(0, 245, 196, 0.25), 0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
+                  ? '0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
                   : 'none',
                 opacity: activeTab === 'buy' ? 1 : 0.85,
-                filter: activeTab === 'buy' ? 'brightness(1.15)' : 'saturate(0.7)',
+                filter: activeTab === 'buy' ? 'brightness(1.18) saturate(1.1)' : 'saturate(0.7)',
                 transition: 'all 200ms ease'
               }}
             >
