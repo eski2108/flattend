@@ -1534,7 +1534,7 @@ function P2PMarketplace() {
                 flex: 1,
                 height: '48px',
                 background: activeTab === 'sell' 
-                  ? 'linear-gradient(135deg, #FF5A5F 0%, #C93A3F 100%)'
+                  ? 'linear-gradient(135deg, #FF6B6B 0%, #D94848 100%)'
                   : 'rgba(255, 90, 95, 0.08)',
                 border: activeTab === 'sell' 
                   ? 'none' 
@@ -1545,10 +1545,10 @@ function P2PMarketplace() {
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'sell' 
-                  ? '0 0 10px rgba(255, 90, 95, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
+                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 10px rgba(255, 90, 95, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
                   : 'none',
                 opacity: activeTab === 'sell' ? 1 : 0.85,
-                filter: activeTab === 'sell' ? 'brightness(1.18) saturate(1.1)' : 'saturate(0.7)',
+                filter: activeTab === 'sell' ? 'brightness(1.22) saturate(1.1)' : 'saturate(0.7)',
                 transition: 'all 200ms ease'
               }}
             >
