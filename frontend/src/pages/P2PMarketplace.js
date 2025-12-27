@@ -1377,9 +1377,9 @@ function P2PMarketplace() {
             </div>
 
             {/* Divider */}
-            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.08)', flexShrink: 0 }} />
 
-            {/* Premium Filter Chips */}
+            {/* Filter Chips - BINANCE SPEC */}
             <button
               onClick={() => {
                 setSortBy('best_price');
@@ -1388,12 +1388,14 @@ function P2PMarketplace() {
               style={{
                 padding: '10px 16px',
                 background: sortBy === 'best_price' 
-                  ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)' 
-                  : 'rgba(255, 255, 255, 0.03)',
-                border: `1px solid ${sortBy === 'best_price' ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                  ? 'rgba(255,255,255,0.04)' 
+                  : 'rgba(255,255,255,0.04)',
+                border: sortBy === 'best_price' 
+                  ? '1px solid rgba(22,199,132,0.6)' 
+                  : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '12px',
-                color: sortBy === 'best_price' ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
-                fontWeight: '600',
+                color: sortBy === 'best_price' ? '#16C784' : 'rgba(255,255,255,0.45)',
+                fontWeight: '500',
                 cursor: 'pointer',
                 fontSize: '13px',
                 display: 'flex',
@@ -1401,20 +1403,8 @@ function P2PMarketplace() {
                 gap: '6px',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
-                boxShadow: sortBy === 'best_price' ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (sortBy === 'best_price') {
-                  e.currentTarget.style.transform = 'scale(1.03)';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (sortBy === 'best_price') {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
-                }
+                boxShadow: sortBy === 'best_price' ? '0 0 10px rgba(22,199,132,0.18)' : 'none',
+                transition: 'all 150ms ease'
               }}
             >
               {sortBy === 'best_price' && <CheckCircle size={14} />}
@@ -1425,13 +1415,13 @@ function P2PMarketplace() {
               onClick={() => setFilters({...filters, trustedOnly: !filters.trustedOnly})}
               style={{
                 padding: '10px 16px',
-                background: filters.trustedOnly 
-                  ? 'linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0.1) 100%)' 
-                  : 'rgba(255, 255, 255, 0.03)',
-                border: `1px solid ${filters.trustedOnly ? 'rgba(0, 240, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: 'rgba(255,255,255,0.04)',
+                border: filters.trustedOnly 
+                  ? '1px solid rgba(22,199,132,0.6)' 
+                  : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '12px',
-                color: filters.trustedOnly ? '#00F0FF' : 'rgba(255, 255, 255, 0.5)',
-                fontWeight: '600',
+                color: filters.trustedOnly ? '#16C784' : 'rgba(255,255,255,0.45)',
+                fontWeight: '500',
                 cursor: 'pointer',
                 fontSize: '13px',
                 display: 'flex',
@@ -1439,23 +1429,10 @@ function P2PMarketplace() {
                 gap: '6px',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
-                boxShadow: filters.trustedOnly ? '0 0 20px rgba(0, 240, 255, 0.3)' : 'none',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (filters.trustedOnly) {
-                  e.currentTarget.style.transform = 'scale(1.03)';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (filters.trustedOnly) {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.3)';
-                }
+                boxShadow: filters.trustedOnly ? '0 0 10px rgba(22,199,132,0.18)' : 'none',
+                transition: 'all 150ms ease'
               }}
             >
-              {filters.trustedOnly && <CheckCircle size={14} />}
               <IoShield size={14} />
               Trusted
             </button>
@@ -1464,13 +1441,13 @@ function P2PMarketplace() {
               onClick={() => setFilters({...filters, fastPaymentOnly: !filters.fastPaymentOnly})}
               style={{
                 padding: '10px 16px',
-                background: filters.fastPaymentOnly 
-                  ? 'linear-gradient(135deg, rgba(252, 211, 77, 0.2) 0%, rgba(252, 211, 77, 0.1) 100%)' 
-                  : 'rgba(255, 255, 255, 0.03)',
-                border: `1px solid ${filters.fastPaymentOnly ? 'rgba(252, 211, 77, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: 'rgba(255,255,255,0.04)',
+                border: filters.fastPaymentOnly 
+                  ? '1px solid rgba(22,199,132,0.6)' 
+                  : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '12px',
-                color: filters.fastPaymentOnly ? '#FCD34D' : 'rgba(255, 255, 255, 0.5)',
-                fontWeight: '600',
+                color: filters.fastPaymentOnly ? '#16C784' : 'rgba(255,255,255,0.45)',
+                fontWeight: '500',
                 cursor: 'pointer',
                 fontSize: '13px',
                 display: 'flex',
@@ -1478,23 +1455,10 @@ function P2PMarketplace() {
                 gap: '6px',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
-                boxShadow: filters.fastPaymentOnly ? '0 0 20px rgba(252, 211, 77, 0.3)' : 'none',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (filters.fastPaymentOnly) {
-                  e.currentTarget.style.transform = 'scale(1.03)';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(252, 211, 77, 0.5)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (filters.fastPaymentOnly) {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(252, 211, 77, 0.3)';
-                }
+                boxShadow: filters.fastPaymentOnly ? '0 0 10px rgba(22,199,132,0.18)' : 'none',
+                transition: 'all 150ms ease'
               }}
             >
-              {filters.fastPaymentOnly && <CheckCircle size={14} />}
               <IoFlash size={14} />
               Fast Pay
             </button>
@@ -1504,13 +1468,13 @@ function P2PMarketplace() {
               onClick={() => setShowFilters(!showFilters)}
               style={{
                 padding: '10px 16px',
-                background: showFilters 
-                  ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(168, 85, 247, 0.1) 100%)' 
-                  : 'rgba(255, 255, 255, 0.03)',
-                border: `1px solid ${showFilters ? 'rgba(168, 85, 247, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                background: 'rgba(255,255,255,0.04)',
+                border: showFilters 
+                  ? '1px solid rgba(22,199,132,0.6)' 
+                  : '1px solid rgba(255,255,255,0.08)',
                 borderRadius: '12px',
-                color: showFilters ? '#A855F7' : 'rgba(255, 255, 255, 0.5)',
-                fontWeight: '600',
+                color: showFilters ? '#16C784' : 'rgba(255,255,255,0.45)',
+                fontWeight: '500',
                 cursor: 'pointer',
                 fontSize: '13px',
                 display: 'flex',
@@ -1518,20 +1482,8 @@ function P2PMarketplace() {
                 gap: '6px',
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
-                boxShadow: showFilters ? '0 0 20px rgba(168, 85, 247, 0.3)' : 'none',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (showFilters) {
-                  e.currentTarget.style.transform = 'scale(1.03)';
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (showFilters) {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(168, 85, 247, 0.3)';
-                }
+                boxShadow: showFilters ? '0 0 10px rgba(22,199,132,0.18)' : 'none',
+                transition: 'all 150ms ease'
               }}
             >
               <IoFilter size={14} />
