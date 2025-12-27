@@ -1920,7 +1920,10 @@ function P2PMarketplace() {
                 <span>
                   <a href="#offers" style={{ color: '#00C6FF', textDecoration: 'none' }} onClick={(e) => {
                     e.preventDefault();
-                    document.getElementById('offers-section')?.scrollIntoView({ behavior: 'smooth' });
+                    setShowAllOffers(true);
+                    setTimeout(() => {
+                      document.getElementById('offers-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
                   }}>View all {filteredOffers.length} offers</a>
                 </span>
               )}
@@ -1943,8 +1946,8 @@ function P2PMarketplace() {
           </div>
           {/* ========== END AMOUNT INPUT WIDGET ========== */}
 
-        {/* EXPANDED FILTERS PANEL */}
-        {showFilters && (
+        {/* EXPANDED FILTERS PANEL - Only show when showAllOffers is true */}
+        {showAllOffers && showFilters && (
           <div style={{
             marginBottom: '1.5rem',
             padding: '1rem',
