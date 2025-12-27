@@ -72,11 +72,11 @@ function P2PMarketplace() {
   const [showFilters, setShowFilters] = useState(false);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   
-  // Amount Widget State (FINAL SPEC - No Pay/Receive toggle)
-  // BUY mode: User edits fiat (You pay), crypto auto-calculates (You receive)
-  // SELL mode: User edits crypto (You sell), fiat auto-calculates (You receive)
-  const [fiatAmount, setFiatAmount] = useState('');
-  const [cryptoAmount, setCryptoAmount] = useState('');
+  // Amount Widget State (BINANCE P2P SPEC)
+  // Top box = FILTER ONLY. "You receive" stays empty until seller clicked.
+  // BTC calculation happens ONLY when user clicks "Buy BTC" on a seller card.
+  const [fiatAmount, setFiatAmount] = useState('');  // Filter amount input
+  const [cryptoAmount, setCryptoAmount] = useState('');  // Only set when offer selected
   const [selectedInputFiat, setSelectedInputFiat] = useState('GBP');
   const [amountError, setAmountError] = useState('');
   
