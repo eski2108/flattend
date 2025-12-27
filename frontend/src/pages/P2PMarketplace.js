@@ -1646,7 +1646,12 @@ function P2PMarketplace() {
             width: isMobile ? '100%' : 'auto'
           }}>
             <button
-              onClick={() => setActiveTab('buy')}
+              onClick={() => {
+                if (activeTab !== 'buy') {
+                  resetTradeState('tab_change_to_buy');
+                  setActiveTab('buy');
+                }
+              }}
               style={{
                 flex: 1,
                 height: '48px',
@@ -1674,7 +1679,12 @@ function P2PMarketplace() {
               BUY
             </button>
             <button
-              onClick={() => setActiveTab('sell')}
+              onClick={() => {
+                if (activeTab !== 'sell') {
+                  resetTradeState('tab_change_to_sell');
+                  setActiveTab('sell');
+                }
+              }}
               style={{
                 flex: 1,
                 height: '48px',
