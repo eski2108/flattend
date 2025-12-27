@@ -2822,8 +2822,8 @@ function P2PMarketplace() {
               </div>
             )}
           </div>
-          )}
-          {/* END Offers List - showAllOffers conditional */}
+        )}
+        {/* END Offers List - showAllOffers conditional */}
 
         {/* Seller Profile Modal */}
         {showSellerProfile && selectedSeller && (
