@@ -2381,28 +2381,49 @@ function P2PMarketplace() {
           </div>
         )}
 
-          {/* Offers List */}
+          {/* Offers List - ONLY RENDER WHEN showAllOffers IS TRUE (BINANCE SPEC) */}
+          {showAllOffers && (
           <div style={{ 
             position: 'relative', 
             zIndex: 0, 
             marginTop: isMobile ? '24px' : '16px'
           }}>
             <div style={{ 
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
               marginBottom: '16px', 
-              fontSize: '13px',
-              fontWeight: '600',
-              color: 'rgba(255, 255, 255, 0.7)',
               padding: '8px 0',
               clear: 'both'
             }}
             id="offers-section"
             >
-              Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
-              {fiatAmount && activeTab === 'buy' && (
-                <span style={{ color: '#22C55E', marginLeft: '8px' }}>
-                  matching {getFiatSymbol(selectedInputFiat)}{fiatAmount}
-                </span>
-              )}
+              <span style={{ 
+                fontSize: '13px',
+                fontWeight: '600',
+                color: 'rgba(255, 255, 255, 0.7)'
+              }}>
+                Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
+                {fiatAmount && activeTab === 'buy' && (
+                  <span style={{ color: '#22C55E', marginLeft: '8px' }}>
+                    matching {getFiatSymbol(selectedInputFiat)}{fiatAmount}
+                  </span>
+                )}
+              </span>
+              <button
+                onClick={() => setShowAllOffers(false)}
+                style={{
+                  padding: '6px 12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '6px',
+                  color: 'rgba(255,255,255,0.6)',
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                ← Back to Best Match
+              </button>
             </div>
 
             {loading ? (
