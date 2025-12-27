@@ -281,6 +281,27 @@ function P2PMarketplace() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Load buyer verification status on mount
+  useEffect(() => {
+    const loadBuyerVerification = () => {
+      const userData = localStorage.getItem('cryptobank_user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          setBuyerVerification({
+            email_verified: user.email_verified || false,
+            phone_verified: user.phone_verified || false,
+            kyc_verified: user.kyc_verified || false,
+            checked: true
+          });
+        } catch (e) {
+          console.error('Error parsing user verification:', e);
+        }
+      }
+    };
+    loadBuyerVerification();
+  }, []);
+
   useEffect(() => {
     fetchOffers();
   }, [selectedCrypto, sortBy, activeTab, selectedFiatCurrency, filters.favoritesOnly, filters.trustedOnly, filters.fastPaymentOnly]);
