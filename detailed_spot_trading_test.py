@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://p2p-bestmatch.preview.emergentagent.com"
+BACKEND_URL = "https://unified-trading-1.preview.emergentagent.com"
 TEST_USER_ID = "test_user_123"
 
 def log_test(test_name, status, details=""):

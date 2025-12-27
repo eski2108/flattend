@@ -1,6 +1,6 @@
 # ✅ ALL CHANGES DEPLOYED TO PREVIEW
 
-**Preview URL:** https://p2p-bestmatch.preview.emergentagent.com  
+**Preview URL:** https://unified-trading-1.preview.emergentagent.com  
 **Deployment Time:** December 11, 2025 23:45 UTC  
 **Status:** 🟢 LIVE AND OPERATIONAL
 
@@ -86,7 +86,7 @@
 
 1. **Navigate to Preview:**
    ```
-   https://p2p-bestmatch.preview.emergentagent.com
+   https://unified-trading-1.preview.emergentagent.com
    ```
 
 2. **Login:**
@@ -139,10 +139,10 @@
 sudo supervisorctl status
 
 # Test preview URL
-curl https://p2p-bestmatch.preview.emergentagent.com
+curl https://unified-trading-1.preview.emergentagent.com
 
 # Test API health
-curl https://p2p-bestmatch.preview.emergentagent.com/api/health
+curl https://unified-trading-1.preview.emergentagent.com/api/health
 
 # All return 200 OK ✅
 ```
@@ -183,7 +183,7 @@ curl https://p2p-bestmatch.preview.emergentagent.com/api/health
 
 **All changes are LIVE at:**
 ```
-https://p2p-bestmatch.preview.emergentagent.com
+https://unified-trading-1.preview.emergentagent.com
 ```
 
 **Test Account:**

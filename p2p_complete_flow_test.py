@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 
 # Configuration
-BACKEND_URL = "https://p2p-bestmatch.preview.emergentagent.com/api"
+BACKEND_URL = "https://unified-trading-1.preview.emergentagent.com/api"
 
 # Test users as specified in review request
 SELLER_EMAIL = "p2p_seller_final@test.com"

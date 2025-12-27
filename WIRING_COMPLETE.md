@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://p2p-bestmatch.preview.emergentagent.com/api
-- **Frontend App**: https://p2p-bestmatch.preview.emergentagent.com
+- **Backend API**: https://unified-trading-1.preview.emergentagent.com/api
+- **Frontend App**: https://unified-trading-1.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

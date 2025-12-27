@@ -236,11 +236,11 @@ The flow is working correctly end-to-end.
 
 ## Preview URL
 
-https://p2p-bestmatch.preview.emergentagent.com
+https://unified-trading-1.preview.emergentagent.com
 
 ### Test Route
 
-`https://p2p-bestmatch.preview.emergentagent.com/#/p2p/add-payment-method`
+`https://unified-trading-1.preview.emergentagent.com/#/p2p/add-payment-method`
 
 ---
 

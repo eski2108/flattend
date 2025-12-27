@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, '/app/backend')
 
-API_URL = "https://p2p-bestmatch.preview.emergentagent.com"
+API_URL = "https://unified-trading-1.preview.emergentagent.com"
 
 async def run_test():
     from motor.motor_asyncio import AsyncIOMotorClient

@@ -1,7 +1,7 @@
 # CoinHubX Production Deployment - LOCKED VERSION
 
 ## Production URL
-**Primary:** https://p2p-bestmatch.preview.emergentagent.com
+**Primary:** https://unified-trading-1.preview.emergentagent.com
 **Custom Domain (to be configured):** https://coinhubx.net
 
 ## Current Status: STABLE AND LOCKED

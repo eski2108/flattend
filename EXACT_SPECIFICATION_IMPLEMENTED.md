@@ -1,7 +1,7 @@
 # COINHUBX TRADING PAGE - EXACT SPECIFICATION IMPLEMENTATION
 
 **Deployment Status:** ✅ LIVE
-**URL:** https://p2p-bestmatch.preview.emergentagent.com
+**URL:** https://unified-trading-1.preview.emergentagent.com
 **Date:** December 10, 2025 01:35 UTC
 
 ---
@@ -169,7 +169,7 @@
 - MongoDB: pid 8285
 - Nginx: pid 8281
 
-**Live URL:** https://p2p-bestmatch.preview.emergentagent.com
+**Live URL:** https://unified-trading-1.preview.emergentagent.com
 
 ---
 
