@@ -76,7 +76,7 @@
 
 **Test Results:**
 ```bash
-curl https://tradehub-268.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
+curl https://p2p-bestmatch.preview.emergentagent.com/api/wallets/balances/test_staging_user_001
 
 Response:
 {

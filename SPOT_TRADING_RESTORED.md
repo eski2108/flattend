@@ -182,7 +182,7 @@ payment_methods: {
 - ✅ `/api/coins/available` - Available coins for instant buy
 
 **Environment Variable:**
-- ✅ Set in Vercel: `REACT_APP_BACKEND_URL = https://tradehub-268.preview.emergentagent.com`
+- ✅ Set in Vercel: `REACT_APP_BACKEND_URL = https://p2p-bestmatch.preview.emergentagent.com`
 
 ---
 

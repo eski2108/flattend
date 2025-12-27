@@ -61,12 +61,12 @@
 
 **Before:**
 ```
-https://tradehub-268.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://p2p-bestmatch.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 **After:**
 ```
-https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://p2p-bestmatch.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 
 ---
@@ -77,13 +77,13 @@ https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
 ```
 📧 URLs found in dispute email template:
 
-1. https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+1. https://p2p-bestmatch.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-2. https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+2. https://p2p-bestmatch.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
-3. https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+3. https://p2p-bestmatch.preview.emergentagent.com/#/admin/disputes/{dispute_id}
    Status: ✅ CORRECT (HashRouter format: YES)
 
 📊 Summary:
@@ -289,7 +289,7 @@ If any issues arise:
    - Verify navigation to dispute page
 
 4. **Manual URL Test:**
-   - Navigate to: `https://tradehub-268.preview.emergentagent.com/#/admin/disputes`
+   - Navigate to: `https://p2p-bestmatch.preview.emergentagent.com/#/admin/disputes`
    - Login as admin
    - Verify page loads correctly
 

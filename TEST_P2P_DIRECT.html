@@ -8,7 +8,7 @@
     <div id="result"></div>
     
     <script>
-        fetch('https://tradehub-268.preview.emergentagent.com/api/p2p/marketplace/offers')
+        fetch('https://p2p-bestmatch.preview.emergentagent.com/api/p2p/marketplace/offers')
             .then(r => r.json())
             .then(data => {
                 document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';

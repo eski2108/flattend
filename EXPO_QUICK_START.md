@@ -120,7 +120,7 @@ npx expo start
 
 The app is pre-configured to connect to:
 ```
-https://tradehub-268.preview.emergentagent.com/api
+https://p2p-bestmatch.preview.emergentagent.com/api
 ```
 
 This means:

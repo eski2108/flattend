@@ -8,7 +8,7 @@ import aiohttp
 import json
 from datetime import datetime, timezone
 
-BACKEND_URL = "https://tradehub-268.preview.emergentagent.com"
+BACKEND_URL = "https://p2p-bestmatch.preview.emergentagent.com"
 
 async def test_referral_endpoint():
     """Test the referral dashboard endpoint"""

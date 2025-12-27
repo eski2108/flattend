@@ -188,9 +188,9 @@ Merchant Status: Active
 ## 📞 SUPPORT INFORMATION
 
 **System URLs:**
-- Frontend: https://tradehub-268.preview.emergentagent.com
-- Backend API: https://tradehub-268.preview.emergentagent.com/api
-- P2P Marketplace: https://tradehub-268.preview.emergentagent.com/p2p
+- Frontend: https://p2p-bestmatch.preview.emergentagent.com
+- Backend API: https://p2p-bestmatch.preview.emergentagent.com/api
+- P2P Marketplace: https://p2p-bestmatch.preview.emergentagent.com/p2p
 
 **Services:**
 - Backend: Running (port 8001)

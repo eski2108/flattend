@@ -92,7 +92,7 @@ currencies.forEach(currency => {
 
 ## Proof from Live Preview
 
-**URL:** https://tradehub-268.preview.emergentagent.com
+**URL:** https://p2p-bestmatch.preview.emergentagent.com
 
 ### Trading Page (Desktop)
 - Header shows: "106 pairs" (reduced from 494)

@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://tradehub-268.preview.emergentagent.com
-P2P Page:     https://tradehub-268.preview.emergentagent.com/p2p
-Backend API:  https://tradehub-268.preview.emergentagent.com/api
+Frontend:     https://p2p-bestmatch.preview.emergentagent.com
+P2P Page:     https://p2p-bestmatch.preview.emergentagent.com/p2p
+Backend API:  https://p2p-bestmatch.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

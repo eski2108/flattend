@@ -17,7 +17,7 @@ import sys
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tradehub-268.preview.emergentagent.com/api"
+BASE_URL = "https://p2p-bestmatch.preview.emergentagent.com/api"
 
 # Test credentials
 LOGIN_CREDENTIALS = {

@@ -8,7 +8,7 @@ import json
 import time
 from datetime import datetime
 
-BACKEND_URL = "https://tradehub-268.preview.emergentagent.com/api"
+BACKEND_URL = "https://p2p-bestmatch.preview.emergentagent.com/api"
 
 def test_system_messages():
     """Test if system messages are created during P2P flow"""
