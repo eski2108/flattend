@@ -1675,7 +1675,11 @@ function P2PMarketplace() {
               }}>
                 You receive
               </label>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? '8px' : '12px' 
+              }}>
                 <div style={{ flex: 1, position: 'relative' }}>
                   {/* READ-ONLY in BUY mode - uses div not input */}
                   {activeTab === 'buy' ? (
@@ -1723,7 +1727,8 @@ function P2PMarketplace() {
                   )}
                 </div>
                 <div style={{
-                  width: '100px',
+                  width: isMobile ? '100%' : '110px',
+                  minWidth: isMobile ? 'auto' : '110px',
                   height: '52px',
                   padding: '0 12px',
                   background: 'rgba(0, 0, 0, 0.4)',
@@ -1735,7 +1740,8 @@ function P2PMarketplace() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '6px',
+                  boxSizing: 'border-box'
                 }}>
                   {COIN_EMOJIS[selectedCrypto] || '₿'} {selectedCrypto}
                 </div>
