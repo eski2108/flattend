@@ -1519,7 +1519,7 @@ function P2PMarketplace() {
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'buy' 
-                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
+                  ? '0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
                   : 'none',
                 opacity: activeTab === 'buy' ? 1 : 0.85,
                 filter: activeTab === 'buy' ? 'brightness(1.18) saturate(1.1)' : 'saturate(0.7)',
