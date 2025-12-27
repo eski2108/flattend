@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"cd24d199d48e4e3d8dcba2aa42fa9dc1","collectionName":"p2p_collateral","type":"collection"}
