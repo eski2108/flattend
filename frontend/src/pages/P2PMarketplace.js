@@ -1519,10 +1519,10 @@ function P2PMarketplace() {
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'buy' 
-                  ? 'inset 0 0 6px rgba(0, 245, 196, 0.25), 0 4px 14px rgba(0, 245, 196, 0.3)' 
+                  ? 'inset 0 0 6px rgba(0, 245, 196, 0.25), 0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
                   : 'none',
                 opacity: activeTab === 'buy' ? 1 : 0.85,
-                filter: activeTab === 'buy' ? 'brightness(1.15)' : 'saturate(0.75)',
+                filter: activeTab === 'buy' ? 'brightness(1.15)' : 'saturate(0.7)',
                 transition: 'all 200ms ease'
               }}
             >
@@ -1534,21 +1534,21 @@ function P2PMarketplace() {
                 flex: 1,
                 height: '48px',
                 background: activeTab === 'sell' 
-                  ? 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)'
-                  : 'rgba(246, 70, 93, 0.08)',
+                  ? 'linear-gradient(135deg, #FF5A5F 0%, #C93A3F 100%)'
+                  : 'rgba(255, 90, 95, 0.08)',
                 border: activeTab === 'sell' 
                   ? 'none' 
-                  : '1px solid rgba(246, 70, 93, 0.2)',
-                borderRadius: '12px',
-                color: activeTab === 'sell' ? '#0B1F14' : 'rgba(246, 70, 93, 0.65)',
+                  : '1px solid rgba(255, 90, 95, 0.2)',
+                borderRadius: '16px',
+                color: activeTab === 'sell' ? '#0B1F14' : 'rgba(255, 90, 95, 0.65)',
                 fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'sell' 
-                  ? 'inset 0 0 6px rgba(246, 70, 93, 0.25), 0 4px 14px rgba(246, 70, 93, 0.3)' 
+                  ? '0 0 10px rgba(255, 90, 95, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
                   : 'none',
                 opacity: activeTab === 'sell' ? 1 : 0.85,
-                filter: activeTab === 'sell' ? 'brightness(1.15)' : 'saturate(0.75)',
+                filter: activeTab === 'sell' ? 'brightness(1.18) saturate(1.1)' : 'saturate(0.7)',
                 transition: 'all 200ms ease'
               }}
             >
