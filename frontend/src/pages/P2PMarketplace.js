@@ -1823,44 +1823,36 @@ function P2PMarketplace() {
               </div>
             )}
 
-            {/* MAIN CTA BUTTON - BINANCE SPEC (PRIMARY, STRONGEST VISUAL) */}
-            <button
-              onClick={() => {
-                if (bestOffer && bestQuote) {
-                  setSelectedOffer(bestOffer);
-                  setShowConfirmModal(true);
-                }
-              }}
-              disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
-              style={{
-                width: '100%',
-                height: '48px',
-                background: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
-                  ? 'rgba(255,255,255,0.08)'
-                  : activeTab === 'buy'
-                    ? 'linear-gradient(135deg, #16C784 0%, #0ECB81 100%)'
-                    : 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                color: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
-                  ? 'rgba(255,255,255,0.35)'
-                  : '#0B1F17',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0) 
-                  ? 'not-allowed' 
-                  : 'pointer',
-                boxShadow: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
-                  ? 'none'
-                  : activeTab === 'buy'
-                    ? '0 0 0 rgba(22,199,132,0), 0 8px 24px rgba(22,199,132,0.35)'
-                    : '0 0 0 rgba(246,70,93,0), 0 8px 24px rgba(246,70,93,0.35)',
-                marginBottom: '8px',
-                transition: 'all 150ms ease'
-              }}
-            >
-              {loadingBestOffer ? 'Finding best offer...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
-            </button>
+            {/* MAIN CTA BUTTON - EXACT TRADING PAGE COMPONENT */}
+            <div style={{ marginBottom: '8px' }}>
+              {activeTab === 'buy' ? (
+                <BuyButton
+                  onClick={() => {
+                    if (bestOffer && bestQuote) {
+                      setSelectedOffer(bestOffer);
+                      setShowConfirmModal(true);
+                    }
+                  }}
+                  disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
+                  loading={loadingBestOffer}
+                  label={loadingBestOffer ? 'Finding best offer...' : `Buy ${selectedCrypto}`}
+                  isMobile={isMobile}
+                />
+              ) : (
+                <SellButton
+                  onClick={() => {
+                    if (bestOffer && bestQuote) {
+                      setSelectedOffer(bestOffer);
+                      setShowConfirmModal(true);
+                    }
+                  }}
+                  disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
+                  loading={loadingBestOffer}
+                  label={loadingBestOffer ? 'Finding best offer...' : `Sell ${selectedCrypto}`}
+                  isMobile={isMobile}
+                />
+              )}
+            </div>
 
             {/* View all offers link */}
             <div style={{ 
