@@ -2642,7 +2642,8 @@ function P2PMarketplace() {
             }}
             id="offers-section"
             >
-              Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
+              {/* UNIFIED: Use tradeState.offersCount from backend as single source of truth */}
+              Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{tradeState.offersCount || filteredOffers.length}</span> {(tradeState.offersCount || filteredOffers.length) === 1 ? 'offer' : 'offers'}
               {fiatAmount && activeTab === 'buy' && (
                 <span style={{ color: '#22C55E', marginLeft: '8px' }}>
                   matching {getFiatSymbol(selectedInputFiat)}{fiatAmount}
