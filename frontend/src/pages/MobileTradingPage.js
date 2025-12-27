@@ -69,7 +69,27 @@ export default function MobileTradingPage() {
   const [coinName, setCoinName] = useState('');
   const [balance, setBalance] = useState({ quote: 0, base: 0 });
   const [tradingFee, setTradingFee] = useState(0.1);
-  const [exchangeRates, setExchangeRates] = useState({ GBP: 0.79, EUR: 0.92, JPY: 149.5, AUD: 1.53, CAD: 1.36, CHF: 0.88, CNY: 7.24, INR: 83.12, NGN: 1550, BRL: 4.97, KRW: 1320, MXN: 17.15, SGD: 1.34, HKD: 7.82, ZAR: 18.65, AED: 3.67, SAR: 3.75, TRY: 32.5, PLN: 3.98 });
+  const [exchangeRates, setExchangeRates] = useState({ USD: 1 });
+  
+  // Fetch forex rates from backend
+  useEffect(() => {
+    const fetchForexRates = async () => {
+      try {
+        const response = await axios.get(`${API}/api/forex/rates`);
+        if (response.data.success && response.data.rates) {
+          setExchangeRates(response.data.rates);
+          console.log('📊 Forex rates loaded from backend:', response.data.rates);
+        }
+      } catch (error) {
+        console.error('Error fetching forex rates:', error);
+      }
+    };
+    
+    fetchForexRates();
+    // Refresh forex rates every 60 seconds
+    const interval = setInterval(fetchForexRates, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (symbol) {
