@@ -90,6 +90,27 @@ function P2PMarketplace() {
   const [selectedInputFiat, setSelectedInputFiat] = useState('GBP');
   const [amountError, setAmountError] = useState('');
   
+  // =====================================================
+  // UNIFIED TRADE STATE MACHINE (FIX: 0 offers + Seller Found bug)
+  // Single source of truth for match status. NO frontend derivations.
+  // =====================================================
+  const [tradeState, setTradeState] = useState({
+    queryKey: '',              // Hash of current inputs to prevent stale data
+    offersCount: 0,            // Number of offers from backend
+    matched: false,            // Backend says matched
+    matchedOfferId: null,      // The offer_id from backend
+    matchedSellerName: null,   // Seller name for display
+    status: 'idle'             // 'idle' | 'loading' | 'ready' | 'no_offers' | 'error'
+  });
+  
+  // Generate query key from current inputs
+  const generateQueryKey = () => {
+    return `${selectedCrypto}_${selectedInputFiat}_${fiatAmount}_${activeTab}_${filters.paymentMethod || ''}_${sortBy}`;
+  };
+  
+  // Query key ref to track latest request
+  const latestQueryKeyRef = useRef('');
+  
   // Confirm Trade Modal State
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedOffer, setSelectedOffer] = useState(null);
