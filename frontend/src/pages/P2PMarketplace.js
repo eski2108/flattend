@@ -587,47 +587,89 @@ function P2PMarketplace() {
     return symbols[currency] || currency + ' ';
   };
 
-  // Handle fiat amount change (BUY mode - "You pay")
-  // Uses SELECTED OFFER PRICE, not global ticker or averages
-  // Handle fiat amount change - FILTER ONLY, no BTC calculation
-  // Handle fiat amount change - filters offers AND shows approximate BTC
+  // State for best offer (Binance-style auto-selection)
+  const [bestOffer, setBestOffer] = useState(null);
+  const [loadingBestOffer, setLoadingBestOffer] = useState(false);
+  
+  // Fetch best offer from backend (Binance-style)
+  const fetchBestOffer = async (amount, side = 'buy', asset = 'BTC', fiat = 'GBP') => {
+    if (!amount || parseFloat(amount) <= 0) {
+      setBestOffer(null);
+      setCryptoAmount('');
+      return;
+    }
+    
+    setLoadingBestOffer(true);
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/p2p/offers/best?side=${side}&fiat=${fiat}&amount=${amount}&asset=${asset}`
+      );
+      const data = await response.json();
+      
+      if (data.success && data.best_offer) {
+        setBestOffer(data.best_offer);
+        setSelectedOffer(data.best_offer);
+        setCryptoAmount(data.you_receive.toString());
+        setAmountError('');
+      } else {
+        setBestOffer(null);
+        setSelectedOffer(null);
+        setCryptoAmount('');
+        setAmountError(data.error || `No offers available for ${fiat} ${amount}`);
+      }
+    } catch (error) {
+      console.error('Error fetching best offer:', error);
+      setBestOffer(null);
+      setAmountError('Error finding offers');
+    } finally {
+      setLoadingBestOffer(false);
+    }
+  };
+  
+  // Debounce timer for amount changes
+  const debounceTimerRef = useRef(null);
+  
+  // Handle fiat amount change - calls best offer API (Binance-style)
   const handleFiatAmountChange = (value) => {
     setFiatAmount(value);
     setAmountError('');
     
-    // Show approximate BTC based on best offer price
-    if (value && parseFloat(value) > 0 && offers.length > 0) {
-      const bestOffer = offers[0];
-      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
-      if (price > 0) {
-        const btc = parseFloat(value) / price;
-        setCryptoAmount(btc.toFixed(8));
-      } else {
-        setCryptoAmount('');
-      }
-    } else {
-      setCryptoAmount('');
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
+    
+    // Debounce API call
+    debounceTimerRef.current = setTimeout(() => {
+      if (activeTab === 'buy') {
+        fetchBestOffer(value, 'buy', selectedCrypto, selectedInputFiat);
+      }
+    }, 300);
   };
 
-  // Handle crypto amount change - shows approximate fiat for SELL mode
+  // Handle crypto amount change - for SELL mode
   const handleCryptoAmountChange = (value) => {
     setCryptoAmount(value);
     setAmountError('');
     
-    // Show approximate fiat based on best offer price
-    if (value && parseFloat(value) > 0 && offers.length > 0) {
-      const bestOffer = offers[0];
-      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
-      if (price > 0) {
-        const fiat = parseFloat(value) * price;
-        setFiatAmount(fiat.toFixed(2));
-      } else {
-        setFiatAmount('');
-      }
-    } else {
-      setFiatAmount('');
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
     }
+    
+    // Debounce API call
+    debounceTimerRef.current = setTimeout(() => {
+      if (activeTab === 'sell' && value && parseFloat(value) > 0 && offers.length > 0) {
+        const bestOffer = offers[0];
+        const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
+        if (price > 0) {
+          const fiat = parseFloat(value) * price;
+          setFiatAmount(fiat.toFixed(2));
+          setSelectedOffer(bestOffer);
+          setBestOffer(bestOffer);
+        }
+      }
+    }, 300);
   };
 
   // Handle fiat chip click (BUY mode)
