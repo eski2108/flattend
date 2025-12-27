@@ -267,11 +267,139 @@ export default function MerchantCenter() {
             Merchant Center
           </h1>
           <p style={{ color: '#888', fontSize: '1rem' }}>
-            {sellerStatus?.is_seller ? 'Manage your P2P ads and trading activity' : 'Become a seller and start earning'}
+            {sellerVerification.blocked 
+              ? 'Complete verification to become a seller' 
+              : sellerStatus?.is_seller 
+                ? 'Manage your P2P ads and trading activity' 
+                : 'Become a seller and start earning'}
           </p>
         </div>
 
-        {!sellerStatus?.is_seller ? (
+        {/* SELLER VERIFICATION GATE */}
+        {sellerVerification.checked && sellerVerification.blocked ? (
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1))',
+            border: '2px solid rgba(239, 68, 68, 0.4)',
+            borderRadius: '20px',
+            padding: '3rem 2rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              background: 'rgba(239, 68, 68, 0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem'
+            }}>
+              <IoCloseCircle size={48} color="#EF4444" />
+            </div>
+            
+            <h2 style={{ color: '#EF4444', fontSize: '1.75rem', fontWeight: '900', marginBottom: '0.75rem' }}>
+              Verification Required
+            </h2>
+            <p style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '1rem', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem' }}>
+              To become a seller on CoinHubX, you must complete phone verification and KYC verification. This helps protect our community from fraud.
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px', margin: '0 auto' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(0, 0, 0, 0.3)',
+                padding: '1rem 1.5rem',
+                borderRadius: '12px',
+                border: sellerVerification.phone_verified 
+                  ? '1px solid rgba(34, 197, 94, 0.5)' 
+                  : '1px solid rgba(239, 68, 68, 0.3)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {sellerVerification.phone_verified ? (
+                    <IoCheckmarkCircle size={24} color="#22C55E" />
+                  ) : (
+                    <IoCloseCircle size={24} color="#EF4444" />
+                  )}
+                  <span style={{ color: '#fff', fontWeight: '600' }}>Phone Verification</span>
+                </div>
+                {!sellerVerification.phone_verified && (
+                  <button
+                    onClick={() => navigate('/settings/security')}
+                    style={{
+                      padding: '8px 16px',
+                      background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Verify Now
+                  </button>
+                )}
+              </div>
+              
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: 'rgba(0, 0, 0, 0.3)',
+                padding: '1rem 1.5rem',
+                borderRadius: '12px',
+                border: sellerVerification.kyc_verified 
+                  ? '1px solid rgba(34, 197, 94, 0.5)' 
+                  : '1px solid rgba(239, 68, 68, 0.3)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  {sellerVerification.kyc_verified ? (
+                    <IoCheckmarkCircle size={24} color="#22C55E" />
+                  ) : (
+                    <IoCloseCircle size={24} color="#EF4444" />
+                  )}
+                  <span style={{ color: '#fff', fontWeight: '600' }}>KYC Verification</span>
+                </div>
+                {!sellerVerification.kyc_verified && (
+                  <button
+                    onClick={() => navigate('/settings/kyc')}
+                    style={{
+                      padding: '8px 16px',
+                      background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: '#fff',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Complete KYC
+                  </button>
+                )}
+              </div>
+            </div>
+            
+            <button
+              onClick={() => navigate('/p2p')}
+              style={{
+                marginTop: '2rem',
+                padding: '12px 32px',
+                background: 'transparent',
+                border: '1px solid rgba(143, 155, 179, 0.4)',
+                borderRadius: '10px',
+                color: '#8F9BB3',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Back to P2P Marketplace
+            </button>
+          </div>
+        ) : !sellerStatus?.is_seller ? (
           /* NOT A SELLER - ACTIVATION FLOW */
           <>
             {/* What is Selling Section */}
