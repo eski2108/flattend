@@ -222,29 +222,48 @@ export default function SpotTradingPro() {
 
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API}/api/trading/place-order`, {
+      // Get user data
+      const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+      const userId = userData.user_id;
+      
+      if (!userId) {
+        toast.error('Please login to trade');
+        navigate('/login');
+        return;
+      }
+      
+      const baseAsset = selectedPair.replace('USD', '');
+      const tradeAmount = parseFloat(amount);
+      
+      // Use unified /api/trading/order endpoint (same as mobile)
+      const res = await axios.post(`${API}/api/trading/order`, {
         user_id: userId,
-        pair: selectedPair,
-        type: side,
-        amount: parseFloat(amount),
-        price: marketStats.lastPrice,
-        fee_percent: 0.1
+        side: side,
+        order_type: orderType,
+        base_asset: baseAsset,
+        quote_currency: quoteCurrency,
+        amount: tradeAmount,
+        price: orderType === 'limit' ? parseFloat(limitPrice) : null
       }, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
 
       if (res.data.success) {
-        toast.success(`${side.toUpperCase()} order executed successfully!`);
+        const exec = res.data.execution;
+        toast.success(
+          `${side.toUpperCase()} ${tradeAmount.toFixed(6)} ${baseAsset} @ $${exec.price.toFixed(2)} (Fee: $${exec.fee.toFixed(2)})`
+        );
         setAmount('');
+        setLimitPrice('');
       } else {
-        toast.error(res.data.error || 'Trade failed');
+        toast.error(res.data.error || res.data.detail || 'Trade failed');
       }
     } catch (e) {
-      toast.error(e.response?.data?.error || 'Trade failed. Please try again.');
+      toast.error(e.response?.data?.detail || e.response?.data?.error || 'Trade failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [amount, selectedPair, marketStats.lastPrice]);
+  }, [amount, selectedPair, marketStats.lastPrice, orderType, limitPrice, quoteCurrency, navigate]);
 
   // If not desktop, show loading while redirect happens
   if (!isDesktop) {
