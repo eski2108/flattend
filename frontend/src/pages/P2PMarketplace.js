@@ -1411,7 +1411,12 @@ function P2PMarketplace() {
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <select
                 value={selectedCrypto}
-                onChange={(e) => setSelectedCrypto(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value !== selectedCrypto) {
+                    resetTradeState('crypto_change');
+                    setSelectedCrypto(e.target.value);
+                  }
+                }}
                 style={{
                   padding: '10px 32px 10px 14px',
                   background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.05) 100%)',
