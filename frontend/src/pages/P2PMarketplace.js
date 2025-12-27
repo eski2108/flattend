@@ -581,18 +581,44 @@ function P2PMarketplace() {
   // Handle fiat amount change (BUY mode - "You pay")
   // Uses SELECTED OFFER PRICE, not global ticker or averages
   // Handle fiat amount change - FILTER ONLY, no BTC calculation
-  // Handle fiat amount change - filters offers, NO BTC calculation
+  // Handle fiat amount change - filters offers AND shows approximate BTC
   const handleFiatAmountChange = (value) => {
     setFiatAmount(value);
     setAmountError('');
-    setCryptoAmount(''); // Keep blank until seller selected
+    
+    // Show approximate BTC based on best offer price
+    if (value && parseFloat(value) > 0 && offers.length > 0) {
+      const bestOffer = offers[0];
+      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
+      if (price > 0) {
+        const btc = parseFloat(value) / price;
+        setCryptoAmount(btc.toFixed(8));
+      } else {
+        setCryptoAmount('');
+      }
+    } else {
+      setCryptoAmount('');
+    }
   };
 
-  // Handle crypto amount change - filters offers for SELL mode, NO fiat calculation
+  // Handle crypto amount change - shows approximate fiat for SELL mode
   const handleCryptoAmountChange = (value) => {
     setCryptoAmount(value);
     setAmountError('');
-    setFiatAmount(''); // Keep blank until buyer selected
+    
+    // Show approximate fiat based on best offer price
+    if (value && parseFloat(value) > 0 && offers.length > 0) {
+      const bestOffer = offers[0];
+      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
+      if (price > 0) {
+        const fiat = parseFloat(value) * price;
+        setFiatAmount(fiat.toFixed(2));
+      } else {
+        setFiatAmount('');
+      }
+    } else {
+      setFiatAmount('');
+    }
   };
 
   // Handle fiat chip click (BUY mode)
