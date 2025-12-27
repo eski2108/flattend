@@ -573,14 +573,18 @@ function P2PMarketplace() {
     }
   };
 
-  // Get fiat symbol
+  // Get fiat symbol - expanded for international currencies
   const getFiatSymbol = (currency) => {
-    switch (currency) {
-      case 'GBP': return '£';
-      case 'USD': return '$';
-      case 'EUR': return '€';
-      default: return '£';
-    }
+    const symbols = {
+      'GBP': '£', 'USD': '$', 'EUR': '€', 'AUD': 'A$', 'CAD': 'C$',
+      'CHF': 'CHF', 'JPY': '¥', 'CNY': '¥', 'INR': '₹', 'SGD': 'S$',
+      'HKD': 'HK$', 'NZD': 'NZ$', 'SEK': 'kr', 'NOK': 'kr', 'DKK': 'kr',
+      'ZAR': 'R', 'BRL': 'R$', 'MXN': 'MX$', 'AED': 'د.إ', 'SAR': '﷼',
+      'THB': '฿', 'MYR': 'RM', 'PHP': '₱', 'IDR': 'Rp', 'KRW': '₩',
+      'TWD': 'NT$', 'PLN': 'zł', 'TRY': '₺', 'RUB': '₽', 'NGN': '₦',
+      'KES': 'KSh', 'GHS': 'GH₵'
+    };
+    return symbols[currency] || currency + ' ';
   };
 
   // Handle fiat amount change (BUY mode - "You pay")
