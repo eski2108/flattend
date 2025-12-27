@@ -1320,34 +1320,28 @@ function P2PMarketplace() {
             </div>
 
             {/* Divider */}
-            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.08)', flexShrink: 0 }} />
 
-            {/* Premium Currency Selector Pill */}
+            {/* Currency Selector - BINANCE SPEC */}
             <div style={{ position: 'relative', flexShrink: 0 }}>
               <select
                 value={selectedFiatCurrency}
                 onChange={(e) => setSelectedFiatCurrency(e.target.value)}
                 style={{
                   padding: '10px 32px 10px 14px',
-                  background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%)',
-                  border: '1px solid rgba(168, 85, 247, 0.4)',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: selectedFiatCurrency 
+                    ? '1px solid rgba(22,199,132,0.6)' 
+                    : '1px solid rgba(255,255,255,0.08)',
                   borderRadius: '12px',
-                  color: '#A855F7',
+                  color: selectedFiatCurrency ? '#16C784' : 'rgba(255,255,255,0.45)',
                   fontSize: '13px',
-                  fontWeight: '700',
+                  fontWeight: '500',
                   cursor: 'pointer',
                   outline: 'none',
-                  boxShadow: '0 0 20px rgba(168, 85, 247, 0.2)',
+                  boxShadow: selectedFiatCurrency ? '0 0 10px rgba(22,199,132,0.18)' : 'none',
                   appearance: 'none',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.4)';
-                  e.currentTarget.style.transform = 'scale(1.02)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(168, 85, 247, 0.2)';
-                  e.currentTarget.style.transform = 'scale(1)';
+                  transition: 'all 150ms ease'
                 }}
               >
                 <option value="" style={{ background: '#0f172a', color: '#fff' }}>🌍 All Currencies</option>
@@ -1371,7 +1365,7 @@ function P2PMarketplace() {
               </select>
               <IoChevronDown 
                 size={14} 
-                color="#A855F7" 
+                color={selectedFiatCurrency ? '#16C784' : 'rgba(255,255,255,0.45)'} 
                 style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
               />
             </div>
