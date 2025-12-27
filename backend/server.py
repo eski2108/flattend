@@ -2996,7 +2996,177 @@ async def create_enhanced_sell_offer(offer_data: Dict):
         "message": "Offer created successfully"
     }
 
-# ==================== P2P BEST OFFER ENDPOINT (BINANCE-STYLE) ====================
+# ==================== P2P BEST MATCH ENDPOINT (BINANCE-STYLE) ====================
+# POST /api/p2p/match/best - Returns the best matching offer for given criteria
+
+class P2PMatchRequest(BaseModel):
+    side: str  # "buy" or "sell"
+    asset: str = "BTC"
+    fiat: str = "GBP"
+    amount_fiat: Optional[float] = None
+    amount_crypto: Optional[float] = None
+    payment_method: Optional[str] = None
+    region: Optional[str] = None
+    user_id: Optional[str] = None
+
+@api_router.post("/p2p/match/best")
+async def p2p_match_best(request: P2PMatchRequest):
+    """
+    Binance-style Best Match endpoint.
+    Returns the single best offer that can fulfil the user's request.
+    """
+    try:
+        # Validate: exactly one of amount_fiat or amount_crypto must be provided
+        if request.amount_fiat is None and request.amount_crypto is None:
+            return {
+                "success": False,
+                "code": "INVALID_AMOUNT",
+                "reason": "Either amount_fiat or amount_crypto must be provided",
+                "suggestions": ["PROVIDE_AMOUNT"]
+            }
+        
+        if request.amount_fiat is not None and request.amount_crypto is not None:
+            return {
+                "success": False,
+                "code": "INVALID_AMOUNT",
+                "reason": "Only one of amount_fiat or amount_crypto should be provided",
+                "suggestions": ["PROVIDE_ONE_AMOUNT"]
+            }
+        
+        # Determine ad_type based on side
+        # BUY: user wants to buy crypto, needs SELL offers (sellers)
+        # SELL: user wants to sell crypto, needs BUY offers (buyers)
+        ad_type = "sell" if request.side.lower() == "buy" else "buy"
+        
+        # Collect matching offers
+        matching_offers = []
+        
+        async for offer in db.p2p_offers.find({"status": "active", "crypto_currency": request.asset.upper()}):
+            # Check ad_type (case-insensitive)
+            offer_ad_type = str(offer.get("ad_type", "")).lower()
+            if offer_ad_type != ad_type:
+                continue
+            
+            # Get offer price
+            offer_price = float(offer.get("price_per_unit") or offer.get("price") or 0)
+            if offer_price <= 0:
+                continue
+            
+            # Get limits and availability
+            min_crypto = float(offer.get("min_order_limit") or offer.get("min_amount") or 0)
+            max_crypto = float(offer.get("max_order_limit") or offer.get("max_amount") or 999999)
+            available = float(offer.get("crypto_amount") or offer.get("available_amount") or 0)
+            
+            if available <= 0:
+                continue
+            
+            # Calculate amounts
+            if request.amount_fiat is not None:
+                crypto_needed = request.amount_fiat / offer_price
+                fiat_amount = request.amount_fiat
+            else:
+                crypto_needed = request.amount_crypto
+                fiat_amount = request.amount_crypto * offer_price
+            
+            # Convert limits to fiat for comparison
+            min_limit_fiat = min_crypto * offer_price
+            max_limit_fiat = max_crypto * offer_price
+            
+            # Check limits (in fiat)
+            if fiat_amount < min_limit_fiat:
+                continue
+            if fiat_amount > max_limit_fiat:
+                continue
+            
+            # Check liquidity
+            if crypto_needed > available:
+                continue
+            
+            # Check payment method if specified
+            if request.payment_method:
+                offer_methods = offer.get("payment_methods", [])
+                if isinstance(offer_methods, str):
+                    offer_methods = [offer_methods]
+                method_match = any(
+                    request.payment_method.lower() in m.lower() or m.lower() in request.payment_method.lower()
+                    for m in offer_methods
+                )
+                if not method_match:
+                    continue
+            
+            # Get seller stats for tie-breaking
+            seller_stats = await db.p2p_seller_stats.find_one({"user_id": offer.get("seller_id")}) or {}
+            completion_rate = seller_stats.get("completion_rate", 0)
+            total_trades = seller_stats.get("total_trades", 0)
+            
+            matching_offers.append({
+                "offer_id": offer.get("offer_id"),
+                "seller_id": offer.get("seller_id"),
+                "seller_name": offer.get("seller_name", "Unknown"),
+                "price": offer_price,
+                "min_limit": min_limit_fiat,
+                "max_limit": max_limit_fiat,
+                "min_crypto": min_crypto,
+                "max_crypto": max_crypto,
+                "available_amount": available,
+                "payment_methods": offer.get("payment_methods", []),
+                "completion_rate": completion_rate,
+                "total_trades": total_trades,
+                "crypto_needed": round(crypto_needed, 8),
+                "fiat_amount": round(fiat_amount, 2)
+            })
+        
+        # If no matches found
+        if not matching_offers:
+            return {
+                "success": False,
+                "code": "NO_MATCH",
+                "reason": "No offer can fulfil amount/payment/limits",
+                "suggestions": ["CHANGE_AMOUNT", "CHANGE_PAYMENT_METHOD", "VIEW_ALL_OFFERS"]
+            }
+        
+        # Sort to find best offer
+        if request.side.lower() == "buy":
+            # BUY: lowest price first, then highest completion, then most trades
+            matching_offers.sort(key=lambda x: (x["price"], -x["completion_rate"], -x["total_trades"]))
+        else:
+            # SELL: highest price first, then highest completion, then most trades
+            matching_offers.sort(key=lambda x: (-x["price"], -x["completion_rate"], -x["total_trades"]))
+        
+        best_offer = matching_offers[0]
+        
+        return {
+            "success": True,
+            "mode": "best_match",
+            "offer": {
+                "offer_id": best_offer["offer_id"],
+                "seller_id": best_offer["seller_id"],
+                "seller_name": best_offer["seller_name"],
+                "price": best_offer["price"],
+                "min_limit": best_offer["min_limit"],
+                "max_limit": best_offer["max_limit"],
+                "available_amount": best_offer["available_amount"],
+                "payment_methods": best_offer["payment_methods"]
+            },
+            "quote": {
+                "fiat": request.fiat,
+                "asset": request.asset.upper(),
+                "amount_fiat": best_offer["fiat_amount"],
+                "amount_crypto": best_offer["crypto_needed"],
+                "rate": best_offer["price"]
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in p2p_match_best: {e}")
+        return {
+            "success": False,
+            "code": "ERROR",
+            "reason": str(e),
+            "suggestions": ["TRY_AGAIN"]
+        }
+
+# ==================== P2P BEST OFFER ENDPOINT (LEGACY - GET) ====================
 @api_router.get("/p2p/offers/best")
 async def get_best_p2p_offer(
     side: str = Query(..., description="buy or sell"),
