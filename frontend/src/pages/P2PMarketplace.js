@@ -1486,7 +1486,7 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle - EXACT TRADING PAGE MATCH */}
+          {/* BUY/SELL Toggle - EXACT TRADING PAGE COMPONENTS */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
@@ -1494,66 +1494,18 @@ function P2PMarketplace() {
             marginBottom: '6px',
             width: isMobile ? '100%' : 'auto'
           }}>
-            <button
+            <BuyButton 
               onClick={() => setActiveTab('buy')}
-              style={{
-                flex: 1,
-                height: '48px',
-                background: activeTab === 'buy' ? '#16C784' : '#1C2430',
-                border: 'none',
-                borderRadius: '10px',
-                color: activeTab === 'buy' ? '#0B1F14' : '#7A8599',
-                fontWeight: '600',
-                fontSize: '14px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'buy' 
-                  ? '0 0 0 1px rgba(22,199,132,0.35), 0 4px 18px rgba(22,199,132,0.45)' 
-                  : 'none',
-                transition: 'all 150ms ease'
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab === 'buy') {
-                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(22,199,132,0.55), 0 6px 24px rgba(22,199,132,0.6)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab === 'buy') {
-                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(22,199,132,0.35), 0 4px 18px rgba(22,199,132,0.45)';
-                }
-              }}
-            >
-              BUY
-            </button>
-            <button
+              disabled={activeTab !== 'buy'}
+              label="BUY"
+              isMobile={isMobile}
+            />
+            <SellButton 
               onClick={() => setActiveTab('sell')}
-              style={{
-                flex: 1,
-                height: '48px',
-                background: activeTab === 'sell' ? '#F6465D' : '#1C2430',
-                border: 'none',
-                borderRadius: '10px',
-                color: activeTab === 'sell' ? '#0B1F14' : '#7A8599',
-                fontWeight: '600',
-                fontSize: '14px',
-                cursor: 'pointer',
-                boxShadow: activeTab === 'sell' 
-                  ? '0 0 0 1px rgba(246,70,93,0.35), 0 4px 18px rgba(246,70,93,0.45)' 
-                  : 'none',
-                transition: 'all 150ms ease'
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab === 'sell') {
-                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(246,70,93,0.55), 0 6px 24px rgba(246,70,93,0.6)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab === 'sell') {
-                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(246,70,93,0.35), 0 4px 18px rgba(246,70,93,0.45)';
-                }
-              }}
-            >
-              SELL
-            </button>
+              disabled={activeTab !== 'sell'}
+              label="SELL"
+              isMobile={isMobile}
+            />
           </div>
 
           {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE - COMPACT) ========== */}
