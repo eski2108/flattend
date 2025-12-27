@@ -1448,15 +1448,22 @@ function P2PMarketplace() {
               Advanced Filters
             </button>
 
-            {/* Divider */}
-            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0, marginLeft: isMobile ? '0' : 'auto' }} />
+            {/* Divider - hide on mobile */}
+            {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0, marginLeft: 'auto' }} />}
 
             {/* Premium BUY/SELL Toggle */}
-            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '8px', 
+              flexShrink: 0,
+              width: isMobile ? '100%' : 'auto',
+              marginTop: isMobile ? '8px' : '0'
+            }}>
               <button
                 onClick={() => setActiveTab('buy')}
                 style={{
-                  padding: '10px 20px',
+                  padding: isMobile ? '12px 0' : '10px 20px',
+                  flex: isMobile ? 1 : 'none',
                   background: activeTab === 'buy' 
                     ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' 
                     : 'rgba(255, 255, 255, 0.03)',
@@ -1466,7 +1473,6 @@ function P2PMarketplace() {
                   fontWeight: '700',
                   fontSize: '13px',
                   cursor: 'pointer',
-                  flexShrink: 0,
                   boxShadow: activeTab === 'buy' ? '0 0 25px rgba(16, 185, 129, 0.4)' : 'none',
                   transition: 'all 0.3s ease'
                 }}
@@ -1489,7 +1495,8 @@ function P2PMarketplace() {
               <button
                 onClick={() => setActiveTab('sell')}
                 style={{
-                  padding: '10px 20px',
+                  padding: isMobile ? '12px 0' : '10px 20px',
+                  flex: isMobile ? 1 : 'none',
                   background: activeTab === 'sell' 
                     ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' 
                     : 'rgba(255, 255, 255, 0.03)',
