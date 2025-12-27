@@ -584,16 +584,36 @@ function P2PMarketplace() {
   const handleFiatAmountChange = (value) => {
     setFiatAmount(value);
     setAmountError('');
-    // Never calculate crypto here - that happens only when Buy BTC is clicked
-    setCryptoAmount('');
+    
+    // Calculate BTC using best offer price
+    if (value && offers.length > 0) {
+      const bestOffer = offers[0]; // First offer is best price
+      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
+      if (price > 0) {
+        const btc = parseFloat(value) / price;
+        setCryptoAmount(btc.toFixed(8));
+      }
+    } else {
+      setCryptoAmount('');
+    }
   };
 
-  // Handle crypto amount change - FILTER ONLY for SELL mode
+  // Handle crypto amount change - calculates fiat for SELL mode
   const handleCryptoAmountChange = (value) => {
     setCryptoAmount(value);
     setAmountError('');
-    // Never calculate fiat here - that happens only when Sell is clicked
-    setFiatAmount('');
+    
+    // Calculate fiat using best offer price
+    if (value && offers.length > 0) {
+      const bestOffer = offers[0];
+      const price = parseFloat(bestOffer.price_per_unit || bestOffer.price || 0);
+      if (price > 0) {
+        const fiat = parseFloat(value) * price;
+        setFiatAmount(fiat.toFixed(2));
+      }
+    } else {
+      setFiatAmount('');
+    }
   };
 
   // Handle fiat chip click (BUY mode)
