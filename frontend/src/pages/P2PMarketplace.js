@@ -1571,13 +1571,13 @@ function P2PMarketplace() {
             overflow: 'visible'
           }}>
             
-            {/* Row 1: Amount Input with Currency Dropdown (inline) */}
+            {/* Row 1: You Pay - SPEC: 15px, 500, neutral */}
             <div style={{ marginBottom: '10px' }}>
               <label style={{
                 display: 'block',
                 color: 'rgba(255, 255, 255, 0.5)',
                 fontSize: '11px',
-                fontWeight: '600',
+                fontWeight: '500',
                 marginBottom: '4px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
