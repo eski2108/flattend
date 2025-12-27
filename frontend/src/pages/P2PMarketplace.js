@@ -1486,7 +1486,7 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle - EXACT TRADING PAGE COMPONENTS */}
+          {/* BUY/SELL Toggle - SPEC COMPLIANT */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
@@ -1494,25 +1494,65 @@ function P2PMarketplace() {
             marginBottom: '6px',
             width: isMobile ? '100%' : 'auto'
           }}>
-            <BuyButton 
+            <button
               onClick={() => setActiveTab('buy')}
-              disabled={activeTab !== 'buy'}
-              label="BUY"
-              isMobile={isMobile}
-            />
-            <SellButton 
+              style={{
+                flex: 1,
+                height: '48px',
+                background: activeTab === 'buy' 
+                  ? 'linear-gradient(135deg, #00F5C4 0%, #00C2A0 100%)'
+                  : 'rgba(0, 245, 196, 0.08)',
+                border: activeTab === 'buy' 
+                  ? 'none' 
+                  : '1px solid rgba(0, 245, 196, 0.2)',
+                borderRadius: '12px',
+                color: activeTab === 'buy' ? '#0B1F14' : 'rgba(0, 245, 196, 0.65)',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'buy' 
+                  ? 'inset 0 0 6px rgba(0, 245, 196, 0.25), 0 4px 14px rgba(0, 245, 196, 0.3)' 
+                  : 'none',
+                opacity: activeTab === 'buy' ? 1 : 0.85,
+                filter: activeTab === 'buy' ? 'brightness(1.15)' : 'saturate(0.75)',
+                transition: 'all 200ms ease'
+              }}
+            >
+              BUY
+            </button>
+            <button
               onClick={() => setActiveTab('sell')}
-              disabled={activeTab !== 'sell'}
-              label="SELL"
-              isMobile={isMobile}
-            />
+              style={{
+                flex: 1,
+                height: '48px',
+                background: activeTab === 'sell' 
+                  ? 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)'
+                  : 'rgba(246, 70, 93, 0.08)',
+                border: activeTab === 'sell' 
+                  ? 'none' 
+                  : '1px solid rgba(246, 70, 93, 0.2)',
+                borderRadius: '12px',
+                color: activeTab === 'sell' ? '#0B1F14' : 'rgba(246, 70, 93, 0.65)',
+                fontWeight: '600',
+                fontSize: '14px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'sell' 
+                  ? 'inset 0 0 6px rgba(246, 70, 93, 0.25), 0 4px 14px rgba(246, 70, 93, 0.3)' 
+                  : 'none',
+                opacity: activeTab === 'sell' ? 1 : 0.85,
+                filter: activeTab === 'sell' ? 'brightness(1.15)' : 'saturate(0.75)',
+                transition: 'all 200ms ease'
+              }}
+            >
+              SELL
+            </button>
           </div>
 
-          {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE - COMPACT) ========== */}
+          {/* ========== AMOUNT INPUT WIDGET ========== */}
           <div style={{
             width: '100%',
             padding: isMobile ? '12px' : '16px',
-            background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(10, 22, 40, 0.95) 100%)',
+            background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(8, 18, 32, 0.98) 100%)',
             border: '1px solid rgba(0, 198, 255, 0.2)',
             borderRadius: '12px',
             marginBottom: isMobile ? '20px' : '24px',
