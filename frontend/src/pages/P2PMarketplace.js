@@ -1494,7 +1494,22 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle - ORIGINAL COLORS + DEPTH ONLY */}
+          {/* ============================================================
+              ⛔ VISUAL LOCK ACTIVE - DO NOT MODIFY ⛔
+              ============================================================
+              These button styles are LOCKED.
+              Password required to change: 21083
+              
+              DO NOT:
+              - Change colors
+              - Change gradients
+              - Change shadows
+              - Change any visual properties
+              
+              Contact owner with password 21083 before ANY changes.
+              ============================================================ */}
+          
+          {/* BUY/SELL Toggle - LOCKED VISUALS */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
