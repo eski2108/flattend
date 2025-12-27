@@ -20,6 +20,15 @@ export default function MerchantCenter() {
   const [myAds, setMyAds] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  
+  // Seller verification gate state
+  const [sellerVerification, setSellerVerification] = useState({
+    phone_verified: false,
+    kyc_verified: false,
+    checked: false,
+    blocked: false
+  });
+  
   const [paymentMethod, setPaymentMethod] = useState({
     type: 'bank_transfer',
     country: 'GB',
@@ -53,8 +62,24 @@ export default function MerchantCenter() {
     try {
       const user = JSON.parse(userData);
       setCurrentUser(user);
+      
+      // Check seller verification requirements (phone + KYC)
+      const phoneVerified = user.phone_verified || false;
+      const kycVerified = user.kyc_verified || false;
+      
+      setSellerVerification({
+        phone_verified: phoneVerified,
+        kyc_verified: kycVerified,
+        checked: true,
+        blocked: !phoneVerified || !kycVerified
+      });
+      
       setLoading(false);
-      fetchSellerStatus(user.user_id);
+      
+      // Only fetch seller status if verified
+      if (phoneVerified && kycVerified) {
+        fetchSellerStatus(user.user_id);
+      }
     } catch (error) {
       console.error('Error parsing user data:', error);
       setLoading(false);
