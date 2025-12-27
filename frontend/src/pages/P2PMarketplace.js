@@ -1764,9 +1764,13 @@ function P2PMarketplace() {
               </div>
             )}
 
-            {/* Row 3: Quick Amount Chips */}
+            {/* Row 3: Quick Amount Chips - 2 column on mobile, auto on desktop */}
             <div style={{ marginBottom: '12px' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(80px, auto))',
+                gap: '8px'
+              }}>
                 {activeTab === 'buy' ? (
                   // BUY mode: fiat chips
                   fiatChips.map((value) => (
@@ -1774,7 +1778,7 @@ function P2PMarketplace() {
                       key={value}
                       onClick={() => handleFiatChipClick(value)}
                       style={{
-                        height: '34px',
+                        height: '38px',
                         padding: '0 14px',
                         background: fiatAmount === value.toString()
                           ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
@@ -1785,7 +1789,8 @@ function P2PMarketplace() {
                         fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap'
                       }}
                     >
                       {getFiatSymbol(selectedInputFiat)}{value.toLocaleString()}
@@ -1798,7 +1803,7 @@ function P2PMarketplace() {
                       key={value}
                       onClick={() => handleCryptoChipClick(value)}
                       style={{
-                        height: '34px',
+                        height: '38px',
                         padding: '0 14px',
                         background: cryptoAmount === value.toString()
                           ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
@@ -1809,7 +1814,8 @@ function P2PMarketplace() {
                         fontSize: '13px',
                         fontWeight: '600',
                         cursor: 'pointer',
-                        transition: 'all 0.2s ease'
+                        transition: 'all 0.2s ease',
+                        whiteSpace: 'nowrap'
                       }}
                     >
                       {value} {selectedCrypto}
