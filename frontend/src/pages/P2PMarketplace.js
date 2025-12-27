@@ -7,6 +7,7 @@ import { IoCheckmarkCircle as CheckCircle, IoChevronDown, IoClose, IoFilter, IoF
 import P2PNotifications from '@/components/P2PNotifications';
 import TraderStats from '@/components/TraderStats';
 import { COIN_EMOJIS } from '@/utils/coinConfig';
+import { BuyButton, SellButton, TradingButtonsContainer } from '@/components/TradingButtons';
 import '../styles/globalSwapTheme.css';
 
 const API = process.env.REACT_APP_BACKEND_URL;
