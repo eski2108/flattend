@@ -1682,10 +1682,12 @@ function P2PMarketplace() {
             background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(10, 22, 40, 0.95) 100%)',
             border: '1px solid rgba(0, 198, 255, 0.2)',
             borderRadius: '12px',
-            marginBottom: isMobile ? '12px' : '16px',
+            marginBottom: isMobile ? '20px' : '24px',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
             boxSizing: 'border-box',
-            maxHeight: isMobile ? '200px' : 'auto'
+            position: 'relative',
+            zIndex: 1,
+            overflow: 'visible'
           }}>
             
             {/* Row 1: Amount Input with Currency Dropdown (inline) */}
