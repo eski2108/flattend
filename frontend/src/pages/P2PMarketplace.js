@@ -1901,10 +1901,6 @@ function P2PMarketplace() {
             )}
           </div>
           {/* ========== END AMOUNT INPUT WIDGET ========== */}
-              )}
-            </div>
-          </div>
-          {/* ========== END AMOUNT INPUT WIDGET ========== */}
 
         {/* EXPANDED FILTERS PANEL */}
         {showFilters && (
