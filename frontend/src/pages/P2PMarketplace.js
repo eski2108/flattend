@@ -1494,7 +1494,7 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle - SPEC COMPLIANT */}
+          {/* BUY/SELL Toggle - ORIGINAL COLORS + DEPTH ONLY */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
@@ -1508,23 +1508,25 @@ function P2PMarketplace() {
                 flex: 1,
                 height: '48px',
                 background: activeTab === 'buy' 
-                  ? 'linear-gradient(135deg, #00F5C4 0%, #00C2A0 100%)'
-                  : 'rgba(0, 245, 196, 0.08)',
+                  ? 'linear-gradient(180deg, rgba(32, 227, 162, 0.15) 0%, rgba(32, 227, 162, 0.35) 100%)'
+                  : 'rgba(32, 227, 162, 0.08)',
                 border: activeTab === 'buy' 
-                  ? 'none' 
-                  : '1px solid rgba(0, 245, 196, 0.2)',
-                borderRadius: '16px',
-                color: activeTab === 'buy' ? '#0B1F14' : 'rgba(0, 245, 196, 0.65)',
+                  ? '1px solid rgba(32, 227, 162, 0.5)' 
+                  : '1px solid rgba(32, 227, 162, 0.2)',
+                borderRadius: '12px',
+                color: '#20E3A2',
                 fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'buy' 
-                  ? '0 0 10px rgba(0, 245, 196, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
+                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3)' 
                   : 'none',
-                opacity: activeTab === 'buy' ? 1 : 0.85,
-                filter: activeTab === 'buy' ? 'brightness(1.18) saturate(1.1)' : 'saturate(0.7)',
-                transition: 'all 200ms ease'
+                opacity: activeTab === 'buy' ? 1 : 0.7,
+                transition: 'all 150ms ease'
               }}
+              onMouseDown={(e) => { if (activeTab === 'buy') e.currentTarget.style.transform = 'scale(0.98)'; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
             >
               BUY
             </button>
@@ -1534,23 +1536,25 @@ function P2PMarketplace() {
                 flex: 1,
                 height: '48px',
                 background: activeTab === 'sell' 
-                  ? 'linear-gradient(135deg, #FF6B6B 0%, #D94848 100%)'
-                  : 'rgba(255, 90, 95, 0.08)',
+                  ? 'linear-gradient(180deg, rgba(255, 50, 80, 0.15) 0%, rgba(255, 50, 80, 0.35) 100%)'
+                  : 'rgba(255, 50, 80, 0.08)',
                 border: activeTab === 'sell' 
-                  ? 'none' 
-                  : '1px solid rgba(255, 90, 95, 0.2)',
-                borderRadius: '16px',
-                color: activeTab === 'sell' ? '#0B1F14' : 'rgba(255, 90, 95, 0.65)',
+                  ? '1px solid rgba(255, 50, 80, 0.5)' 
+                  : '1px solid rgba(255, 50, 80, 0.2)',
+                borderRadius: '12px',
+                color: '#ff3250',
                 fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'sell' 
-                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 10px rgba(255, 90, 95, 0.25), 0 6px 16px rgba(0, 0, 0, 0.35)' 
+                  ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3)' 
                   : 'none',
-                opacity: activeTab === 'sell' ? 1 : 0.85,
-                filter: activeTab === 'sell' ? 'brightness(1.22) saturate(1.1)' : 'saturate(0.7)',
-                transition: 'all 200ms ease'
+                opacity: activeTab === 'sell' ? 1 : 0.7,
+                transition: 'all 150ms ease'
               }}
+              onMouseDown={(e) => { if (activeTab === 'sell') e.currentTarget.style.transform = 'scale(0.98)'; }}
+              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
             >
               SELL
             </button>
