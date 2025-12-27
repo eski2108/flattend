@@ -41401,15 +41401,15 @@ async def get_forex_rates():
                 "cached": True
             }
         
-        # Fetch fresh rates from exchangerate.host
-        log_info("📊 FOREX: Fetching fresh rates from exchangerate.host")
+        # Fetch fresh rates from open.er-api.com (free, no key required)
+        log_info("📊 FOREX: Fetching fresh rates from open.er-api.com")
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get("https://api.exchangerate.host/latest?base=USD")
+            response = await client.get("https://open.er-api.com/v6/latest/USD")
             
             if response.status_code == 200:
                 data = response.json()
                 
-                if data.get("success", True) and data.get("rates"):
+                if data.get("result") == "success" and data.get("rates"):
                     # Extract only the currencies we support
                     supported = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "NGN", "BRL", "KRW", "MXN", "SGD", "HKD", "ZAR", "AED", "SAR", "TRY", "PLN"]
                     rates = {k: v for k, v in data["rates"].items() if k in supported}
