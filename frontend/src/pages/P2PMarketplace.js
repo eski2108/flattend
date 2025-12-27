@@ -2436,7 +2436,9 @@ function P2PMarketplace() {
               fontSize: '13px',
               fontWeight: '600',
               color: 'rgba(255, 255, 255, 0.7)'
-            }}>
+            }}
+            id="offers-section"
+            >
               Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
               {fiatAmount && activeTab === 'buy' && (
                 <span style={{ color: '#22C55E', marginLeft: '8px' }}>
