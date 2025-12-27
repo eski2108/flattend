@@ -41518,18 +41518,18 @@ async def place_spot_order(order: SpotOrderRequest):
             raise HTTPException(status_code=400, detail=f"Unsupported base asset: {order.base_asset}")
         
         # ===== FETCH LIVE PRICES =====
-        # Get market price in USD using the price_service
+        # Get market price in USD
         market_price_usd = 0
         try:
-            prices = await get_cached_prices()
-            crypto_prices = prices.get('crypto_prices', {})
-            # Try both uppercase and lowercase asset names
-            asset_data = crypto_prices.get(order.base_asset) or crypto_prices.get(order.base_asset.lower()) or crypto_prices.get(order.base_asset.upper())
+            # Call the prices/live endpoint internally
+            price_data = await get_live_prices()
+            prices = price_data.get('prices', {})
+            asset_data = prices.get(order.base_asset) or prices.get(order.base_asset.upper())
             if asset_data:
-                market_price_usd = asset_data.get('usd', 0) or asset_data.get('USD', 0)
+                market_price_usd = asset_data.get('price_usd', 0)
             log_info(f"📈 SPOT ORDER: Got price for {order.base_asset}: ${market_price_usd}")
         except Exception as price_err:
-            log_warning(f"Failed to get cached prices: {price_err}")
+            log_warning(f"Failed to get prices: {price_err}")
         
         if market_price_usd <= 0:
             raise HTTPException(status_code=400, detail=f"Unable to fetch market price for {order.base_asset}")
