@@ -2996,6 +2996,107 @@ async def create_enhanced_sell_offer(offer_data: Dict):
         "message": "Offer created successfully"
     }
 
+# ==================== P2P BEST OFFER ENDPOINT (BINANCE-STYLE) ====================
+@api_router.get("/p2p/offers/best")
+async def get_best_p2p_offer(
+    side: str = Query(..., description="buy or sell"),
+    fiat: str = Query("GBP", description="Fiat currency"),
+    amount: float = Query(..., description="Amount in fiat"),
+    asset: str = Query("BTC", description="Crypto asset"),
+    payment_method: Optional[str] = Query(None, description="Preferred payment method")
+):
+    """
+    Returns the BEST matching offer for the given amount.
+    Best = lowest price (for buy) that can fulfil the amount.
+    """
+    try:
+        # Determine ad_type based on side
+        # If user wants to BUY crypto, we need SELL offers (sellers)
+        ad_type = "sell" if side.lower() == "buy" else "buy"
+        
+        # Query for active offers
+        query = {
+            "status": "active",
+            "ad_type": ad_type,
+            "crypto_currency": asset.upper()
+        }
+        
+        # Get all matching offers from p2p_offers collection
+        offers = []
+        async for offer in db.p2p_offers.find(query):
+            offer_price = float(offer.get("price_per_unit") or offer.get("price") or 0)
+            if offer_price <= 0:
+                continue
+                
+            # Calculate crypto amount for the fiat amount
+            crypto_amount_needed = amount / offer_price
+            
+            # Check limits
+            min_crypto = float(offer.get("min_order_limit") or offer.get("min_amount") or 0)
+            max_crypto = float(offer.get("max_order_limit") or offer.get("max_amount") or offer.get("available_amount") or 999999)
+            available = float(offer.get("crypto_amount") or offer.get("available_amount") or 0)
+            
+            # Check if this offer can fulfil the amount
+            if crypto_amount_needed < min_crypto:
+                continue
+            if crypto_amount_needed > max_crypto:
+                continue
+            if crypto_amount_needed > available:
+                continue
+            
+            # Check payment method if specified
+            if payment_method:
+                offer_methods = offer.get("payment_methods", [])
+                if isinstance(offer_methods, str):
+                    offer_methods = [offer_methods]
+                if payment_method.lower() not in [m.lower() for m in offer_methods]:
+                    continue
+            
+            offers.append({
+                "offer_id": offer.get("offer_id"),
+                "seller_id": offer.get("seller_id"),
+                "seller_name": offer.get("seller_name", "Unknown"),
+                "price": offer_price,
+                "min_limit": min_crypto,
+                "max_limit": max_crypto,
+                "available": available,
+                "payment_methods": offer.get("payment_methods", []),
+                "crypto_amount_for_fiat": round(crypto_amount_needed, 8),
+                "fiat_currency": offer.get("fiat_currency", fiat),
+                "crypto_currency": asset.upper()
+            })
+        
+        if not offers:
+            return {
+                "success": False,
+                "error": f"No offers available for {fiat} {amount} with selected filters",
+                "best_offer": None
+            }
+        
+        # Sort by price (lowest first for buy side)
+        if side.lower() == "buy":
+            offers.sort(key=lambda x: x["price"])
+        else:
+            offers.sort(key=lambda x: x["price"], reverse=True)
+        
+        best_offer = offers[0]
+        
+        return {
+            "success": True,
+            "best_offer": best_offer,
+            "total_matching_offers": len(offers),
+            "you_receive": best_offer["crypto_amount_for_fiat"],
+            "rate": best_offer["price"]
+        }
+        
+    except Exception as e:
+        logger.error(f"Error finding best offer: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "best_offer": None
+        }
+
 # ==================== P2P OFFERS DEBUG ENDPOINT ====================
 @api_router.get("/p2p/offers/debug")
 async def get_p2p_offers_debug(
