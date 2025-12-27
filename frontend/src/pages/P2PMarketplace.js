@@ -589,38 +589,75 @@ function P2PMarketplace() {
 
   // State for best offer (Binance-style auto-selection)
   const [bestOffer, setBestOffer] = useState(null);
+  const [bestQuote, setBestQuote] = useState(null);
   const [loadingBestOffer, setLoadingBestOffer] = useState(false);
+  const [matchError, setMatchError] = useState(null);
   
-  // Fetch best offer from backend (Binance-style)
-  const fetchBestOffer = async (amount, side = 'buy', asset = 'BTC', fiat = 'GBP') => {
-    if (!amount || parseFloat(amount) <= 0) {
+  // Fetch best match from backend (POST /api/p2p/match/best)
+  const fetchBestMatch = async (amountFiat, side = 'buy', asset = 'BTC', fiat = 'GBP', paymentMethod = null) => {
+    if (!amountFiat || parseFloat(amountFiat) <= 0) {
       setBestOffer(null);
+      setBestQuote(null);
       setCryptoAmount('');
+      setMatchError(null);
       return;
     }
     
     setLoadingBestOffer(true);
+    setMatchError(null);
+    
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/p2p/offers/best?side=${side}&fiat=${fiat}&amount=${amount}&asset=${asset}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/p2p/match/best`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Idempotency-Key': crypto.randomUUID()
+          },
+          body: JSON.stringify({
+            side: side,
+            asset: asset,
+            fiat: fiat,
+            amount_fiat: parseFloat(amountFiat),
+            amount_crypto: null,
+            payment_method: paymentMethod,
+            region: null
+          })
+        }
       );
       const data = await response.json();
       
-      if (data.success && data.best_offer) {
-        setBestOffer(data.best_offer);
-        setSelectedOffer(data.best_offer);
-        setCryptoAmount(data.you_receive.toString());
+      if (data.success && data.offer && data.quote) {
+        // Map offer fields for frontend compatibility
+        const mappedOffer = {
+          ...data.offer,
+          price_per_unit: data.offer.price,
+          crypto_amount: data.offer.available_amount,
+          available_amount: data.offer.available_amount,
+          min_order_limit: data.offer.min_limit / data.offer.price,
+          max_order_limit: data.offer.max_limit / data.offer.price
+        };
+        setBestOffer(mappedOffer);
+        setBestQuote(data.quote);
+        setSelectedOffer(mappedOffer);
+        setCryptoAmount(data.quote.amount_crypto.toString());
         setAmountError('');
       } else {
         setBestOffer(null);
+        setBestQuote(null);
         setSelectedOffer(null);
         setCryptoAmount('');
-        setAmountError(data.error || `No offers available for ${fiat} ${amount}`);
+        setMatchError(data.reason || 'No offers available');
+        if (data.code === 'NO_MATCH') {
+          setAmountError(`No offers for ${fiat} ${amountFiat}. Try a different amount.`);
+        }
       }
     } catch (error) {
-      console.error('Error fetching best offer:', error);
+      console.error('Error fetching best match:', error);
       setBestOffer(null);
-      setAmountError('Error finding offers');
+      setBestQuote(null);
+      setMatchError('Error finding offers');
     } finally {
       setLoadingBestOffer(false);
     }
@@ -629,10 +666,11 @@ function P2PMarketplace() {
   // Debounce timer for amount changes
   const debounceTimerRef = useRef(null);
   
-  // Handle fiat amount change - calls best offer API (Binance-style)
+  // Handle fiat amount change - calls best match API (Binance-style)
   const handleFiatAmountChange = (value) => {
     setFiatAmount(value);
     setAmountError('');
+    setMatchError(null);
     
     // Clear previous timer
     if (debounceTimerRef.current) {
@@ -642,7 +680,7 @@ function P2PMarketplace() {
     // Debounce API call
     debounceTimerRef.current = setTimeout(() => {
       if (activeTab === 'buy') {
-        fetchBestOffer(value, 'buy', selectedCrypto, selectedInputFiat);
+        fetchBestMatch(value, 'buy', selectedCrypto, selectedInputFiat, null);
       }
     }, 300);
   };
@@ -657,7 +695,7 @@ function P2PMarketplace() {
       clearTimeout(debounceTimerRef.current);
     }
     
-    // Debounce API call
+    // Debounce API call for SELL mode
     debounceTimerRef.current = setTimeout(() => {
       if (activeTab === 'sell' && value && parseFloat(value) > 0 && offers.length > 0) {
         const bestOffer = offers[0];
