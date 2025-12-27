@@ -41374,6 +41374,306 @@ logger.info("✅ Trading Bot endpoints registered at /api/bots/*")
 # =====================================================================
 
 # =====================================================================
+# FOREX RATES ENDPOINT - BACKEND-DRIVEN CURRENCY CONVERSION
+# =====================================================================
+
+# Forex cache - 60 second TTL
+FOREX_CACHE = {"rates": None, "timestamp": 0, "ttl": 60}
+
+@api_router.get("/forex/rates")
+async def get_forex_rates():
+    """
+    Get live forex rates from exchangerate.host
+    Cached for 60 seconds server-side
+    Frontend MUST use this endpoint for all currency conversions
+    """
+    try:
+        current_time = time.time()
+        
+        # Return cached rates if still valid
+        if FOREX_CACHE["rates"] and (current_time - FOREX_CACHE["timestamp"]) < FOREX_CACHE["ttl"]:
+            log_info("📊 FOREX: Returning cached rates")
+            return {
+                "success": True,
+                "base": "USD",
+                "rates": FOREX_CACHE["rates"],
+                "timestamp": int(FOREX_CACHE["timestamp"]),
+                "cached": True
+            }
+        
+        # Fetch fresh rates from exchangerate.host
+        log_info("📊 FOREX: Fetching fresh rates from exchangerate.host")
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get("https://api.exchangerate.host/latest?base=USD")
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("success", True) and data.get("rates"):
+                    # Extract only the currencies we support
+                    supported = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "NGN", "BRL", "KRW", "MXN", "SGD", "HKD", "ZAR", "AED", "SAR", "TRY", "PLN"]
+                    rates = {k: v for k, v in data["rates"].items() if k in supported}
+                    rates["USD"] = 1.0  # Ensure USD is always 1
+                    
+                    # Update cache
+                    FOREX_CACHE["rates"] = rates
+                    FOREX_CACHE["timestamp"] = current_time
+                    
+                    log_info(f"📊 FOREX: Updated rates for {len(rates)} currencies")
+                    
+                    return {
+                        "success": True,
+                        "base": "USD",
+                        "rates": rates,
+                        "timestamp": int(current_time),
+                        "cached": False
+                    }
+        
+        # Fallback rates if API fails
+        log_warning("📊 FOREX: API failed, using fallback rates")
+        fallback_rates = {
+            "USD": 1.0, "EUR": 0.92, "GBP": 0.79, "JPY": 149.5, "AUD": 1.53,
+            "CAD": 1.36, "CHF": 0.88, "CNY": 7.24, "INR": 83.12, "NGN": 1550,
+            "BRL": 4.97, "KRW": 1320, "MXN": 17.15, "SGD": 1.34, "HKD": 7.82,
+            "ZAR": 18.65, "AED": 3.67, "SAR": 3.75, "TRY": 32.5, "PLN": 3.98
+        }
+        
+        return {
+            "success": True,
+            "base": "USD",
+            "rates": fallback_rates,
+            "timestamp": int(current_time),
+            "cached": False,
+            "fallback": True
+        }
+        
+    except Exception as e:
+        log_error("get_forex_rates", e)
+        # Return fallback on error
+        return {
+            "success": True,
+            "base": "USD",
+            "rates": {"USD": 1.0, "EUR": 0.92, "GBP": 0.79, "JPY": 149.5},
+            "timestamp": int(time.time()),
+            "error": str(e),
+            "fallback": True
+        }
+
+
+# =====================================================================
+# SPOT TRADING ORDER - BACKEND-AUTHORITATIVE VERSION
+# =====================================================================
+
+class SpotOrderRequest(BaseModel):
+    """Backend-authoritative order request - frontend is display only"""
+    user_id: str
+    side: str  # "buy" or "sell"
+    order_type: str  # "market" or "limit"
+    base_asset: str  # e.g., "ETH", "BTC"
+    quote_currency: str  # e.g., "USD", "EUR", "GBP"
+    amount: float  # Base asset amount
+    price: Optional[float] = None  # Required for limit orders, ignored for market
+    
+    model_config = ConfigDict(extra='forbid')
+
+
+@api_router.post("/trading/order")
+async def place_spot_order(order: SpotOrderRequest):
+    """
+    Place a spot trading order - BACKEND IS SOURCE OF TRUTH
+    
+    Backend responsibilities:
+    - Validate all inputs
+    - Fetch live prices
+    - Convert currencies using backend forex
+    - Apply fees server-side
+    - Store canonical values
+    - Reject invalid orders
+    """
+    try:
+        log_info(f"📈 SPOT ORDER: {order.user_id} {order.side} {order.amount} {order.base_asset} in {order.quote_currency}")
+        
+        # ===== VALIDATION 1: Basic input validation =====
+        if order.side not in ["buy", "sell"]:
+            raise HTTPException(status_code=400, detail="Invalid side. Must be 'buy' or 'sell'")
+        
+        if order.order_type not in ["market", "limit"]:
+            raise HTTPException(status_code=400, detail="Invalid order type. Must be 'market' or 'limit'")
+        
+        if order.amount <= 0:
+            raise HTTPException(status_code=400, detail="Amount must be greater than 0")
+        
+        # ===== VALIDATION 2: Limit order price validation =====
+        if order.order_type == "limit":
+            if order.price is None or order.price <= 0:
+                raise HTTPException(status_code=400, detail="Limit orders require a valid price > 0")
+        
+        # ===== VALIDATION 3: Currency validation =====
+        supported_currencies = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "NGN", "BRL", "KRW", "MXN", "SGD", "HKD", "ZAR", "AED", "SAR", "TRY", "PLN"]
+        if order.quote_currency not in supported_currencies:
+            raise HTTPException(status_code=400, detail=f"Unsupported quote currency: {order.quote_currency}")
+        
+        supported_assets = ["BTC", "ETH", "USDT", "BNB", "XRP", "SOL", "ADA", "DOGE", "DOT", "MATIC", "LTC", "SHIB", "AVAX", "LINK", "UNI"]
+        if order.base_asset not in supported_assets:
+            raise HTTPException(status_code=400, detail=f"Unsupported base asset: {order.base_asset}")
+        
+        # ===== FETCH LIVE PRICES =====
+        # Get market price in USD
+        market_price_usd = 0
+        try:
+            price_response = await get_live_prices()
+            if price_response.get("success") and price_response.get("prices"):
+                asset_price = price_response["prices"].get(order.base_asset, {})
+                market_price_usd = asset_price.get("price_usd", 0)
+        except:
+            pass
+        
+        if market_price_usd <= 0:
+            raise HTTPException(status_code=400, detail=f"Unable to fetch market price for {order.base_asset}")
+        
+        # ===== FETCH FOREX RATES =====
+        forex_response = await get_forex_rates()
+        forex_rates = forex_response.get("rates", {"USD": 1.0})
+        quote_rate = forex_rates.get(order.quote_currency, 1.0)
+        
+        # Convert market price to quote currency
+        market_price_quote = market_price_usd * quote_rate
+        
+        # ===== VALIDATION 4: Limit price sanity check =====
+        if order.order_type == "limit":
+            # Reject limit orders more than 20% away from market price
+            price_diff_percent = abs(order.price - market_price_quote) / market_price_quote * 100
+            if price_diff_percent > 20:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Limit price too far from market. Market: {market_price_quote:.2f} {order.quote_currency}, Your price: {order.price:.2f} (diff: {price_diff_percent:.1f}%)"
+                )
+        
+        # ===== DETERMINE EXECUTION PRICE =====
+        execution_price = order.price if order.order_type == "limit" else market_price_quote
+        
+        # ===== CALCULATE TOTAL AND FEES (SERVER-SIDE) =====
+        subtotal = order.amount * execution_price
+        fee_percent = 0.5  # 0.5% trading fee
+        fee = subtotal * (fee_percent / 100)
+        total = subtotal + fee if order.side == "buy" else subtotal - fee
+        
+        # ===== GET USER BALANCES =====
+        user_balance_doc = await db.user_balances.find_one({"user_id": order.user_id})
+        if not user_balance_doc:
+            await db.user_balances.insert_one({
+                "user_id": order.user_id,
+                "balances": {},
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+            user_balance_doc = await db.user_balances.find_one({"user_id": order.user_id})
+        
+        balances = user_balance_doc.get("balances", {})
+        
+        # ===== VALIDATION 5: Balance check =====
+        if order.side == "buy":
+            # Need quote currency to buy
+            quote_balance = balances.get(order.quote_currency, {}).get("available", 0)
+            # Also check USD balance and convert if needed
+            if quote_balance < total and order.quote_currency != "USD":
+                usd_balance = balances.get("USD", {}).get("available", 0)
+                quote_balance = usd_balance * quote_rate
+            
+            if quote_balance < total:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Insufficient {order.quote_currency} balance. Need {total:.2f}, have {quote_balance:.2f}"
+                )
+        else:
+            # Need base asset to sell
+            base_balance = balances.get(order.base_asset, {}).get("available", 0)
+            if base_balance < order.amount:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Insufficient {order.base_asset} balance. Need {order.amount}, have {base_balance}"
+                )
+        
+        # ===== EXECUTE ORDER =====
+        if order.side == "buy":
+            # Deduct quote currency
+            if order.quote_currency not in balances:
+                balances[order.quote_currency] = {"available": 0, "locked": 0}
+            balances[order.quote_currency]["available"] = balances.get(order.quote_currency, {}).get("available", 0) - total
+            
+            # Add base asset
+            if order.base_asset not in balances:
+                balances[order.base_asset] = {"available": 0, "locked": 0}
+            balances[order.base_asset]["available"] = balances.get(order.base_asset, {}).get("available", 0) + order.amount
+        else:
+            # Deduct base asset
+            balances[order.base_asset]["available"] = balances.get(order.base_asset, {}).get("available", 0) - order.amount
+            
+            # Add quote currency (minus fee)
+            if order.quote_currency not in balances:
+                balances[order.quote_currency] = {"available": 0, "locked": 0}
+            balances[order.quote_currency]["available"] = balances.get(order.quote_currency, {}).get("available", 0) + total
+        
+        # ===== UPDATE BALANCES =====
+        await db.user_balances.update_one(
+            {"user_id": order.user_id},
+            {"$set": {"balances": balances, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        
+        # ===== RECORD TRADE =====
+        trade_record = {
+            "trade_id": str(uuid.uuid4()),
+            "user_id": order.user_id,
+            "side": order.side,
+            "order_type": order.order_type,
+            "base_asset": order.base_asset,
+            "quote_currency": order.quote_currency,
+            "amount": order.amount,
+            "price": execution_price,
+            "price_usd": market_price_usd,
+            "subtotal": subtotal,
+            "fee": fee,
+            "fee_percent": fee_percent,
+            "total": total,
+            "forex_rate": quote_rate,
+            "status": "completed",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.spot_trades.insert_one(trade_record)
+        
+        # ===== ADD FEE TO ADMIN WALLET =====
+        fee_in_usd = fee / quote_rate
+        await sync_credit_balance("admin_wallet", "USD", fee_in_usd, f"spot_{order.side}_fee")
+        
+        log_info(f"✅ SPOT ORDER COMPLETED: {order.side} {order.amount} {order.base_asset} @ {execution_price:.2f} {order.quote_currency}")
+        
+        return {
+            "success": True,
+            "message": f"Successfully {order.side} {order.amount} {order.base_asset}",
+            "trade": trade_record,
+            "execution": {
+                "price": execution_price,
+                "price_usd": market_price_usd,
+                "subtotal": subtotal,
+                "fee": fee,
+                "fee_percent": fee_percent,
+                "total": total,
+                "quote_currency": order.quote_currency,
+                "forex_rate": quote_rate
+            },
+            "new_balance": {
+                order.base_asset: balances.get(order.base_asset, {}).get("available", 0),
+                order.quote_currency: balances.get(order.quote_currency, {}).get("available", 0)
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_error("place_spot_order", e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# =====================================================================
 # FINAL ROUTER REGISTRATION - MUST BE AT END OF FILE
 # This ensures ALL endpoints defined above are registered
 # =====================================================================
