@@ -780,14 +780,39 @@ function P2PMarketplace() {
   const debounceTimerRef = useRef(null);
   
   // Handle fiat amount change - calls best match API (Binance-style)
+  // CRITICAL: Immediately reset matched state to prevent "Seller found + 0 offers" bug
   const handleFiatAmountChange = (value) => {
     setFiatAmount(value);
     setAmountError('');
     setMatchError(null);
     
+    // HARD RESET IMMEDIATELY when amount changes
+    setTradeState(prev => ({
+      ...prev,
+      matched: false,
+      matchedOfferId: null,
+      matchedSellerName: null,
+      status: 'loading'
+    }));
+    setBestOffer(null);
+    setBestQuote(null);
+    setSelectedOffer(null);
+    setCryptoAmount('');
+    
     // Clear previous timer
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Handle empty/invalid input
+    if (!value || parseFloat(value) <= 0) {
+      setTradeState(prev => ({
+        ...prev,
+        status: 'idle',
+        matched: false,
+        matchedOfferId: null
+      }));
+      return;
     }
     
     // Debounce API call
