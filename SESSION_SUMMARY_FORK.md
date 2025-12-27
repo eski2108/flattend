@@ -206,7 +206,7 @@ STATS PANEL (2 columns, same height as before)
 
 ## LIVE URL
 
-https://order-confirmation-2.preview.emergentagent.com
+https://tradehub-268.preview.emergentagent.com
 
 ---
 

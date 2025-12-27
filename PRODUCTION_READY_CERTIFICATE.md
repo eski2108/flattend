@@ -195,8 +195,8 @@ mongodb:  RUNNING
 ```
 
 ### URLs Configured:
-- Frontend: `https://order-confirmation-2.preview.emergentagent.com`
-- Backend API: `https://order-confirmation-2.preview.emergentagent.com/api`
+- Frontend: `https://tradehub-268.preview.emergentagent.com`
+- Backend API: `https://tradehub-268.preview.emergentagent.com/api`
 - Database: `mongodb://localhost:27017/coinhubx`
 
 ---

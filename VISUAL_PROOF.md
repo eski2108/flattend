@@ -45,7 +45,7 @@
 
 ### ❌ BEFORE (BROKEN)
 ```
-https://order-confirmation-2.preview.emergentagent.com/admin/disputes/dispute_123
+https://tradehub-268.preview.emergentagent.com/admin/disputes/dispute_123
                                                      ↑
                                             NO HASH - BREAKS!
 ```
@@ -61,14 +61,14 @@ https://order-confirmation-2.preview.emergentagent.com/admin/disputes/dispute_12
 
 ### ✅ AFTER (FIXED)
 ```
-https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/dispute_123
+https://tradehub-268.preview.emergentagent.com/#/admin/disputes/dispute_123
                                                      ↑↑
                                             HASH ADDED - WORKS!
 ```
 
 **What Happens:**
 1. Admin clicks button
-2. Browser loads: `https://order-confirmation-2.preview.emergentagent.com/`
+2. Browser loads: `https://tradehub-268.preview.emergentagent.com/`
 3. React app loads
 4. HashRouter reads: `#/admin/disputes/dispute_123`
 5. Routes to: AdminDisputeDetail component
@@ -216,13 +216,13 @@ https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/dispute_
 
 #### ❌ BEFORE
 ```html
-<a href="https://order-confirmation-2.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://tradehub-268.preview.emergentagent.com/admin/disputes/{dispute_id}">
      Missing #/  ──────────────────────────────────────────────┘
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
      Added #/  ──────────────────────────────────────────────┘
 ```
 
@@ -232,12 +232,12 @@ https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/dispute_
 
 #### ❌ BEFORE
 ```
-https://order-confirmation-2.preview.emergentagent.com/admin/disputes/{dispute_id}
+https://tradehub-268.preview.emergentagent.com/admin/disputes/{dispute_id}
 ```
 
 #### ✅ AFTER
 ```
-https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}
+https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}
                                                      ↑↑ Added
 ```
 
@@ -247,12 +247,12 @@ https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/{dispute
 
 #### ❌ BEFORE
 ```html
-<a href="https://order-confirmation-2.preview.emergentagent.com/admin/disputes/{dispute_id}">
+<a href="https://tradehub-268.preview.emergentagent.com/admin/disputes/{dispute_id}">
 ```
 
 #### ✅ AFTER
 ```html
-<a href="https://order-confirmation-2.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
+<a href="https://tradehub-268.preview.emergentagent.com/#/admin/disputes/{dispute_id}">
 ```
 
 ---

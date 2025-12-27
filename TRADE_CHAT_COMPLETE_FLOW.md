@@ -330,4 +330,4 @@ All features implemented and tested:
 - ✅ Image uploads working
 - ✅ Real-time polling active
 
-**Test it now at:** https://order-confirmation-2.preview.emergentagent.com
+**Test it now at:** https://tradehub-268.preview.emergentagent.com

@@ -142,8 +142,8 @@ Password: test1234
 ```
 
 ### Testing Flow:
-1. Login at: https://order-confirmation-2.preview.emergentagent.com/login
-2. Visit marketplace: https://order-confirmation-2.preview.emergentagent.com/p2p
+1. Login at: https://tradehub-268.preview.emergentagent.com/login
+2. Visit marketplace: https://tradehub-268.preview.emergentagent.com/p2p
 3. Click "Become a Seller"
 4. Activate seller account
 5. Create an offer

@@ -8,7 +8,7 @@ Run these from YOUR machine (not the blocked server).
 
 ## Backend URL
 ```
-BACKEND=https://order-confirmation-2.preview.emergentagent.com
+BACKEND=https://tradehub-268.preview.emergentagent.com
 USER_ID=no2fa-curl-test
 ```
 

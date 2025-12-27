@@ -328,7 +328,7 @@
 ## 🚀 DEPLOYMENT STATUS
 
 **Environment:** Production Preview  
-**URL:** https://order-confirmation-2.preview.emergentagent.com
+**URL:** https://tradehub-268.preview.emergentagent.com
 
 **Services Status:**
 ```bash

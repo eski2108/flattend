@@ -99,9 +99,9 @@ Status:   Merchant Active
   SYSTEM URLS
 ================================================================================
 
-Frontend:     https://order-confirmation-2.preview.emergentagent.com
-P2P Page:     https://order-confirmation-2.preview.emergentagent.com/p2p
-Backend API:  https://order-confirmation-2.preview.emergentagent.com/api
+Frontend:     https://tradehub-268.preview.emergentagent.com
+P2P Page:     https://tradehub-268.preview.emergentagent.com/p2p
+Backend API:  https://tradehub-268.preview.emergentagent.com/api
 
 ================================================================================
   SERVICES STATUS

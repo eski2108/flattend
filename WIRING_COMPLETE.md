@@ -6,8 +6,8 @@ Status: ✅ PRODUCTION READY - LOCKED
 ## 🎯 System Overview
 
 ### Production URLs:
-- **Backend API**: https://order-confirmation-2.preview.emergentagent.com/api
-- **Frontend App**: https://order-confirmation-2.preview.emergentagent.com
+- **Backend API**: https://tradehub-268.preview.emergentagent.com/api
+- **Frontend App**: https://tradehub-268.preview.emergentagent.com
 - **Custom Domain (Configure DNS)**: https://coinhubx.net
 
 ### Environment Configuration:

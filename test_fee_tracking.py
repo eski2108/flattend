@@ -7,7 +7,7 @@ import requests
 import json
 from datetime import datetime
 
-BASE_URL = "https://order-confirmation-2.preview.emergentagent.com/api"
+BASE_URL = "https://tradehub-268.preview.emergentagent.com/api"
 
 def test_fee_tracking():
     print("\n" + "="*60)

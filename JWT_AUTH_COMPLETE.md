@@ -3,7 +3,7 @@
 ## STATUS: ✅ FULLY OPERATIONAL
 
 **Test User:** aby@test.com / test123  
-**Live URL:** https://order-confirmation-2.preview.emergentagent.com
+**Live URL:** https://tradehub-268.preview.emergentagent.com
 
 ---
 

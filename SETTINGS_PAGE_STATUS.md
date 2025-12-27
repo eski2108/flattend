@@ -149,7 +149,7 @@
 
 ## How to Test
 
-1. **Go to:** https://order-confirmation-2.preview.emergentagent.com/settings
+1. **Go to:** https://tradehub-268.preview.emergentagent.com/settings
 2. **Log in with:** admin@coinhubx.net / test123
 3. **Test each button:**
    - Click every button

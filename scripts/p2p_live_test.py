@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, '/app/backend')
 
-API_URL = "https://order-confirmation-2.preview.emergentagent.com"
+API_URL = "https://tradehub-268.preview.emergentagent.com"
 
 async def run_test():
     from motor.motor_asyncio import AsyncIOMotorClient

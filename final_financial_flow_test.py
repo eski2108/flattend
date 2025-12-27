@@ -14,7 +14,7 @@ from decimal import Decimal
 import sys
 
 # Configuration
-BASE_URL = "https://order-confirmation-2.preview.emergentagent.com/api"
+BASE_URL = "https://tradehub-268.preview.emergentagent.com/api"
 TEST_USER_A = {
     "email": "gads21083@gmail.com",
     "password": "123456789"
