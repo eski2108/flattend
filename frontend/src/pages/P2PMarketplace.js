@@ -1586,82 +1586,76 @@ function P2PMarketplace() {
             }
           </div>
 
-          {/* ========== AMOUNT INPUT WIDGET (FINAL SPEC) ========== */}
-          {/* NO Pay/Receive toggle - only BUY/SELL determines which field is editable */}
+          {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE) ========== */}
           <div style={{
             width: '100%',
-            padding: isMobile ? '16px' : '20px',
+            padding: isMobile ? '14px' : '20px',
             background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.98) 0%, rgba(10, 22, 40, 0.98) 100%)',
             border: '1px solid rgba(0, 198, 255, 0.25)',
-            borderRadius: '14px',
-            marginBottom: '24px',
+            borderRadius: isMobile ? '12px' : '14px',
+            marginBottom: isMobile ? '16px' : '24px',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
             boxSizing: 'border-box'
           }}>
             
-            {/* Row 1: "You pay" - Fiat Input (editable in BUY mode) */}
-            <div style={{ marginBottom: '16px' }}>
+            {/* Row 1: "You pay" - Amount + Currency inline */}
+            <div style={{ marginBottom: isMobile ? '12px' : '16px' }}>
               <label style={{
                 display: 'block',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '13px',
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: isMobile ? '12px' : '13px',
                 fontWeight: '600',
-                marginBottom: '8px',
+                marginBottom: '6px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
                 You pay
               </label>
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: isMobile ? 'column' : 'row',
-                gap: isMobile ? '8px' : '12px' 
-              }}>
-                <div style={{ flex: 1, position: 'relative' }}>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={fiatAmount}
-                    onChange={(e) => handleFiatAmountChange(e.target.value)}
-                    placeholder="Enter amount"
-                    disabled={activeTab === 'sell'}
-                    style={{
-                      width: '100%',
-                      height: '52px',
-                      padding: '0 16px',
-                      background: activeTab === 'sell' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.4)',
-                      border: amountError ? '2px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.3)',
-                      borderRadius: '12px',
-                      color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.6)' : '#fff',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      boxSizing: 'border-box',
-                      cursor: activeTab === 'sell' ? 'not-allowed' : 'text'
-                    }}
-                  />
-                </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  step="0.01"
+                  min="0"
+                  value={fiatAmount}
+                  onChange={(e) => handleFiatAmountChange(e.target.value)}
+                  placeholder="Enter amount"
+                  disabled={activeTab === 'sell'}
+                  style={{
+                    flex: 1,
+                    height: isMobile ? '46px' : '50px',
+                    padding: '0 14px',
+                    background: activeTab === 'sell' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.4)',
+                    border: amountError ? '2px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.3)',
+                    borderRadius: '12px',
+                    color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.5)' : '#fff',
+                    fontSize: isMobile ? '16px' : '18px',
+                    fontWeight: '700',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    cursor: activeTab === 'sell' ? 'not-allowed' : 'text'
+                  }}
+                />
                 <select
                   value={selectedInputFiat}
                   onChange={(e) => setSelectedInputFiat(e.target.value)}
                   style={{
-                    width: isMobile ? '100%' : '110px',
-                    minWidth: isMobile ? 'auto' : '110px',
-                    height: '52px',
-                    padding: '0 12px',
+                    width: '90px',
+                    height: isMobile ? '46px' : '50px',
+                    padding: '0 10px',
                     background: 'rgba(0, 0, 0, 0.4)',
                     border: '1px solid rgba(0, 198, 255, 0.3)',
                     borderRadius: '12px',
                     color: '#fff',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     appearance: 'none',
                     boxSizing: 'border-box',
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 12px center'
+                    backgroundPosition: 'right 10px center',
+                    flexShrink: 0
                   }}
                 >
                   {fiatCurrencies.map(curr => (
@@ -1671,86 +1665,79 @@ function P2PMarketplace() {
               </div>
             </div>
 
-            {/* Row 2: "You receive" - READ-ONLY in BUY mode, editable in SELL mode */}
-            <div style={{ marginBottom: '16px' }}>
+            {/* Row 2: "You receive" - compact read-only display */}
+            <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
               <label style={{
                 display: 'block',
-                color: 'rgba(255, 255, 255, 0.7)',
-                fontSize: '13px',
+                color: 'rgba(255, 255, 255, 0.6)',
+                fontSize: isMobile ? '12px' : '13px',
                 fontWeight: '600',
-                marginBottom: '8px',
+                marginBottom: '6px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
                 You receive
               </label>
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: isMobile ? 'column' : 'row',
-                gap: isMobile ? '8px' : '12px' 
-              }}>
-                <div style={{ flex: 1, position: 'relative' }}>
-                  {/* READ-ONLY in BUY mode - uses div not input */}
-                  {activeTab === 'buy' ? (
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '52px',
-                        padding: '0 16px',
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        borderRadius: '12px',
-                        color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.4)',
-                        fontSize: '18px',
-                        fontWeight: '700',
-                        boxSizing: 'border-box',
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}
-                    >
-                      {cryptoAmount || 'Select offer below'}
-                    </div>
-                  ) : (
-                    <input
-                      type="number"
-                      step="0.00000001"
-                      min="0"
-                      value={cryptoAmount}
-                      onChange={(e) => handleCryptoAmountChange(e.target.value)}
-                      placeholder="Enter amount"
-                      style={{
-                        width: '100%',
-                        height: '52px',
-                        padding: '0 16px',
-                        background: 'rgba(0, 0, 0, 0.4)',
-                        border: '1px solid rgba(0, 198, 255, 0.3)',
-                        borderRadius: '12px',
-                        color: '#fff',
-                        fontSize: '18px',
-                        fontWeight: '700',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                        cursor: 'text'
-                      }}
-                    />
-                  )}
-                </div>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                {activeTab === 'buy' ? (
+                  <div
+                    style={{
+                      flex: 1,
+                      height: isMobile ? '46px' : '50px',
+                      padding: '0 14px',
+                      background: 'rgba(0, 0, 0, 0.15)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.35)',
+                      fontSize: isMobile ? '15px' : '18px',
+                      fontWeight: cryptoAmount ? '700' : '500',
+                      boxSizing: 'border-box',
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {cryptoAmount || 'Select offer below'}
+                  </div>
+                ) : (
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    step="0.00000001"
+                    min="0"
+                    value={cryptoAmount}
+                    onChange={(e) => handleCryptoAmountChange(e.target.value)}
+                    placeholder="Enter amount"
+                    style={{
+                      flex: 1,
+                      height: isMobile ? '46px' : '50px',
+                      padding: '0 14px',
+                      background: 'rgba(0, 0, 0, 0.4)',
+                      border: '1px solid rgba(0, 198, 255, 0.3)',
+                      borderRadius: '12px',
+                      color: '#fff',
+                      fontSize: isMobile ? '16px' : '18px',
+                      fontWeight: '700',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                )}
                 <div style={{
-                  width: isMobile ? '100%' : '110px',
-                  minWidth: isMobile ? 'auto' : '110px',
-                  height: '52px',
-                  padding: '0 12px',
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(0, 198, 255, 0.3)',
+                  width: '90px',
+                  height: isMobile ? '46px' : '50px',
+                  padding: '0 10px',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '12px',
                   color: '#fff',
-                  fontSize: '15px',
+                  fontSize: '14px',
                   fontWeight: '600',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px',
-                  boxSizing: 'border-box'
+                  gap: '4px',
+                  boxSizing: 'border-box',
+                  flexShrink: 0
                 }}>
                   {COIN_EMOJIS[selectedCrypto] || '₿'} {selectedCrypto}
                 </div>
@@ -1761,87 +1748,84 @@ function P2PMarketplace() {
             {amountError && (
               <div style={{
                 color: '#EF4444',
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: '500',
-                marginBottom: '12px',
-                padding: '10px 14px',
+                marginBottom: '8px',
+                padding: '8px 12px',
                 background: 'rgba(239, 68, 68, 0.1)',
-                borderRadius: '10px',
+                borderRadius: '8px',
                 border: '1px solid rgba(239, 68, 68, 0.3)'
               }}>
                 ⚠️ {amountError}
               </div>
             )}
 
-            {/* Row 3: Quick Amount Chips - 2 column on mobile, auto on desktop */}
-            <div style={{ marginBottom: '12px' }}>
-              <div style={{ 
-                display: 'grid', 
-                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(90px, 1fr))',
-                gap: '8px'
-              }}>
-                {activeTab === 'buy' ? (
-                  // BUY mode: fiat chips
-                  fiatChips.map((value) => (
-                    <button
-                      key={value}
-                      onClick={() => handleFiatChipClick(value)}
-                      style={{
-                        height: '42px',
-                        padding: '0 12px',
-                        background: fiatAmount === value.toString()
-                          ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                          : 'rgba(255, 255, 255, 0.05)',
-                        border: `1px solid ${fiatAmount === value.toString() ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                        borderRadius: '12px',
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap',
-                        width: '100%'
-                      }}
-                    >
-                      {getFiatSymbol(selectedInputFiat)}{value.toLocaleString()}
-                    </button>
-                  ))
-                ) : (
-                  // SELL mode: crypto chips
-                  (selectedCrypto === 'BTC' ? cryptoChipsBTC : cryptoChipsETH).map((value) => (
-                    <button
-                      key={value}
-                      onClick={() => handleCryptoChipClick(value)}
-                      style={{
-                        height: '42px',
-                        padding: '0 12px',
-                        background: cryptoAmount === value.toString()
-                          ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
-                          : 'rgba(255, 255, 255, 0.05)',
-                        border: `1px solid ${cryptoAmount === value.toString() ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                        borderRadius: '12px',
-                        color: '#fff',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap',
-                        width: '100%'
-                      }}
-                    >
-                      {value} {selectedCrypto}
-                    </button>
-                  ))
-                )}
+            {/* Quick Amount Chips - DESKTOP ONLY */}
+            {!isMobile && (
+              <div style={{ marginBottom: '8px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap',
+                  gap: '6px'
+                }}>
+                  {activeTab === 'buy' ? (
+                    fiatChips.map((value) => (
+                      <button
+                        key={value}
+                        onClick={() => handleFiatChipClick(value)}
+                        style={{
+                          height: '34px',
+                          minWidth: '72px',
+                          padding: '0 12px',
+                          background: fiatAmount === value.toString()
+                            ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                            : 'rgba(255, 255, 255, 0.05)',
+                          border: `1px solid ${fiatAmount === value.toString() ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                          borderRadius: '8px',
+                          color: '#fff',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        {getFiatSymbol(selectedInputFiat)}{value.toLocaleString()}
+                      </button>
+                    ))
+                  ) : (
+                    (selectedCrypto === 'BTC' ? cryptoChipsBTC : cryptoChipsETH).map((value) => (
+                      <button
+                        key={value}
+                        onClick={() => handleCryptoChipClick(value)}
+                        style={{
+                          height: '34px',
+                          minWidth: '72px',
+                          padding: '0 12px',
+                          background: cryptoAmount === value.toString()
+                            ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
+                            : 'rgba(255, 255, 255, 0.05)',
+                          border: `1px solid ${cryptoAmount === value.toString() ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                          borderRadius: '8px',
+                          color: '#fff',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        {value} {selectedCrypto}
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Row 4: Limits Helper Text */}
+            {/* Helper text with limits */}
             <div style={{
-              fontSize: '12px',
-              color: 'rgba(255, 255, 255, 0.5)',
-              fontStyle: 'italic',
-              padding: '8px 0 0 0',
+              fontSize: '11px',
+              color: 'rgba(255, 255, 255, 0.4)',
+              paddingTop: '6px',
               borderTop: '1px solid rgba(255, 255, 255, 0.05)'
             }}>
               {selectedOffer ? (
@@ -1851,10 +1835,10 @@ function P2PMarketplace() {
                   const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
                   const minFiat = (minCrypto * price).toFixed(0);
                   const maxFiat = (maxCrypto * price).toFixed(0);
-                  return `Offer limits: ${getFiatSymbol(selectedInputFiat)}${minFiat} – ${getFiatSymbol(selectedInputFiat)}${maxFiat}`;
+                  return `Limits: ${getFiatSymbol(selectedInputFiat)}${minFiat} – ${getFiatSymbol(selectedInputFiat)}${maxFiat}`;
                 })()
               ) : (
-                'Select an offer below to see limits'
+                'Enter amount to filter offers'
               )}
             </div>
           </div>
