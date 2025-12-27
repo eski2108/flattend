@@ -1537,37 +1537,30 @@ function P2PMarketplace() {
               <IoFilter size={14} />
               Advanced Filters
             </button>
+          </div>
 
-            {/* Divider - hide on mobile */}
-            {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0, marginLeft: 'auto' }} />}
+          {/* BUY/SELL Toggle Row - EXACT Trading Page Components */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px',
+            marginBottom: '16px',
+            width: isMobile ? '100%' : 'auto'
+          }}>
+            <BuyButton 
+              onClick={() => setActiveTab('buy')}
+              disabled={activeTab !== 'buy'}
+              label="BUY"
+              isMobile={isMobile}
+            />
+            <SellButton 
+              onClick={() => setActiveTab('sell')}
+              disabled={activeTab !== 'sell'}
+              label="SELL"
+              isMobile={isMobile}
+            />
+          </div>
 
-            {/* BUY/SELL Toggle - EXACT Trading Page Components */}
-            <TradingButtonsContainer isMobile={isMobile}>
-              <BuyButton 
-                onClick={() => setActiveTab('buy')}
-                disabled={activeTab !== 'buy'}
-                label="BUY"
-                isMobile={isMobile}
-              />
-              <SellButton 
-                onClick={() => setActiveTab('sell')}
-                disabled={activeTab !== 'sell'}
-                label="SELL"
-                isMobile={isMobile}
-              />
-            </TradingButtonsContainer>
-
-            {/* Divider - hide on mobile */}
-            {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />}
-
-            {/* PREMIUM BECOME A SELLER CTA */}
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate('/p2p/merchant');
-              }}
-              style={{
+          {/* Helper text for BUY/SELL */}
                 padding: isMobile ? '10px 16px' : '12px 24px',
                 background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
                 border: 'none',
