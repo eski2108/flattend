@@ -2027,8 +2027,12 @@ function P2PMarketplace() {
               )}
             </div>
 
-            {/* Seller Found - SPEC: pill, rgba(0,245,196,0.12), animated chevron */}
-            {bestOffer && bestQuote && (
+            {/* =====================================================
+                SELLER FOUND BANNER - UNIFIED STATE MACHINE
+                RULE: Only show when tradeState.matched === true AND tradeState.matchedOfferId exists
+                This prevents the "Seller found + 0 offers" bug
+            ===================================================== */}
+            {tradeState.status === 'ready' && tradeState.matched && tradeState.matchedOfferId && (
               <div style={{
                 padding: '10px 14px',
                 background: 'rgba(0, 245, 196, 0.12)',
@@ -2042,7 +2046,12 @@ function P2PMarketplace() {
                 alignItems: 'center',
                 justifyContent: 'space-between'
               }}>
-                <span>✓ Seller found · Ready to start trade</span>
+                <div>
+                  <span>✓ Seller found · Ready to start trade</span>
+                  <div style={{ fontSize: '10px', color: 'rgba(0, 245, 196, 0.7)', marginTop: '2px' }}>
+                    {tradeState.matchedSellerName || 'Verified Seller'} • Offer: {tradeState.matchedOfferId?.substring(0, 8)}...
+                  </div>
+                </div>
                 <span style={{ 
                   animation: 'bounceDown 1.5s infinite',
                   fontSize: '16px'
@@ -2050,60 +2059,80 @@ function P2PMarketplace() {
               </div>
             )}
 
-            {/* PRIMARY CTA - SPEC: 58px, 16px, 700, gradient #00F5C4→#00C2A0, glow */}
+            {/* =====================================================
+                PRIMARY CTA BUTTON - UNIFIED STATE MACHINE
+                RULES:
+                - Disabled when: loading OR no match OR status !== 'ready'
+                - Label changes based on status:
+                  - loading: "Finding seller..."
+                  - no_offers/error: "No offers available"  
+                  - ready: "Buy/Sell {crypto}"
+                - Only clickable when matchedOfferId exists
+            ===================================================== */}
             <button
               onClick={() => {
-                if (bestOffer && bestQuote) {
+                // STRICT CHECK: Only proceed if we have a matched offer
+                if (tradeState.matched && tradeState.matchedOfferId && bestOffer && bestQuote) {
                   setSelectedOffer(bestOffer);
                   setShowConfirmModal(true);
                 }
               }}
-              disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
+              disabled={
+                tradeState.status === 'loading' || 
+                tradeState.status === 'no_offers' || 
+                tradeState.status === 'error' ||
+                !tradeState.matched || 
+                !tradeState.matchedOfferId ||
+                !fiatAmount || 
+                parseFloat(fiatAmount) <= 0
+              }
               style={{
                 width: '100%',
                 height: '58px',
-                background: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                background: (tradeState.status !== 'ready' || !tradeState.matched || !fiatAmount || parseFloat(fiatAmount) <= 0)
                   ? 'rgba(255,255,255,0.08)'
                   : activeTab === 'buy'
                     ? 'linear-gradient(135deg, #00F5C4 0%, #00C2A0 100%)'
                     : 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)',
                 border: 'none',
                 borderRadius: '16px',
-                color: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                color: (tradeState.status !== 'ready' || !tradeState.matched || !fiatAmount || parseFloat(fiatAmount) <= 0)
                   ? 'rgba(255,255,255,0.35)'
                   : '#0B1F14',
                 fontSize: '16px',
                 fontWeight: '700',
                 letterSpacing: '0.3px',
-                cursor: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0) 
+                cursor: (tradeState.status !== 'ready' || !tradeState.matched || !fiatAmount || parseFloat(fiatAmount) <= 0) 
                   ? 'not-allowed' 
                   : 'pointer',
-                boxShadow: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                boxShadow: (tradeState.status !== 'ready' || !tradeState.matched || !fiatAmount || parseFloat(fiatAmount) <= 0)
                   ? 'none'
                   : '0 0 14px rgba(0, 245, 196, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35)',
-                filter: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                filter: (tradeState.status !== 'ready' || !tradeState.matched || !fiatAmount || parseFloat(fiatAmount) <= 0)
                   ? 'none'
                   : 'brightness(1.15)',
                 transition: 'all 180ms ease'
               }}
               onMouseEnter={(e) => {
-                if (bestOffer && !loadingBestOffer) {
+                if (tradeState.status === 'ready' && tradeState.matched) {
                   e.currentTarget.style.filter = 'brightness(1.23)';
                   e.currentTarget.style.transform = 'scale(0.98)';
                 }
               }}
               onMouseLeave={(e) => {
-                if (bestOffer && !loadingBestOffer) {
+                if (tradeState.status === 'ready' && tradeState.matched) {
                   e.currentTarget.style.filter = 'brightness(1.15)';
                   e.currentTarget.style.transform = 'scale(1)';
                 }
               }}
             >
-              {loadingBestOffer ? 'Finding best offer...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+              {tradeState.status === 'loading' ? 'Finding seller...' 
+                : tradeState.status === 'no_offers' || tradeState.status === 'error' ? 'No offers available'
+                : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
             </button>
             
             {/* Micro-copy - SPEC: 11px, 70% opacity, margin-top 6px */}
-            {bestOffer && bestQuote && (
+            {tradeState.status === 'ready' && tradeState.matched && tradeState.matchedOfferId && (
               <div style={{
                 textAlign: 'center',
                 fontSize: '11px',
