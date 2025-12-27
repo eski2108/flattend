@@ -3014,16 +3014,15 @@ async def get_best_p2p_offer(
         # If user wants to BUY crypto, we need SELL offers (sellers)
         ad_type = "sell" if side.lower() == "buy" else "buy"
         
-        # Query for active offers
-        query = {
-            "status": "active",
-            "ad_type": ad_type,
-            "crypto_currency": asset.upper()
-        }
-        
-        # Get all matching offers from p2p_offers collection
+        # Query for active offers - check both uppercase and lowercase ad_type
         offers = []
-        async for offer in db.p2p_offers.find(query):
+        
+        # Try p2p_offers collection
+        async for offer in db.p2p_offers.find({"status": "active", "crypto_currency": asset.upper()}):
+            offer_ad_type = str(offer.get("ad_type", "")).lower()
+            if offer_ad_type != ad_type:
+                continue
+                
             offer_price = float(offer.get("price_per_unit") or offer.get("price") or 0)
             if offer_price <= 0:
                 continue
