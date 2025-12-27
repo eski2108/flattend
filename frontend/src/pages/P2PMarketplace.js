@@ -2493,23 +2493,21 @@ function P2PMarketplace() {
           <div style={{ 
             position: 'relative', 
             zIndex: 0, 
-            marginTop: isMobile ? '24px' : '16px',
-            paddingTop: isMobile ? '16px' : '0',
-            borderTop: isMobile ? '1px solid rgba(255, 255, 255, 0.08)' : 'none'
+            marginTop: isMobile ? '24px' : '16px'
           }}>
             <div style={{ 
-              marginBottom: '12px', 
-              fontSize: '12px',
+              marginBottom: '16px', 
+              fontSize: '13px',
               fontWeight: '600',
-              color: 'rgba(255, 255, 255, 0.5)',
-              padding: '0',
+              color: 'rgba(255, 255, 255, 0.7)',
+              padding: '8px 0',
               clear: 'both'
             }}
             id="offers-section"
             >
-              💡 Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
+              Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
               {fiatAmount && activeTab === 'buy' && (
-                <span style={{ color: '#22C55E', marginLeft: '6px' }}>
+                <span style={{ color: '#22C55E', marginLeft: '8px' }}>
                   matching {getFiatSymbol(selectedInputFiat)}{fiatAmount}
                 </span>
               )}
