@@ -1581,12 +1581,13 @@ function P2PMarketplace() {
           {/* NO Pay/Receive toggle - only BUY/SELL determines which field is editable */}
           <div style={{
             width: '100%',
-            padding: '20px',
+            padding: isMobile ? '16px' : '20px',
             background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.98) 0%, rgba(10, 22, 40, 0.98) 100%)',
             border: '1px solid rgba(0, 198, 255, 0.25)',
             borderRadius: '14px',
             marginBottom: '24px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            boxSizing: 'border-box'
           }}>
             
             {/* Row 1: "You pay" - Fiat Input (editable in BUY mode) */}
@@ -1602,7 +1603,11 @@ function P2PMarketplace() {
               }}>
                 You pay
               </label>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: isMobile ? '8px' : '12px' 
+              }}>
                 <div style={{ flex: 1, position: 'relative' }}>
                   <input
                     type="number"
@@ -1632,7 +1637,8 @@ function P2PMarketplace() {
                   value={selectedInputFiat}
                   onChange={(e) => setSelectedInputFiat(e.target.value)}
                   style={{
-                    width: '100px',
+                    width: isMobile ? '100%' : '110px',
+                    minWidth: isMobile ? 'auto' : '110px',
                     height: '52px',
                     padding: '0 12px',
                     background: 'rgba(0, 0, 0, 0.4)',
@@ -1643,9 +1649,10 @@ function P2PMarketplace() {
                     fontWeight: '600',
                     cursor: 'pointer',
                     appearance: 'none',
+                    boxSizing: 'border-box',
                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 10px center'
+                    backgroundPosition: 'right 12px center'
                   }}
                 >
                   {fiatCurrencies.map(curr => (
