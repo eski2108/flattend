@@ -1678,12 +1678,12 @@ function P2PMarketplace() {
           {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE - COMPACT) ========== */}
           <div style={{
             width: '100%',
-            padding: isMobile ? '12px' : '16px',
+            padding: isMobile ? '14px' : '18px',
             background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(10, 22, 40, 0.95) 100%)',
-            border: '1px solid rgba(0, 198, 255, 0.2)',
-            borderRadius: '12px',
-            marginBottom: isMobile ? '20px' : '24px',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(0, 198, 255, 0.25)',
+            borderRadius: isMobile ? '14px' : '16px',
+            marginBottom: '0',
+            boxShadow: '0 4px 24px rgba(0, 0, 0, 0.35)',
             boxSizing: 'border-box',
             position: 'relative',
             zIndex: 1,
