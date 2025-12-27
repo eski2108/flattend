@@ -624,17 +624,53 @@ function P2PMarketplace() {
   const [loadingBestOffer, setLoadingBestOffer] = useState(false);
   const [matchError, setMatchError] = useState(null);
   
+  // =====================================================
+  // HARD RESET: Clear matched state immediately on input change
+  // This prevents "Seller found" with "0 offers" bug
+  // =====================================================
+  const resetTradeState = (reason = 'input_change') => {
+    console.log(`🔄 TRADE STATE RESET: ${reason}`);
+    setTradeState({
+      queryKey: '',
+      offersCount: 0,
+      matched: false,
+      matchedOfferId: null,
+      matchedSellerName: null,
+      status: 'idle'
+    });
+    setBestOffer(null);
+    setBestQuote(null);
+    setSelectedOffer(null);
+    setCryptoAmount('');
+    setMatchError(null);
+    setAmountError('');
+  };
+  
   // Fetch best match from backend (POST /api/p2p/match/best)
+  // Now with unified state machine and queryKey protection
   const fetchBestMatch = async (amountFiat, side = 'buy', asset = 'BTC', fiat = 'GBP', paymentMethod = null) => {
+    // Generate query key for this request
+    const thisQueryKey = `${asset}_${fiat}_${amountFiat}_${side}_${paymentMethod || ''}`;
+    latestQueryKeyRef.current = thisQueryKey;
+    
     if (!amountFiat || parseFloat(amountFiat) <= 0) {
-      setBestOffer(null);
-      setBestQuote(null);
-      setCryptoAmount('');
-      setMatchError(null);
+      resetTradeState('empty_amount');
       return;
     }
     
+    // HARD RESET + SET LOADING
     setLoadingBestOffer(true);
+    setTradeState(prev => ({
+      ...prev,
+      queryKey: thisQueryKey,
+      matched: false,
+      matchedOfferId: null,
+      matchedSellerName: null,
+      status: 'loading'
+    }));
+    setBestOffer(null);
+    setBestQuote(null);
+    setSelectedOffer(null);
     setMatchError(null);
     
     try {
@@ -659,6 +695,12 @@ function P2PMarketplace() {
       );
       const data = await response.json();
       
+      // STALE RESPONSE CHECK: Ignore if queryKey doesn't match latest
+      if (latestQueryKeyRef.current !== thisQueryKey) {
+        console.log('⚠️ Ignoring stale response for queryKey:', thisQueryKey);
+        return;
+      }
+      
       if (data.success && data.offer && data.quote) {
         // Map offer fields for frontend compatibility
         const mappedOffer = {
@@ -669,23 +711,63 @@ function P2PMarketplace() {
           min_order_limit: data.offer.min_limit / data.offer.price,
           max_order_limit: data.offer.max_limit / data.offer.price
         };
+        
+        // UPDATE UNIFIED STATE: ONLY set matched=true when we have a real offer_id
+        setTradeState({
+          queryKey: thisQueryKey,
+          offersCount: 1, // We got a match
+          matched: true,
+          matchedOfferId: data.offer.offer_id,
+          matchedSellerName: data.offer.seller_name || 'Unknown Seller',
+          status: 'ready'
+        });
+        
         setBestOffer(mappedOffer);
         setBestQuote(data.quote);
         setSelectedOffer(mappedOffer);
         setCryptoAmount(data.quote.amount_crypto.toString());
         setAmountError('');
+        setMatchError(null);
+        
+        console.log('✅ TRADE STATE READY:', { offer_id: data.offer.offer_id, seller: data.offer.seller_name });
       } else {
+        // NO MATCH: Clear everything and set status to no_offers
+        setTradeState({
+          queryKey: thisQueryKey,
+          offersCount: 0,
+          matched: false,
+          matchedOfferId: null,
+          matchedSellerName: null,
+          status: 'no_offers'
+        });
+        
         setBestOffer(null);
         setBestQuote(null);
         setSelectedOffer(null);
         setCryptoAmount('');
         setMatchError(data.reason || 'No offers available');
+        
         if (data.code === 'NO_MATCH') {
           setAmountError(`No offers for ${fiat} ${amountFiat}. Try a different amount.`);
         }
+        
+        console.log('❌ NO MATCH:', { reason: data.reason, code: data.code });
       }
     } catch (error) {
       console.error('Error fetching best match:', error);
+      
+      // Ignore if stale
+      if (latestQueryKeyRef.current !== thisQueryKey) return;
+      
+      setTradeState({
+        queryKey: thisQueryKey,
+        offersCount: 0,
+        matched: false,
+        matchedOfferId: null,
+        matchedSellerName: null,
+        status: 'error'
+      });
+      
       setBestOffer(null);
       setBestQuote(null);
       setMatchError('Error finding offers');
