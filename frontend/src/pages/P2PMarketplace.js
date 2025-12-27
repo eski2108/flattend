@@ -1541,83 +1541,21 @@ function P2PMarketplace() {
             {/* Divider - hide on mobile */}
             {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0, marginLeft: 'auto' }} />}
 
-            {/* Premium BUY/SELL Toggle - Matches Trading Page Style */}
-            <div style={{ 
-              display: 'flex', 
-              gap: '10px', 
-              flexShrink: 0,
-              width: isMobile ? '100%' : 'auto',
-              marginTop: isMobile ? '8px' : '0'
-            }}>
-              <button
+            {/* BUY/SELL Toggle - EXACT Trading Page Components */}
+            <TradingButtonsContainer isMobile={isMobile}>
+              <BuyButton 
                 onClick={() => setActiveTab('buy')}
-                style={{
-                  padding: isMobile ? '12px 0' : '10px 20px',
-                  flex: isMobile ? 1 : 'none',
-                  height: '48px',
-                  background: activeTab === 'buy' 
-                    ? 'linear-gradient(180deg, rgba(32, 227, 162, 0.08) 0%, rgba(32, 227, 162, 0.25) 100%)' 
-                    : 'rgba(255, 255, 255, 0.03)',
-                  border: `1px solid ${activeTab === 'buy' ? 'rgba(32, 227, 162, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                  borderRadius: '12px',
-                  color: activeTab === 'buy' ? '#20E3A2' : 'rgba(255, 255, 255, 0.6)',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  boxShadow: activeTab === 'buy' ? '0 0 20px rgba(32, 227, 162, 0.25), inset 0 0 15px rgba(32, 227, 162, 0.08)' : 'none',
-                  transition: 'all 150ms ease',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-              >
-                {activeTab === 'buy' && <span style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '15%',
-                  right: '15%',
-                  height: '2px',
-                  background: '#20E3A2',
-                  boxShadow: '0 0 10px #20E3A2, 0 0 20px #20E3A2',
-                  filter: 'blur(1px)'
-                }} />}
-                BUY
-              </button>
-
-              <button
+                disabled={activeTab !== 'buy'}
+                label="BUY"
+                isMobile={isMobile}
+              />
+              <SellButton 
                 onClick={() => setActiveTab('sell')}
-                style={{
-                  padding: isMobile ? '12px 0' : '10px 20px',
-                  flex: isMobile ? 1 : 'none',
-                  height: '48px',
-                  background: activeTab === 'sell' 
-                    ? 'linear-gradient(180deg, rgba(255, 50, 80, 0.08) 0%, rgba(255, 50, 80, 0.25) 100%)' 
-                    : 'rgba(255, 255, 255, 0.03)',
-                  border: `1px solid ${activeTab === 'sell' ? 'rgba(255, 50, 80, 0.4)' : 'rgba(255, 255, 255, 0.1)'}`,
-                  borderRadius: '12px',
-                  color: activeTab === 'sell' ? '#ff3250' : 'rgba(255, 255, 255, 0.6)',
-                  fontWeight: '600',
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  flexShrink: 0,
-                  boxShadow: activeTab === 'sell' ? '0 0 20px rgba(255, 50, 80, 0.25), inset 0 0 15px rgba(255, 50, 80, 0.08)' : 'none',
-                  transition: 'all 150ms ease',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-              >
-                {activeTab === 'sell' && <span style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '15%',
-                  right: '15%',
-                  height: '2px',
-                  background: '#ff3250',
-                  boxShadow: '0 0 10px #ff3250, 0 0 20px #ff3250',
-                  filter: 'blur(1px)'
-                }} />}
-                SELL
-              </button>
-            </div>
+                disabled={activeTab !== 'sell'}
+                label="SELL"
+                isMobile={isMobile}
+              />
+            </TradingButtonsContainer>
 
             {/* Divider - hide on mobile */}
             {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />}
