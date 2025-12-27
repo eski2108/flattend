@@ -518,11 +518,43 @@ function P2PMarketplace() {
     }
   };
 
-  // Open buy modal when clicking "Buy BTC" on an offer
+  // FILTER OFFERS BY AMOUNT (Binance P2P flow)
+  // Filters seller list based on entered fiat amount
+  const getFilteredOffers = () => {
+    if (!fiatAmount || activeTab !== 'buy') {
+      return offers;
+    }
+    
+    const enteredFiat = parseFloat(fiatAmount);
+    if (isNaN(enteredFiat) || enteredFiat <= 0) {
+      return offers;
+    }
+    
+    return offers.filter(offer => {
+      const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
+      const availableAmount = parseFloat(offer.crypto_amount || offer.available_amount || 0);
+      const minLimit = parseFloat(offer.min_order_limit || offer.min_amount || 0);
+      const maxLimit = parseFloat(offer.max_order_limit || offer.max_amount || availableAmount);
+      
+      if (offerPrice <= 0) return false;
+      
+      // Convert entered fiat to crypto equivalent
+      const cryptoEquivalent = enteredFiat / offerPrice;
+      
+      // Check if within offer limits
+      if (minLimit > 0 && cryptoEquivalent < minLimit) return false;
+      if (maxLimit > 0 && cryptoEquivalent > maxLimit) return false;
+      if (cryptoEquivalent > availableAmount) return false;
+      
+      return true;
+    });
+  };
+  
+  const filteredOffers = getFilteredOffers();
+
   // =====================================================
-  // AMOUNT WIDGET LOGIC (FINAL SPEC - NO PAY/RECEIVE TOGGLE)
-  // BUY mode: User edits fiat (You pay), crypto auto-calculates
-  // SELL mode: User edits crypto, fiat auto-calculates
+  // AMOUNT WIDGET LOGIC (BINANCE P2P SPEC)
+  // Top box = FILTER ONLY. BTC calculated only on Buy BTC click.
   // =====================================================
   
   // Get decimal places based on crypto (NO EXCEPTIONS)
