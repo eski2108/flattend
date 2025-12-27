@@ -701,7 +701,8 @@ function P2PMarketplace() {
         return;
       }
       
-      if (data.success && data.offer && data.quote) {
+      // USE BACKEND'S UNIFIED RESPONSE FIELDS
+      if (data.success && data.matched && data.offer_id && data.offer && data.quote) {
         // Map offer fields for frontend compatibility
         const mappedOffer = {
           ...data.offer,
@@ -712,12 +713,12 @@ function P2PMarketplace() {
           max_order_limit: data.offer.max_limit / data.offer.price
         };
         
-        // UPDATE UNIFIED STATE: ONLY set matched=true when we have a real offer_id
+        // UPDATE UNIFIED STATE using backend's authoritative fields
         setTradeState({
           queryKey: thisQueryKey,
-          offersCount: 1, // We got a match
-          matched: true,
-          matchedOfferId: data.offer.offer_id,
+          offersCount: data.offers_count || 1,
+          matched: data.matched,  // Backend says matched
+          matchedOfferId: data.offer_id,  // Backend provides the offer_id
           matchedSellerName: data.offer.seller_name || 'Unknown Seller',
           status: 'ready'
         });
@@ -729,14 +730,19 @@ function P2PMarketplace() {
         setAmountError('');
         setMatchError(null);
         
-        console.log('✅ TRADE STATE READY:', { offer_id: data.offer.offer_id, seller: data.offer.seller_name });
+        console.log('✅ TRADE STATE READY:', { 
+          offer_id: data.offer_id, 
+          seller: data.offer.seller_name,
+          offers_count: data.offers_count,
+          matched: data.matched
+        });
       } else {
-        // NO MATCH: Clear everything and set status to no_offers
+        // NO MATCH: Use backend's response - matched=false, offer_id=null
         setTradeState({
           queryKey: thisQueryKey,
-          offersCount: 0,
-          matched: false,
-          matchedOfferId: null,
+          offersCount: data.offers_count || 0,
+          matched: data.matched || false,
+          matchedOfferId: data.offer_id || null,
           matchedSellerName: null,
           status: 'no_offers'
         });
@@ -751,7 +757,12 @@ function P2PMarketplace() {
           setAmountError(`No offers for ${fiat} ${amountFiat}. Try a different amount.`);
         }
         
-        console.log('❌ NO MATCH:', { reason: data.reason, code: data.code });
+        console.log('❌ NO MATCH:', { 
+          reason: data.reason, 
+          code: data.code,
+          offers_count: data.offers_count,
+          matched: data.matched
+        });
       }
     } catch (error) {
       console.error('Error fetching best match:', error);
