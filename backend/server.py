@@ -3122,6 +3122,9 @@ async def p2p_match_best(request: P2PMatchRequest):
                 "success": False,
                 "code": "NO_MATCH",
                 "reason": "No offer can fulfil amount/payment/limits",
+                "offers_count": 0,
+                "matched": False,
+                "offer_id": None,
                 "suggestions": ["CHANGE_AMOUNT", "CHANGE_PAYMENT_METHOD", "VIEW_ALL_OFFERS"]
             }
         
@@ -3138,6 +3141,9 @@ async def p2p_match_best(request: P2PMatchRequest):
         return {
             "success": True,
             "mode": "best_match",
+            "offers_count": len(matching_offers),
+            "matched": True,
+            "offer_id": best_offer["offer_id"],
             "offer": {
                 "offer_id": best_offer["offer_id"],
                 "seller_id": best_offer["seller_id"],
