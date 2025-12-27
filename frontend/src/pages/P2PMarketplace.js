@@ -1168,15 +1168,17 @@ function P2PMarketplace() {
             display: 'flex',
             alignItems: 'center',
             gap: isMobile ? '8px' : '12px',
-            padding: isMobile ? '16px' : '24px',
+            padding: isMobile ? '12px' : '24px',
             background: 'rgba(2, 6, 24, 0.4)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: '1px solid rgba(0, 240, 255, 0.2)',
-            borderRadius: '20px',
+            borderRadius: isMobile ? '14px' : '20px',
             marginBottom: '24px',
             flexWrap: 'wrap',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 240, 255, 0.1)'
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 40px rgba(0, 240, 255, 0.1)',
+            boxSizing: 'border-box',
+            width: '100%'
           }}>
             {/* Premium Crypto Selector Pill */}
             <div style={{ position: 'relative', flexShrink: 0 }}>
