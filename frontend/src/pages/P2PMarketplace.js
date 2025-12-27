@@ -16,7 +16,7 @@ function P2PMarketplace() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   
-  // Add CSS animation for boosted badge
+  // Add CSS animations
   React.useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -28,6 +28,14 @@ function P2PMarketplace() {
         50% {
           opacity: 0.8;
           transform: scale(1.05);
+        }
+      }
+      @keyframes bounceDown {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(4px);
         }
       }
     `;
