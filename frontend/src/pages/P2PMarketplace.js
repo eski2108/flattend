@@ -1536,11 +1536,11 @@ function P2PMarketplace() {
                 flex: 1,
                 height: '48px',
                 background: activeTab === 'sell' 
-                  ? 'linear-gradient(180deg, rgba(255, 50, 80, 0.15) 0%, rgba(255, 50, 80, 0.35) 100%)'
-                  : 'rgba(255, 50, 80, 0.08)',
+                  ? 'linear-gradient(180deg, rgba(255, 50, 80, 0.25) 0%, rgba(255, 50, 80, 0.45) 100%)'
+                  : 'rgba(255, 50, 80, 0.12)',
                 border: activeTab === 'sell' 
-                  ? '1px solid rgba(255, 50, 80, 0.5)' 
-                  : '1px solid rgba(255, 50, 80, 0.2)',
+                  ? '1px solid rgba(255, 50, 80, 0.6)' 
+                  : '1px solid rgba(255, 50, 80, 0.25)',
                 borderRadius: '12px',
                 color: '#ff3250',
                 fontWeight: '600',
@@ -1549,7 +1549,7 @@ function P2PMarketplace() {
                 boxShadow: activeTab === 'sell' 
                   ? 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3)' 
                   : 'none',
-                opacity: activeTab === 'sell' ? 1 : 0.7,
+                opacity: activeTab === 'sell' ? 1 : 0.8,
                 transition: 'all 150ms ease'
               }}
               onMouseDown={(e) => { if (activeTab === 'sell') e.currentTarget.style.transform = 'scale(0.98)'; }}
