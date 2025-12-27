@@ -41521,9 +41521,9 @@ async def place_spot_order(order: SpotOrderRequest):
         # Get market price in USD
         market_price_usd = 0
         try:
-            # Call the prices/live endpoint internally
-            price_data = await get_live_prices()
-            prices = price_data.get('prices', {})
+            # Use the live prices endpoint function directly
+            price_response = await get_live_prices_endpoint()
+            prices = price_response.get('prices', {})
             asset_data = prices.get(order.base_asset) or prices.get(order.base_asset.upper())
             if asset_data:
                 market_price_usd = asset_data.get('price_usd', 0)
