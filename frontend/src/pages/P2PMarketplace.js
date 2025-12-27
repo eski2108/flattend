@@ -2822,6 +2822,7 @@ function P2PMarketplace() {
               </div>
             )}
           </div>
+        </div>
         {/* END Offers List */}
 
         {/* Seller Profile Modal */}
