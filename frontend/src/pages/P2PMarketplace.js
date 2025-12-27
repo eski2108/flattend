@@ -1527,8 +1527,8 @@ function P2PMarketplace() {
               </button>
             </div>
 
-            {/* Divider */}
-            <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />
+            {/* Divider - hide on mobile */}
+            {!isMobile && <div style={{ width: '1px', height: '24px', background: 'rgba(255, 255, 255, 0.1)', flexShrink: 0 }} />}
 
             {/* PREMIUM BECOME A SELLER CTA */}
             <button
@@ -1538,15 +1538,15 @@ function P2PMarketplace() {
                 navigate('/p2p/merchant');
               }}
               style={{
-                padding: '12px 24px',
+                padding: isMobile ? '10px 16px' : '12px 24px',
                 background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
                 border: 'none',
                 borderRadius: '14px',
                 color: '#fff',
                 fontWeight: '700',
-                fontSize: '14px',
+                fontSize: isMobile ? '12px' : '14px',
                 cursor: 'pointer',
-                display: 'flex',
+                display: isMobile ? 'none' : 'flex', // Hide on mobile, show in header instead
                 alignItems: 'center',
                 gap: '8px',
                 flexShrink: 0,
