@@ -614,7 +614,8 @@ function P2PMarketplace() {
     return { valid: true, error: '' };
   };
 
-  // Open confirm trade modal when clicking Buy on an offer
+  // Open confirm trade modal when clicking Buy BTC on an offer
+  // THIS IS THE ONLY PLACE WHERE BTC IS CALCULATED
   const openConfirmModal = (offer) => {
     const userData = localStorage.getItem('cryptobank_user');
     if (!userData) {
@@ -630,23 +631,19 @@ function P2PMarketplace() {
       return;
     }
     
-    // Set the selected offer first (needed for conversion calculation)
+    // Set the selected offer
     setSelectedOffer(offer);
     
-    // If user has entered amount, recalculate with this offer's price
+    const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
     const isBuyMode = activeTab === 'buy';
-    if (isBuyMode && fiatAmount) {
-      const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
-      if (offerPrice > 0) {
-        const crypto = parseFloat(fiatAmount) / offerPrice;
-        setCryptoAmount(crypto.toFixed(getCryptoDecimals(selectedCrypto)));
-      }
-    } else if (!isBuyMode && cryptoAmount) {
-      const offerPrice = parseFloat(offer.price_per_unit || offer.price || 0);
-      if (offerPrice > 0) {
-        const fiat = parseFloat(cryptoAmount) * offerPrice;
-        setFiatAmount(fiat.toFixed(2));
-      }
+    
+    // CALCULATE BTC NOW (only at this moment)
+    if (isBuyMode && fiatAmount && offerPrice > 0) {
+      const crypto = parseFloat(fiatAmount) / offerPrice;
+      setCryptoAmount(crypto.toFixed(getCryptoDecimals(selectedCrypto)));
+    } else if (!isBuyMode && cryptoAmount && offerPrice > 0) {
+      const fiat = parseFloat(cryptoAmount) * offerPrice;
+      setFiatAmount(fiat.toFixed(2));
     }
     
     // Validate amount if entered
