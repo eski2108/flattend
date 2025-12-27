@@ -2381,12 +2381,12 @@ function P2PMarketplace() {
           </div>
         )}
 
-          {/* Offers List - ONLY RENDER WHEN showAllOffers IS TRUE (BINANCE SPEC) */}
-          {showAllOffers && (
+          {/* Offers List */}
           <div style={{ 
             position: 'relative', 
             zIndex: 0, 
-            marginTop: isMobile ? '24px' : '16px'
+            marginTop: isMobile ? '24px' : '16px',
+            display: showAllOffers ? 'block' : 'none'
           }}>
             <div style={{ 
               display: 'flex',
