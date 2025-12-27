@@ -1948,56 +1948,76 @@ function P2PMarketplace() {
                 <div style={{ 
                   fontSize: '15px', 
                   fontWeight: '700', 
-                  color: (activeTab === 'buy' ? cryptoAmount : fiatAmount) ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)'
+                  color: bestQuote ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)'
                 }}>
                   {loadingBestOffer ? (
                     'Finding best offer...'
-                  ) : activeTab === 'buy' 
-                    ? (cryptoAmount ? `${cryptoAmount} ${selectedCrypto}` : 'Enter amount above')
-                    : (fiatAmount ? `${getFiatSymbol(selectedInputFiat)}${fiatAmount}` : 'Enter amount above')
-                  }
+                  ) : bestQuote ? (
+                    `${bestQuote.amount_crypto} ${bestQuote.asset}`
+                  ) : matchError ? (
+                    <span style={{ color: '#EF4444', fontSize: '13px' }}>{matchError}</span>
+                  ) : (
+                    'Enter amount above'
+                  )}
                 </div>
               </div>
-              {bestOffer && (
+              {bestQuote && (
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)' }}>Best Rate</div>
                   <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600' }}>
-                    {getFiatSymbol(selectedInputFiat)}{parseFloat(bestOffer.price || 0).toLocaleString()}
+                    {getFiatSymbol(selectedInputFiat)}{bestQuote.rate.toLocaleString()}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* CONTINUE BUTTON - Opens confirm modal directly (Binance-style) */}
-            {bestOffer && fiatAmount && parseFloat(fiatAmount) > 0 && (
-              <button
-                onClick={() => {
-                  if (bestOffer) {
-                    setSelectedOffer(bestOffer);
-                    setShowConfirmModal(true);
-                  }
-                }}
-                disabled={loadingBestOffer || !bestOffer}
-                style={{
-                  width: '100%',
-                  height: '44px',
-                  background: loadingBestOffer ? 'rgba(34, 197, 94, 0.5)' : 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: '#fff',
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  cursor: loadingBestOffer ? 'not-allowed' : 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  marginBottom: '8px'
-                }}
-              >
-                {loadingBestOffer ? 'Finding best offer...' : `Buy ${selectedCrypto} @ Best Price`}
-              </button>
+            {/* Best Match Info */}
+            {bestOffer && bestQuote && (
+              <div style={{
+                padding: '8px 12px',
+                background: 'rgba(34, 197, 94, 0.1)',
+                borderRadius: '8px',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                marginBottom: '10px',
+                fontSize: '12px',
+                color: '#22C55E'
+              }}>
+                ✓ Matched: <strong>{bestOffer.seller_name}</strong> • Rate {getFiatSymbol(selectedInputFiat)}{bestQuote.rate.toLocaleString()} • {bestOffer.payment_methods?.[0] || 'Bank Transfer'}
+              </div>
             )}
+
+            {/* MAIN CTA BUTTON - "Buy BTC" / "Sell BTC" */}
+            <button
+              onClick={() => {
+                if (bestOffer && bestQuote) {
+                  setSelectedOffer(bestOffer);
+                  setShowConfirmModal(true);
+                }
+              }}
+              disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
+              style={{
+                width: '100%',
+                height: '48px',
+                background: (!bestOffer || loadingBestOffer) 
+                  ? 'rgba(255, 255, 255, 0.1)' 
+                  : activeTab === 'buy'
+                    ? 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)'
+                    : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                border: 'none',
+                borderRadius: '10px',
+                color: (!bestOffer || loadingBestOffer) ? 'rgba(255, 255, 255, 0.4)' : '#fff',
+                fontSize: '16px',
+                fontWeight: '700',
+                cursor: (!bestOffer || loadingBestOffer) ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginBottom: '8px'
+              }}
+            >
+              {loadingBestOffer ? 'Finding best offer...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+            </button>
 
             {/* View all offers link */}
             <div style={{ 
@@ -2007,10 +2027,10 @@ function P2PMarketplace() {
             }}>
               {filteredOffers.length > 0 && (
                 <span>
-                  Or <a href="#offers" style={{ color: '#00C6FF', textDecoration: 'none' }} onClick={(e) => {
+                  <a href="#offers" style={{ color: '#00C6FF', textDecoration: 'none' }} onClick={(e) => {
                     e.preventDefault();
                     document.getElementById('offers-section')?.scrollIntoView({ behavior: 'smooth' });
-                  }}>view all {filteredOffers.length} offers</a>
+                  }}>View all {filteredOffers.length} offers</a>
                 </span>
               )}
             </div>
