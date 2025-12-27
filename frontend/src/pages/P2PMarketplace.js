@@ -1990,7 +1990,7 @@ function P2PMarketplace() {
               </div>
             )}
 
-            {/* MAIN CTA BUTTON - "Buy BTC" / "Sell BTC" */}
+            {/* MAIN CTA BUTTON - "Buy BTC" / "Sell BTC" - Matches Trading Page Style */}
             <button
               onClick={() => {
                 if (bestOffer && bestQuote) {
@@ -2003,23 +2003,52 @@ function P2PMarketplace() {
                 width: '100%',
                 height: '48px',
                 background: (!bestOffer || loadingBestOffer) 
-                  ? 'rgba(255, 255, 255, 0.1)' 
+                  ? 'rgba(255, 255, 255, 0.05)' 
                   : activeTab === 'buy'
-                    ? 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)'
-                    : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-                border: 'none',
-                borderRadius: '10px',
-                color: (!bestOffer || loadingBestOffer) ? 'rgba(255, 255, 255, 0.4)' : '#fff',
-                fontSize: '16px',
-                fontWeight: '700',
+                    ? 'linear-gradient(180deg, rgba(32, 227, 162, 0.08) 0%, rgba(32, 227, 162, 0.25) 100%)'
+                    : 'linear-gradient(180deg, rgba(255, 50, 80, 0.08) 0%, rgba(255, 50, 80, 0.25) 100%)',
+                border: (!bestOffer || loadingBestOffer) 
+                  ? '1px solid rgba(255, 255, 255, 0.1)'
+                  : activeTab === 'buy'
+                    ? '1px solid rgba(32, 227, 162, 0.4)'
+                    : '1px solid rgba(255, 50, 80, 0.4)',
+                borderRadius: '12px',
+                color: (!bestOffer || loadingBestOffer) 
+                  ? 'rgba(255, 255, 255, 0.4)' 
+                  : activeTab === 'buy' ? '#20E3A2' : '#ff3250',
+                fontSize: '14px',
+                fontWeight: '600',
                 cursor: (!bestOffer || loadingBestOffer) ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                marginBottom: '8px'
+                marginBottom: '8px',
+                boxShadow: (!bestOffer || loadingBestOffer) 
+                  ? 'none' 
+                  : activeTab === 'buy'
+                    ? '0 0 20px rgba(32, 227, 162, 0.25), inset 0 0 15px rgba(32, 227, 162, 0.08)'
+                    : '0 0 20px rgba(255, 50, 80, 0.25), inset 0 0 15px rgba(255, 50, 80, 0.08)',
+                transition: 'all 150ms ease',
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
+              {/* Bottom glow bar */}
+              {bestOffer && !loadingBestOffer && (
+                <span style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '15%',
+                  right: '15%',
+                  height: '2px',
+                  background: activeTab === 'buy' ? '#20E3A2' : '#ff3250',
+                  boxShadow: activeTab === 'buy' 
+                    ? '0 0 10px #20E3A2, 0 0 20px #20E3A2'
+                    : '0 0 10px #ff3250, 0 0 20px #ff3250',
+                  filter: 'blur(1px)'
+                }} />
+              )}
               {loadingBestOffer ? 'Finding best offer...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
             </button>
 
