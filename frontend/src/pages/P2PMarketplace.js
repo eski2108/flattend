@@ -965,11 +965,12 @@ function P2PMarketplace() {
 
   return (
       <div style={{ 
-        padding: isMobile ? '16px' : '24px', 
+        padding: isMobile ? '12px' : '24px', 
         background: 'linear-gradient(135deg, #020618 0%, #071327 50%, #020618 100%)', 
         minHeight: '100vh',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        paddingBottom: isMobile ? '100px' : '24px' // Extra padding for chat bubble on mobile
       }}>
         {/* Animated orbital glow background */}
         <div style={{
