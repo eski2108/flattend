@@ -1595,259 +1595,312 @@ function P2PMarketplace() {
             }
           </div>
 
-          {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE) ========== */}
+          {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE - COMPACT) ========== */}
           <div style={{
             width: '100%',
-            padding: isMobile ? '14px' : '20px',
-            background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.98) 0%, rgba(10, 22, 40, 0.98) 100%)',
-            border: '1px solid rgba(0, 198, 255, 0.25)',
-            borderRadius: isMobile ? '12px' : '14px',
-            marginBottom: isMobile ? '16px' : '24px',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-            boxSizing: 'border-box'
+            padding: isMobile ? '12px' : '16px',
+            background: 'linear-gradient(135deg, rgba(13, 31, 45, 0.95) 0%, rgba(10, 22, 40, 0.95) 100%)',
+            border: '1px solid rgba(0, 198, 255, 0.2)',
+            borderRadius: '12px',
+            marginBottom: isMobile ? '12px' : '16px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            boxSizing: 'border-box',
+            maxHeight: isMobile ? '200px' : 'auto'
           }}>
             
-            {/* Row 1: "You pay" - Amount + Currency inline */}
-            <div style={{ marginBottom: isMobile ? '12px' : '16px' }}>
+            {/* Row 1: Amount Input with Currency Dropdown (inline) */}
+            <div style={{ marginBottom: '10px' }}>
               <label style={{
                 display: 'block',
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: isMobile ? '12px' : '13px',
+                color: 'rgba(255, 255, 255, 0.5)',
+                fontSize: '11px',
                 fontWeight: '600',
-                marginBottom: '6px',
+                marginBottom: '4px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
-                You pay
+                {activeTab === 'buy' ? 'You pay' : 'You sell'}
               </label>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center',
+                background: 'rgba(0, 0, 0, 0.3)',
+                borderRadius: '10px',
+                border: amountError ? '1px solid #EF4444' : '1px solid rgba(255, 255, 255, 0.1)',
+                overflow: 'hidden'
+              }}>
                 <input
                   type="number"
                   inputMode="decimal"
+                  pattern="[0-9]*"
                   step="0.01"
                   min="0"
-                  value={fiatAmount}
-                  onChange={(e) => handleFiatAmountChange(e.target.value)}
+                  value={activeTab === 'buy' ? fiatAmount : cryptoAmount}
+                  onChange={(e) => activeTab === 'buy' ? handleFiatAmountChange(e.target.value) : handleCryptoAmountChange(e.target.value)}
                   placeholder="Enter amount"
-                  disabled={activeTab === 'sell'}
                   style={{
                     flex: 1,
-                    height: isMobile ? '46px' : '50px',
-                    padding: '0 14px',
-                    background: activeTab === 'sell' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.4)',
-                    border: amountError ? '2px solid #EF4444' : '1px solid rgba(0, 198, 255, 0.3)',
-                    borderRadius: '12px',
-                    color: activeTab === 'sell' ? 'rgba(255, 255, 255, 0.5)' : '#fff',
-                    fontSize: isMobile ? '16px' : '18px',
-                    fontWeight: '700',
+                    height: '44px',
+                    padding: '0 12px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#fff',
+                    fontSize: '16px',
+                    fontWeight: '600',
                     outline: 'none',
-                    boxSizing: 'border-box',
-                    cursor: activeTab === 'sell' ? 'not-allowed' : 'text'
+                    boxSizing: 'border-box'
                   }}
                 />
                 <select
-                  value={selectedInputFiat}
-                  onChange={(e) => setSelectedInputFiat(e.target.value)}
+                  value={activeTab === 'buy' ? selectedInputFiat : selectedCrypto}
+                  onChange={(e) => activeTab === 'buy' ? setSelectedInputFiat(e.target.value) : setSelectedCrypto(e.target.value)}
                   style={{
-                    width: '90px',
-                    height: isMobile ? '46px' : '50px',
-                    padding: '0 10px',
-                    background: 'rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(0, 198, 255, 0.3)',
-                    borderRadius: '12px',
-                    color: '#fff',
-                    fontSize: '14px',
-                    fontWeight: '600',
+                    width: '80px',
+                    height: '44px',
+                    padding: '0 8px',
+                    background: 'rgba(0, 198, 255, 0.1)',
+                    border: 'none',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#00C6FF',
+                    fontSize: '13px',
+                    fontWeight: '700',
                     cursor: 'pointer',
                     appearance: 'none',
                     boxSizing: 'border-box',
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23ffffff' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 12 12'%3E%3Cpath fill='%2300C6FF' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'right 10px center',
-                    flexShrink: 0
+                    backgroundPosition: 'right 6px center',
+                    textAlign: 'center'
                   }}
                 >
-                  {fiatCurrencies.map(curr => (
-                    <option key={curr} value={curr}>{curr}</option>
-                  ))}
+                  {activeTab === 'buy' ? (
+                    fiatCurrencies.map(curr => (
+                      <option key={curr} value={curr}>{curr}</option>
+                    ))
+                  ) : (
+                    ['BTC', 'ETH', 'USDT'].map(curr => (
+                      <option key={curr} value={curr}>{curr}</option>
+                    ))
+                  )}
                 </select>
               </div>
             </div>
 
-            {/* Row 2: "You receive" - compact read-only display */}
-            <div style={{ marginBottom: isMobile ? '8px' : '12px' }}>
-              <label style={{
-                display: 'block',
-                color: 'rgba(255, 255, 255, 0.6)',
-                fontSize: isMobile ? '12px' : '13px',
-                fontWeight: '600',
-                marginBottom: '6px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
-                You receive
-              </label>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                {activeTab === 'buy' ? (
-                  <div
+            {/* Quick Chips Row - Small Pills (Both Mobile & Desktop) */}
+            <div style={{ 
+              display: 'flex', 
+              gap: '6px',
+              marginBottom: '10px',
+              overflowX: 'auto',
+              paddingBottom: '2px',
+              WebkitOverflowScrolling: 'touch',
+              msOverflowStyle: 'none',
+              scrollbarWidth: 'none'
+            }}>
+              {activeTab === 'buy' ? (
+                <>
+                  <button
+                    onClick={() => {
+                      if (selectedOffer) {
+                        const minCrypto = selectedOffer.min_order_limit || selectedOffer.min_amount || 0.001;
+                        const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+                        handleFiatChipClick(Math.ceil(minCrypto * price));
+                      }
+                    }}
+                    disabled={!selectedOffer}
                     style={{
-                      flex: 1,
-                      height: isMobile ? '46px' : '50px',
-                      padding: '0 14px',
-                      background: 'rgba(0, 0, 0, 0.15)',
+                      height: '28px',
+                      padding: '0 10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
                       border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '12px',
-                      color: cryptoAmount ? '#00C6FF' : 'rgba(255, 255, 255, 0.35)',
-                      fontSize: isMobile ? '15px' : '18px',
-                      fontWeight: cryptoAmount ? '700' : '500',
-                      boxSizing: 'border-box',
-                      display: 'flex',
-                      alignItems: 'center'
+                      borderRadius: '999px',
+                      color: selectedOffer ? '#fff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: selectedOffer ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
                     }}
                   >
-                    {cryptoAmount || 'Select offer below'}
-                  </div>
-                ) : (
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.00000001"
-                    min="0"
-                    value={cryptoAmount}
-                    onChange={(e) => handleCryptoAmountChange(e.target.value)}
-                    placeholder="Enter amount"
-                    style={{
-                      flex: 1,
-                      height: isMobile ? '46px' : '50px',
-                      padding: '0 14px',
-                      background: 'rgba(0, 0, 0, 0.4)',
-                      border: '1px solid rgba(0, 198, 255, 0.3)',
-                      borderRadius: '12px',
-                      color: '#fff',
-                      fontSize: isMobile ? '16px' : '18px',
-                      fontWeight: '700',
-                      outline: 'none',
-                      boxSizing: 'border-box'
+                    Min
+                  </button>
+                  {[100, 250, 500].map((value) => (
+                    <button
+                      key={value}
+                      onClick={() => handleFiatChipClick(value)}
+                      style={{
+                        height: '28px',
+                        padding: '0 10px',
+                        background: fiatAmount === value.toString()
+                          ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                          : 'rgba(255, 255, 255, 0.05)',
+                        border: `1px solid ${fiatAmount === value.toString() ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        borderRadius: '999px',
+                        color: '#fff',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0
+                      }}
+                    >
+                      {getFiatSymbol(selectedInputFiat)}{value}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => {
+                      if (selectedOffer) {
+                        const maxCrypto = selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || 1;
+                        const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
+                        handleFiatChipClick(Math.floor(maxCrypto * price));
+                      }
                     }}
-                  />
-                )}
-                <div style={{
-                  width: '90px',
-                  height: isMobile ? '46px' : '50px',
-                  padding: '0 10px',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  color: '#fff',
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px',
-                  boxSizing: 'border-box',
-                  flexShrink: 0
+                    disabled={!selectedOffer}
+                    style={{
+                      height: '28px',
+                      padding: '0 10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '999px',
+                      color: selectedOffer ? '#fff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: selectedOffer ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}
+                  >
+                    Max
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      if (selectedOffer) {
+                        const minCrypto = selectedOffer.min_order_limit || selectedOffer.min_amount || 0.001;
+                        handleCryptoChipClick(minCrypto);
+                      }
+                    }}
+                    disabled={!selectedOffer}
+                    style={{
+                      height: '28px',
+                      padding: '0 10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '999px',
+                      color: selectedOffer ? '#fff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: selectedOffer ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}
+                  >
+                    Min
+                  </button>
+                  {(selectedCrypto === 'BTC' ? [0.001, 0.005, 0.01] : [0.1, 0.5, 1]).map((value) => (
+                    <button
+                      key={value}
+                      onClick={() => handleCryptoChipClick(value)}
+                      style={{
+                        height: '28px',
+                        padding: '0 10px',
+                        background: cryptoAmount === value.toString()
+                          ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
+                          : 'rgba(255, 255, 255, 0.05)',
+                        border: `1px solid ${cryptoAmount === value.toString() ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
+                        borderRadius: '999px',
+                        color: '#fff',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        flexShrink: 0
+                      }}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => {
+                      if (selectedOffer) {
+                        const maxCrypto = selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || 1;
+                        handleCryptoChipClick(maxCrypto);
+                      }
+                    }}
+                    disabled={!selectedOffer}
+                    style={{
+                      height: '28px',
+                      padding: '0 10px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '999px',
+                      color: selectedOffer ? '#fff' : 'rgba(255, 255, 255, 0.3)',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: selectedOffer ? 'pointer' : 'not-allowed',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
+                    }}
+                  >
+                    Max
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Row 2: You Receive (Read-only, auto-calculated) */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '8px 12px',
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.05)'
+            }}>
+              <div>
+                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '2px', textTransform: 'uppercase' }}>
+                  {activeTab === 'buy' ? 'You receive' : 'You get'}
+                </div>
+                <div style={{ 
+                  fontSize: '15px', 
+                  fontWeight: '700', 
+                  color: (activeTab === 'buy' ? cryptoAmount : fiatAmount) ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)'
                 }}>
-                  {COIN_EMOJIS[selectedCrypto] || '₿'} {selectedCrypto}
+                  {activeTab === 'buy' 
+                    ? (cryptoAmount ? `${cryptoAmount} ${selectedCrypto}` : 'Select offer below')
+                    : (fiatAmount ? `${getFiatSymbol(selectedInputFiat)}${fiatAmount}` : 'Select offer below')
+                  }
                 </div>
               </div>
+              {selectedOffer && (
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)' }}>Rate</div>
+                  <div style={{ fontSize: '12px', color: '#fff', fontWeight: '600' }}>
+                    {getFiatSymbol(selectedInputFiat)}{parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0).toLocaleString()}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Error message */}
             {amountError && (
               <div style={{
                 color: '#EF4444',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontWeight: '500',
-                marginBottom: '8px',
-                padding: '8px 12px',
+                marginTop: '6px',
+                padding: '6px 10px',
                 background: 'rgba(239, 68, 68, 0.1)',
-                borderRadius: '8px',
-                border: '1px solid rgba(239, 68, 68, 0.3)'
+                borderRadius: '6px'
               }}>
                 ⚠️ {amountError}
               </div>
             )}
-
-            {/* Quick Amount Chips - DESKTOP ONLY */}
-            {!isMobile && (
-              <div style={{ marginBottom: '8px' }}>
-                <div style={{ 
-                  display: 'flex', 
-                  flexWrap: 'wrap',
-                  gap: '6px'
-                }}>
-                  {activeTab === 'buy' ? (
-                    fiatChips.map((value) => (
-                      <button
-                        key={value}
-                        onClick={() => handleFiatChipClick(value)}
-                        style={{
-                          height: '34px',
-                          minWidth: '72px',
-                          padding: '0 12px',
-                          background: fiatAmount === value.toString()
-                            ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                            : 'rgba(255, 255, 255, 0.05)',
-                          border: `1px solid ${fiatAmount === value.toString() ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        {getFiatSymbol(selectedInputFiat)}{value.toLocaleString()}
-                      </button>
-                    ))
-                  ) : (
-                    (selectedCrypto === 'BTC' ? cryptoChipsBTC : cryptoChipsETH).map((value) => (
-                      <button
-                        key={value}
-                        onClick={() => handleCryptoChipClick(value)}
-                        style={{
-                          height: '34px',
-                          minWidth: '72px',
-                          padding: '0 12px',
-                          background: cryptoAmount === value.toString()
-                            ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
-                            : 'rgba(255, 255, 255, 0.05)',
-                          border: `1px solid ${cryptoAmount === value.toString() ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                          borderRadius: '8px',
-                          color: '#fff',
-                          fontSize: '13px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease'
-                        }}
-                      >
-                        {value} {selectedCrypto}
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Helper text with limits */}
-            <div style={{
-              fontSize: '11px',
-              color: 'rgba(255, 255, 255, 0.4)',
-              paddingTop: '6px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.05)'
-            }}>
-              {selectedOffer ? (
-                (() => {
-                  const minCrypto = selectedOffer.min_order_limit || selectedOffer.min_amount || 0.001;
-                  const maxCrypto = selectedOffer.max_order_limit || selectedOffer.max_amount || selectedOffer.available_amount || 1;
-                  const price = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
-                  const minFiat = (minCrypto * price).toFixed(0);
-                  const maxFiat = (maxCrypto * price).toFixed(0);
-                  return `Limits: ${getFiatSymbol(selectedInputFiat)}${minFiat} – ${getFiatSymbol(selectedInputFiat)}${maxFiat}`;
-                })()
-              ) : (
-                'Enter amount to filter offers'
+          </div>
+          {/* ========== END AMOUNT INPUT WIDGET ========== */}
               )}
             </div>
           </div>
