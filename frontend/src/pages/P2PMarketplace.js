@@ -1805,32 +1805,33 @@ function P2PMarketplace() {
               )}
             </div>
 
-            {/* Row 2: You Receive (Read-only, auto-calculated) */}
+            {/* Row 2: You Receive - SPEC: 18px, 700, #00F5C4, glow */}
             <div style={{ 
               display: 'flex', 
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '8px 12px',
-              background: 'rgba(0, 0, 0, 0.2)',
-              borderRadius: '8px',
-              border: '1px solid rgba(255, 255, 255, 0.05)',
-              marginBottom: '10px'
+              padding: '10px 14px',
+              background: 'rgba(0, 0, 0, 0.25)',
+              borderRadius: '10px',
+              border: '1px solid rgba(0, 245, 196, 0.15)',
+              marginBottom: '12px'
             }}>
               <div>
-                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '2px', textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)', marginBottom: '3px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   {activeTab === 'buy' ? 'You receive' : 'You get'}
                 </div>
                 <div style={{ 
-                  fontSize: '15px', 
+                  fontSize: '18px', 
                   fontWeight: '700', 
-                  color: bestQuote ? '#00C6FF' : 'rgba(255, 255, 255, 0.3)'
+                  color: bestQuote ? '#00F5C4' : 'rgba(255, 255, 255, 0.3)',
+                  textShadow: bestQuote ? '0 0 8px rgba(0, 245, 196, 0.35)' : 'none'
                 }}>
                   {loadingBestOffer ? (
                     'Finding best offer...'
                   ) : bestQuote ? (
                     `${bestQuote.amount_crypto} ${bestQuote.asset}`
                   ) : matchError ? (
-                    <span style={{ color: '#EF4444', fontSize: '13px' }}>{matchError}</span>
+                    <span style={{ color: '#EF4444', fontSize: '13px', textShadow: 'none' }}>{matchError}</span>
                   ) : (
                     'Enter amount above'
                   )}
@@ -1839,45 +1840,99 @@ function P2PMarketplace() {
               {bestQuote && (
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.4)' }}>Best Rate</div>
-                  <div style={{ fontSize: '12px', color: '#22C55E', fontWeight: '600' }}>
+                  <div style={{ fontSize: '13px', color: '#00F5C4', fontWeight: '600' }}>
                     {getFiatSymbol(selectedInputFiat)}{bestQuote.rate.toLocaleString()}
                   </div>
                 </div>
               )}
             </div>
 
-            {/* Best Match Info - BINANCE SPEC */}
+            {/* Seller Found - SPEC: pill, rgba(0,245,196,0.12), animated chevron */}
             {bestOffer && bestQuote && (
               <div style={{
-                padding: '8px 12px',
-                background: 'rgba(22,199,132,0.12)',
-                borderRadius: '8px',
-                border: '1px solid rgba(22,199,132,0.35)',
-                boxShadow: '0 0 10px rgba(22,199,132,0.20)',
-                marginBottom: '10px',
-                fontSize: '12px',
-                fontWeight: '500',
-                color: '#16C784'
+                padding: '10px 14px',
+                background: 'rgba(0, 245, 196, 0.12)',
+                borderRadius: '12px',
+                border: '1px solid rgba(0, 245, 196, 0.35)',
+                marginBottom: '24px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#00F5C4',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between'
               }}>
-                ✓ Matched: <strong>{bestOffer.seller_name}</strong> • Rate {getFiatSymbol(selectedInputFiat)}{bestQuote.rate.toLocaleString()} • {bestOffer.payment_methods?.[0] || 'Bank Transfer'}
+                <span>✓ Seller found · Ready to start trade</span>
+                <span style={{ 
+                  animation: 'bounceDown 1.5s infinite',
+                  fontSize: '16px'
+                }}>↓</span>
               </div>
             )}
 
-            {/* MAIN CTA BUTTON - EXACT TRADING PAGE COMPONENT */}
-            <div style={{ marginBottom: '8px' }}>
-              {activeTab === 'buy' ? (
-                <BuyButton
-                  onClick={() => {
-                    if (bestOffer && bestQuote) {
-                      setSelectedOffer(bestOffer);
-                      setShowConfirmModal(true);
-                    }
-                  }}
-                  disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
-                  loading={loadingBestOffer}
-                  label={loadingBestOffer ? 'Finding best offer...' : `Buy ${selectedCrypto}`}
-                  isMobile={isMobile}
-                />
+            {/* PRIMARY CTA - SPEC: 58px, 16px, 700, gradient #00F5C4→#00C2A0, glow */}
+            <button
+              onClick={() => {
+                if (bestOffer && bestQuote) {
+                  setSelectedOffer(bestOffer);
+                  setShowConfirmModal(true);
+                }
+              }}
+              disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
+              style={{
+                width: '100%',
+                height: '58px',
+                background: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                  ? 'rgba(255,255,255,0.08)'
+                  : activeTab === 'buy'
+                    ? 'linear-gradient(135deg, #00F5C4 0%, #00C2A0 100%)'
+                    : 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)',
+                border: 'none',
+                borderRadius: '16px',
+                color: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                  ? 'rgba(255,255,255,0.35)'
+                  : '#0B1F14',
+                fontSize: '16px',
+                fontWeight: '700',
+                letterSpacing: '0.3px',
+                cursor: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0) 
+                  ? 'not-allowed' 
+                  : 'pointer',
+                boxShadow: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                  ? 'none'
+                  : '0 0 14px rgba(0, 245, 196, 0.35), 0 6px 18px rgba(0, 0, 0, 0.35)',
+                filter: (loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0)
+                  ? 'none'
+                  : 'brightness(1.15)',
+                transition: 'all 180ms ease'
+              }}
+              onMouseEnter={(e) => {
+                if (bestOffer && !loadingBestOffer) {
+                  e.currentTarget.style.filter = 'brightness(1.23)';
+                  e.currentTarget.style.transform = 'scale(0.98)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (bestOffer && !loadingBestOffer) {
+                  e.currentTarget.style.filter = 'brightness(1.15)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }
+              }}
+            >
+              {loadingBestOffer ? 'Finding best offer...' : `${activeTab === 'buy' ? 'Buy' : 'Sell'} ${selectedCrypto}`}
+            </button>
+            
+            {/* Micro-copy - SPEC: 11px, 70% opacity, margin-top 6px */}
+            {bestOffer && bestQuote && (
+              <div style={{
+                textAlign: 'center',
+                fontSize: '11px',
+                color: 'rgba(255, 255, 255, 0.7)',
+                marginTop: '6px'
+              }}>
+                Starts trade & opens escrow
+              </div>
+            )}
               ) : (
                 <SellButton
                   onClick={() => {
