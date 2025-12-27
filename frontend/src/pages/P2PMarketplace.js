@@ -2248,9 +2248,9 @@ function P2PMarketplace() {
               color: 'rgba(255, 255, 255, 0.7)'
             }}>
               Showing <span style={{ color: '#00F0FF', fontWeight: '700' }}>{filteredOffers.length}</span> {filteredOffers.length === 1 ? 'offer' : 'offers'}
-              {fiatAmount && activeTab === 'buy' && filteredOffers.length !== offers.length && (
-                <span style={{ color: 'rgba(255, 255, 255, 0.5)', marginLeft: '8px' }}>
-                  (filtered by {getFiatSymbol(selectedInputFiat)}{fiatAmount})
+              {fiatAmount && activeTab === 'buy' && (
+                <span style={{ color: '#22C55E', marginLeft: '8px' }}>
+                  matching {getFiatSymbol(selectedInputFiat)}{fiatAmount}
                 </span>
               )}
             </div>
