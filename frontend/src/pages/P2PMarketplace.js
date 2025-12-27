@@ -2285,7 +2285,7 @@ function P2PMarketplace() {
                   </div>
                 ))}
               </div>
-            ) : offers.length === 0 ? (
+            ) : filteredOffers.length === 0 ? (
               <div style={{ 
                 textAlign: 'center', 
                 padding: isMobile ? '40px 20px' : '60px 40px', 
@@ -2298,15 +2298,21 @@ function P2PMarketplace() {
               }}>
                 <div style={{ fontSize: '48px', marginBottom: '16px', opacity: '0.3' }}>🔍</div>
                 <div style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '18px', fontWeight: '600', marginBottom: '8px' }}>
-                  No offers available for {selectedCrypto}
+                  {fiatAmount && activeTab === 'buy' 
+                    ? `No offers match ${getFiatSymbol(selectedInputFiat)}${fiatAmount}`
+                    : `No offers available for ${selectedCrypto}`
+                  }
                 </div>
                 <div style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '14px' }}>
-                  Try selecting a different cryptocurrency or adjusting filters
+                  {fiatAmount && activeTab === 'buy'
+                    ? 'Try a different amount or clear the filter'
+                    : 'Try selecting a different cryptocurrency or adjusting filters'
+                  }
                 </div>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {offers.map((offer) => (
+                {filteredOffers.map((offer) => (
                   <div
                     key={offer.offer_id}
                     style={{
