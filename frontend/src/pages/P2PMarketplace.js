@@ -1928,26 +1928,12 @@ function P2PMarketplace() {
                 textAlign: 'center',
                 fontSize: '11px',
                 color: 'rgba(255, 255, 255, 0.7)',
-                marginTop: '6px'
+                marginTop: '6px',
+                marginBottom: '8px'
               }}>
                 Starts trade & opens escrow
               </div>
             )}
-              ) : (
-                <SellButton
-                  onClick={() => {
-                    if (bestOffer && bestQuote) {
-                      setSelectedOffer(bestOffer);
-                      setShowConfirmModal(true);
-                    }
-                  }}
-                  disabled={loadingBestOffer || !bestOffer || !fiatAmount || parseFloat(fiatAmount) <= 0}
-                  loading={loadingBestOffer}
-                  label={loadingBestOffer ? 'Finding best offer...' : `Sell ${selectedCrypto}`}
-                  isMobile={isMobile}
-                />
-              )}
-            </div>
 
             {/* View all offers link */}
             <div style={{ 
@@ -1957,7 +1943,7 @@ function P2PMarketplace() {
             }}>
               {filteredOffers.length > 0 && (
                 <span>
-                  <a href="#offers" style={{ color: '#00C6FF', textDecoration: 'none' }} onClick={(e) => {
+                  <a href="#offers" style={{ color: '#00F5C4', textDecoration: 'none' }} onClick={(e) => {
                     e.preventDefault();
                     setShowAllOffers(true);
                     setTimeout(() => {
