@@ -1539,31 +1539,67 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle Row - EXACT Trading Page Components */}
+          {/* BUY/SELL Toggle Row - BINANCE SPEC */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
-            marginBottom: '16px',
+            marginTop: '6px',
+            marginBottom: '6px',
             width: isMobile ? '100%' : 'auto'
           }}>
-            <BuyButton 
+            <button
               onClick={() => setActiveTab('buy')}
-              disabled={activeTab !== 'buy'}
-              label="BUY"
-              isMobile={isMobile}
-            />
-            <SellButton 
+              style={{
+                flex: 1,
+                height: '48px',
+                background: activeTab === 'buy' 
+                  ? 'linear-gradient(135deg, #16C784 0%, #0ECB81 100%)' 
+                  : 'transparent',
+                border: activeTab === 'buy' 
+                  ? 'none' 
+                  : '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                color: activeTab === 'buy' ? '#0B1F17' : 'rgba(255,255,255,0.45)',
+                fontWeight: activeTab === 'buy' ? '600' : '500',
+                fontSize: '14px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'buy' 
+                  ? '0 4px 14px rgba(22,199,132,0.30)' 
+                  : 'none',
+                transition: 'all 150ms ease'
+              }}
+            >
+              BUY
+            </button>
+            <button
               onClick={() => setActiveTab('sell')}
-              disabled={activeTab !== 'sell'}
-              label="SELL"
-              isMobile={isMobile}
-            />
+              style={{
+                flex: 1,
+                height: '48px',
+                background: activeTab === 'sell' 
+                  ? 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)' 
+                  : 'transparent',
+                border: activeTab === 'sell' 
+                  ? 'none' 
+                  : '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                color: activeTab === 'sell' ? '#0B1F17' : 'rgba(255,255,255,0.45)',
+                fontWeight: activeTab === 'sell' ? '600' : '500',
+                fontSize: '14px',
+                cursor: 'pointer',
+                boxShadow: activeTab === 'sell' 
+                  ? '0 4px 14px rgba(246,70,93,0.30)' 
+                  : 'none',
+                transition: 'all 150ms ease'
+              }}
+            >
+              SELL
+            </button>
           </div>
           
           {/* Helper text for BUY/SELL */}
           <div style={{ 
-            marginTop: '-8px', 
-            marginBottom: '16px', 
+            marginBottom: '6px', 
             padding: '0 8px',
             fontSize: '12px',
             color: 'rgba(255, 255, 255, 0.5)',
