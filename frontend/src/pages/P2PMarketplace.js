@@ -1946,8 +1946,8 @@ function P2PMarketplace() {
           </div>
           {/* ========== END AMOUNT INPUT WIDGET ========== */}
 
-        {/* EXPANDED FILTERS PANEL - Only show when showAllOffers is true */}
-        {showAllOffers && showFilters && (
+        {/* EXPANDED FILTERS PANEL */}
+        {showFilters && (
           <div style={{
             marginBottom: '1.5rem',
             padding: '1rem',
