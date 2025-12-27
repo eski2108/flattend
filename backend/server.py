@@ -41521,12 +41521,23 @@ async def place_spot_order(order: SpotOrderRequest):
         # Get market price in USD
         market_price_usd = 0
         try:
-            price_response = await get_live_prices()
-            if price_response.get("success") and price_response.get("prices"):
-                asset_price = price_response["prices"].get(order.base_asset, {})
-                market_price_usd = asset_price.get("price_usd", 0)
-        except:
-            pass
+            # Get prices from the live pricing system
+            prices = await get_cached_prices()
+            crypto_prices = prices.get('crypto_prices', {})
+            if order.base_asset in crypto_prices:
+                market_price_usd = crypto_prices[order.base_asset].get('usd', 0)
+        except Exception as price_err:
+            log_warning(f"Failed to get cached prices: {price_err}")
+            # Try direct API call
+            try:
+                async with httpx.AsyncClient(timeout=10.0) as client:
+                    resp = await client.get(f"https://api.coingecko.com/api/v3/simple/price?ids={order.base_asset.lower()}&vs_currencies=usd")
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        if order.base_asset.lower() in data:
+                            market_price_usd = data[order.base_asset.lower()].get('usd', 0)
+            except:
+                pass
         
         if market_price_usd <= 0:
             raise HTTPException(status_code=400, detail=f"Unable to fetch market price for {order.base_asset}")
