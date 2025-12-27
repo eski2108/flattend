@@ -256,12 +256,21 @@ export default function MobileTradingPage() {
         return;
       }
       
+      // Get user_id from token
+      const userData = JSON.parse(localStorage.getItem('cryptobank_user') || '{}');
+      const userId = userData.user_id;
+      
+      if (!userId) {
+        toast.error('User session invalid. Please login again.');
+        navigate('/login');
+        return;
+      }
+      
       let tradeAmount;
-      let tradePrice;
+      let tradePrice = null;
       
       if (orderType === 'market') {
         tradeAmount = marketEstimates.baseAmount;
-        tradePrice = priceInQuote;
       } else {
         tradeAmount = parseFloat(limitAmount) || 0;
         tradePrice = parseFloat(limitPrice) || 0;
@@ -272,21 +281,26 @@ export default function MobileTradingPage() {
         return;
       }
       
+      // Use new backend-authoritative endpoint
       const response = await axios.post(
         `${API}/api/trading/order`,
         {
-          symbol: coinBase,
+          user_id: userId,
           side: side,
-          type: orderType,
+          order_type: orderType,
+          base_asset: coinBase,
+          quote_currency: quoteCurrency,
           amount: tradeAmount,
-          price: orderType === 'limit' ? tradePrice : undefined,
-          quoteCurrency: quoteCurrency
+          price: tradePrice
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
       if (response.data.success) {
-        toast.success(`${side.toUpperCase()} order placed successfully!`);
+        const exec = response.data.execution;
+        toast.success(
+          `${side.toUpperCase()} ${tradeAmount.toFixed(6)} ${coinBase} @ ${currency.symbol}${exec.price.toFixed(2)} (Fee: ${currency.symbol}${exec.fee.toFixed(2)})`
+        );
         setSpendAmount('');
         setReceiveAmount('');
         setLimitAmount('');
