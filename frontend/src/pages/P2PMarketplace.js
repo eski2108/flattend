@@ -1777,7 +1777,7 @@ function P2PMarketplace() {
             <div style={{ marginBottom: '12px' }}>
               <div style={{ 
                 display: 'grid', 
-                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(80px, auto))',
+                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(90px, 1fr))',
                 gap: '8px'
               }}>
                 {activeTab === 'buy' ? (
@@ -1787,19 +1787,20 @@ function P2PMarketplace() {
                       key={value}
                       onClick={() => handleFiatChipClick(value)}
                       style={{
-                        height: '38px',
-                        padding: '0 14px',
+                        height: '42px',
+                        padding: '0 12px',
                         background: fiatAmount === value.toString()
                           ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
                           : 'rgba(255, 255, 255, 0.05)',
                         border: `1px solid ${fiatAmount === value.toString() ? 'rgba(16, 185, 129, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                        borderRadius: '999px',
+                        borderRadius: '12px',
                         color: '#fff',
-                        fontSize: '13px',
+                        fontSize: '14px',
                         fontWeight: '600',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        width: '100%'
                       }}
                     >
                       {getFiatSymbol(selectedInputFiat)}{value.toLocaleString()}
@@ -1812,19 +1813,20 @@ function P2PMarketplace() {
                       key={value}
                       onClick={() => handleCryptoChipClick(value)}
                       style={{
-                        height: '38px',
-                        padding: '0 14px',
+                        height: '42px',
+                        padding: '0 12px',
                         background: cryptoAmount === value.toString()
                           ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
                           : 'rgba(255, 255, 255, 0.05)',
                         border: `1px solid ${cryptoAmount === value.toString() ? 'rgba(239, 68, 68, 0.5)' : 'rgba(255, 255, 255, 0.1)'}`,
-                        borderRadius: '999px',
+                        borderRadius: '12px',
                         color: '#fff',
-                        fontSize: '13px',
+                        fontSize: '14px',
                         fontWeight: '600',
                         cursor: 'pointer',
                         transition: 'all 0.2s ease',
-                        whiteSpace: 'nowrap'
+                        whiteSpace: 'nowrap',
+                        width: '100%'
                       }}
                     >
                       {value} {selectedCrypto}
