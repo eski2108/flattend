@@ -3056,9 +3056,14 @@ async def get_best_p2p_offer(
                 "seller_id": offer.get("seller_id"),
                 "seller_name": offer.get("seller_name", "Unknown"),
                 "price": offer_price,
+                "price_per_unit": offer_price,  # Alias for frontend compatibility
                 "min_limit": min_crypto,
                 "max_limit": max_crypto,
+                "min_order_limit": min_crypto,  # Alias for frontend compatibility
+                "max_order_limit": max_crypto,  # Alias for frontend compatibility
                 "available": available,
+                "crypto_amount": available,  # Alias for frontend compatibility
+                "available_amount": available,  # Alias for frontend compatibility
                 "payment_methods": offer.get("payment_methods", []),
                 "crypto_amount_for_fiat": round(crypto_amount_needed, 8),
                 "fiat_currency": offer.get("fiat_currency", fiat),
