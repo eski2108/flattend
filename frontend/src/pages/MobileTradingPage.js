@@ -2,18 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
-// Layout is provided by MainLayout wrapper in App.js - no need to import
 import { getCoinName } from '@/config/tradingPairs';
 import { getCryptoEmoji, getCryptoColor } from '@/utils/cryptoIcons';
-import { IoArrowBack, IoTrendingUp, IoTrendingDown } from 'react-icons/io5';
+import { IoArrowBack, IoTrendingUp, IoTrendingDown, IoChevronDown, IoSearch, IoClose } from 'react-icons/io5';
 import DOMPurify from 'dompurify';
-import { BuyButton, SellButton, TradingButtonsContainer } from '@/components/TradingButtons';
 
 const API = process.env.REACT_APP_BACKEND_URL || '';
+
+// All supported currencies with symbols
+const CURRENCIES = [
+  { code: 'USD', symbol: '$', name: 'US Dollar', popular: true },
+  { code: 'EUR', symbol: '€', name: 'Euro', popular: true },
+  { code: 'GBP', symbol: '£', name: 'British Pound', popular: true },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen', popular: false },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', popular: false },
+  { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar', popular: false },
+  { code: 'CHF', symbol: 'Fr', name: 'Swiss Franc', popular: false },
+  { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', popular: false },
+  { code: 'INR', symbol: '₹', name: 'Indian Rupee', popular: false },
+  { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', popular: false },
+  { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', popular: false },
+  { code: 'KRW', symbol: '₩', name: 'South Korean Won', popular: false },
+  { code: 'MXN', symbol: '$', name: 'Mexican Peso', popular: false },
+  { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', popular: false },
+  { code: 'HKD', symbol: 'HK$', name: 'Hong Kong Dollar', popular: false },
+  { code: 'ZAR', symbol: 'R', name: 'South African Rand', popular: false },
+  { code: 'AED', symbol: 'د.إ', name: 'UAE Dirham', popular: false },
+  { code: 'SAR', symbol: '﷼', name: 'Saudi Riyal', popular: false },
+  { code: 'TRY', symbol: '₺', name: 'Turkish Lira', popular: false },
+  { code: 'PLN', symbol: 'zł', name: 'Polish Zloty', popular: false },
+];
 
 export default function MobileTradingPage() {
   const { symbol } = useParams();
   const navigate = useNavigate();
+  
+  // Market data
   const [marketStats, setMarketStats] = useState({
     lastPrice: 0,
     change24h: 0,
@@ -22,17 +46,30 @@ export default function MobileTradingPage() {
     volume24h: 0,
     marketCap: 0
   });
-  const [amount, setAmount] = useState('');
-  const [orderType, setOrderType] = useState('market');
+  
+  // Order state
+  const [orderType, setOrderType] = useState('market'); // 'market' | 'limit'
+  const [orderSide, setOrderSide] = useState('buy'); // 'buy' | 'sell'
+  const [quoteCurrency, setQuoteCurrency] = useState('USD'); // Selected quote currency
+  const [showCurrencyPicker, setShowCurrencyPicker] = useState(false);
+  const [currencySearch, setCurrencySearch] = useState('');
+  
+  // For MARKET orders: spend/receive mode
+  const [marketMode, setMarketMode] = useState('spend'); // 'spend' (quote) | 'receive' (base)
+  const [spendAmount, setSpendAmount] = useState(''); // Amount in quote currency
+  const [receiveAmount, setReceiveAmount] = useState(''); // Amount in base asset
+  
+  // For LIMIT orders
   const [limitPrice, setLimitPrice] = useState('');
+  const [limitAmount, setLimitAmount] = useState(''); // Base asset amount
+  
+  // Other state
   const [isLoading, setIsLoading] = useState(false);
   const [coinBase, setCoinBase] = useState('');
   const [coinName, setCoinName] = useState('');
-  const [balance, setBalance] = useState({ usd: 0, coin: 0, gbp: 0 });
+  const [balance, setBalance] = useState({ quote: 0, base: 0 });
   const [tradingFee, setTradingFee] = useState(0.1);
-  const [inputCurrency, setInputCurrency] = useState('USD');
-  const [currencyAmount, setCurrencyAmount] = useState('');
-  const [exchangeRates, setExchangeRates] = useState({ GBP: 0.79, EUR: 0.92 });
+  const [exchangeRates, setExchangeRates] = useState({ GBP: 0.79, EUR: 0.92, JPY: 149.5, AUD: 1.53, CAD: 1.36, CHF: 0.88, CNY: 7.24, INR: 83.12, NGN: 1550, BRL: 4.97, KRW: 1320, MXN: 17.15, SGD: 1.34, HKD: 7.82, ZAR: 18.65, AED: 3.67, SAR: 3.75, TRY: 32.5, PLN: 3.98 });
 
   useEffect(() => {
     if (symbol) {
@@ -80,14 +117,14 @@ export default function MobileTradingPage() {
       if (!token) return;
       
       const response = await axios.get(`${API}/api/wallet/balance`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       
-      if (response.data.success) {
-        const balances = response.data.balances || {};
+      if (response.data) {
+        const balances = response.data.balances || response.data;
         setBalance({
-          usd: balances.USD || 0,
-          coin: balances[coinBase] || 0
+          quote: balances.USD || balances.usd || 0,
+          base: balances[coinBase] || 0
         });
       }
     } catch (error) {
@@ -97,104 +134,142 @@ export default function MobileTradingPage() {
 
   const fetchTradingFee = async () => {
     try {
-      const response = await axios.get(`${API}/api/admin/platform-settings`);
-      if (response.data.success) {
-        setTradingFee(response.data.settings.spot_trading_fee_percent || 0.1);
+      const response = await axios.get(`${API}/api/trading/fee`);
+      if (response.data?.fee) {
+        setTradingFee(response.data.fee);
       }
     } catch (error) {
-      console.error('Error fetching fee:', error);
+      console.log('Using default trading fee');
     }
   };
 
-  const loadTradingViewChart = (pairSymbol) => {
-    const container = document.getElementById('tradingview-chart-mobile');
+  const loadTradingViewChart = (pair) => {
+    const container = document.getElementById('tradingview_chart');
     if (!container) return;
+    
     container.innerHTML = '';
+    
+    const script = document.createElement('script');
+    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    script.type = 'text/javascript';
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      "autosize": true,
+      "symbol": `BINANCE:${pair}`,
+      "interval": "15",
+      "timezone": "Etc/UTC",
+      "theme": "dark",
+      "style": "1",
+      "locale": "en",
+      "backgroundColor": "rgba(5, 8, 18, 1)",
+      "gridColor": "rgba(15, 242, 242, 0.06)",
+      "hide_top_toolbar": true,
+      "hide_legend": true,
+      "allow_symbol_change": false,
+      "save_image": false,
+      "calendar": false,
+      "hide_volume": true,
+      "support_host": "https://www.tradingview.com"
+    });
+    
+    container.appendChild(script);
+  };
 
-    // SECURITY: Sanitize symbol to prevent injection (only allow alphanumeric)
-    const tvSymbol = pairSymbol.replace('USD', 'USDT').replace(/[^A-Za-z0-9]/g, '');
-
-    const widgetHTML = `
-      <div class="tradingview-widget-container" style="height:100%;width:100%;background:transparent">
-        <div class="tradingview-widget-container__widget" style="height:100%;width:100%;background:transparent"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-        {
-          "autosize": true,
-          "symbol": "BINANCE:${tvSymbol}",
-          "interval": "15",
-          "timezone": "Etc/UTC",
-          "theme": "dark",
-          "style": "1",
-          "locale": "en",
-          "enable_publishing": false,
-          "backgroundColor": "rgba(2, 6, 23, 1)",
-          "gridColor": "rgba(255, 255, 255, 0.05)",
-          "hide_top_toolbar": false,
-          "hide_legend": true,
-          "save_image": false,
-          "hide_volume": false,
-          "support_host": "https://www.tradingview.com",
-          "studies": [
-            "RSI@tv-basicstudies",
-            "MASimple@tv-basicstudies"
-          ]
-        }
-        </script>
-      </div>
-    `;
-
-    // SECURITY: Sanitize widget HTML (though it's not user data)
-    container.innerHTML = DOMPurify.sanitize(widgetHTML, { ADD_TAGS: ['script'], ADD_ATTR: ['async'] });
-    const scripts = container.getElementsByTagName('script');
-    for (let i = 0; i < scripts.length; i++) {
-      if (scripts[i].src) {
-        const newScript = document.createElement('script');
-        newScript.src = scripts[i].src;
-        newScript.async = true;
-        newScript.innerHTML = scripts[i].innerHTML;
-        scripts[i].parentNode.replaceChild(newScript, scripts[i]);
-      }
+  // Get current currency info
+  const getCurrency = () => CURRENCIES.find(c => c.code === quoteCurrency) || CURRENCIES[0];
+  
+  // Convert USD price to selected quote currency
+  const convertPrice = (usdPrice) => {
+    if (quoteCurrency === 'USD') return usdPrice;
+    const rate = exchangeRates[quoteCurrency] || 1;
+    return usdPrice * rate;
+  };
+  
+  // Get price in quote currency
+  const priceInQuote = convertPrice(marketStats.lastPrice);
+  const high24hInQuote = convertPrice(marketStats.high24h);
+  const low24hInQuote = convertPrice(marketStats.low24h);
+  
+  // Calculate estimates for market orders
+  const getMarketEstimates = () => {
+    if (marketMode === 'spend' && spendAmount && priceInQuote > 0) {
+      const spend = parseFloat(spendAmount) || 0;
+      const baseReceived = spend / priceInQuote;
+      const fee = spend * (tradingFee / 100);
+      return { baseAmount: baseReceived, fee, total: spend };
+    } else if (marketMode === 'receive' && receiveAmount && priceInQuote > 0) {
+      const receive = parseFloat(receiveAmount) || 0;
+      const quoteNeeded = receive * priceInQuote;
+      const fee = quoteNeeded * (tradingFee / 100);
+      return { baseAmount: receive, fee, total: quoteNeeded + fee };
     }
+    return { baseAmount: 0, fee: 0, total: 0 };
+  };
+  
+  // Calculate total for limit orders
+  const getLimitTotal = () => {
+    const price = parseFloat(limitPrice) || 0;
+    const amount = parseFloat(limitAmount) || 0;
+    const subtotal = price * amount;
+    const fee = subtotal * (tradingFee / 100);
+    return { subtotal, fee, total: subtotal + fee };
+  };
+  
+  const marketEstimates = getMarketEstimates();
+  const limitCalc = getLimitTotal();
+  
+  // Get available balance in quote currency
+  const getQuoteBalance = () => {
+    if (quoteCurrency === 'USD') return balance.quote;
+    const rate = exchangeRates[quoteCurrency] || 1;
+    return balance.quote * rate;
   };
 
   const handleTrade = async (side) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      toast.error('Please login to trade');
-      navigate('/login');
-      return;
-    }
-
-    if (!amount || parseFloat(amount) <= 0) {
-      toast.error('Please enter a valid amount');
-      return;
-    }
-
-    if (orderType === 'limit' && (!limitPrice || parseFloat(limitPrice) <= 0)) {
-      toast.error('Please enter a valid limit price');
-      return;
-    }
-
-    setIsLoading(true);
-
     try {
-      const payload = {
-        pair: symbol,
-        side: side,
-        amount: parseFloat(amount),
-        order_type: orderType,
-        price: orderType === 'limit' ? parseFloat(limitPrice) : marketStats.lastPrice
-      };
-
+      setIsLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        toast.error('Please login to trade');
+        navigate('/login');
+        return;
+      }
+      
+      let tradeAmount;
+      let tradePrice;
+      
+      if (orderType === 'market') {
+        tradeAmount = marketEstimates.baseAmount;
+        tradePrice = priceInQuote;
+      } else {
+        tradeAmount = parseFloat(limitAmount) || 0;
+        tradePrice = parseFloat(limitPrice) || 0;
+      }
+      
+      if (!tradeAmount || tradeAmount <= 0) {
+        toast.error('Please enter a valid amount');
+        return;
+      }
+      
       const response = await axios.post(
-        `${API}/api/trading/spot/order`,
-        payload,
-        { headers: { 'Authorization': `Bearer ${token}` } }
+        `${API}/api/trading/order`,
+        {
+          symbol: coinBase,
+          side: side,
+          type: orderType,
+          amount: tradeAmount,
+          price: orderType === 'limit' ? tradePrice : undefined,
+          quoteCurrency: quoteCurrency
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-
+      
       if (response.data.success) {
         toast.success(`${side.toUpperCase()} order placed successfully!`);
-        setAmount('');
+        setSpendAmount('');
+        setReceiveAmount('');
+        setLimitAmount('');
         setLimitPrice('');
         fetchBalance();
       } else {
@@ -208,19 +283,48 @@ export default function MobileTradingPage() {
     }
   };
 
-  const calculateTotal = () => {
-    const amt = parseFloat(amount) || 0;
-    const price = orderType === 'limit' ? (parseFloat(limitPrice) || 0) : marketStats.lastPrice;
-    const subtotal = amt * price;
-    const fee = subtotal * (tradingFee / 100);
-    return { subtotal, fee, total: subtotal + fee };
+  // Handle percent button click
+  const handlePercentClick = (percent) => {
+    if (orderSide === 'buy') {
+      // Buying: use quote balance
+      const available = getQuoteBalance();
+      const targetAmount = (available * percent) / 100;
+      if (orderType === 'market') {
+        setMarketMode('spend');
+        setSpendAmount(targetAmount.toFixed(2));
+      } else {
+        // For limit: calculate base amount from price
+        const price = parseFloat(limitPrice) || priceInQuote;
+        if (price > 0) {
+          setLimitAmount((targetAmount / price).toFixed(6));
+        }
+      }
+    } else {
+      // Selling: use base balance
+      const available = balance.base;
+      const targetAmount = (available * percent) / 100;
+      if (orderType === 'market') {
+        setMarketMode('receive');
+        setReceiveAmount(targetAmount.toFixed(6));
+      } else {
+        setLimitAmount(targetAmount.toFixed(6));
+      }
+    }
   };
-
-  const { subtotal, fee, total } = calculateTotal();
 
   const rangePercentage = marketStats.high24h > 0 && marketStats.low24h > 0
     ? ((marketStats.lastPrice - marketStats.low24h) / (marketStats.high24h - marketStats.low24h)) * 100
     : 50;
+
+  const currency = getCurrency();
+  
+  // Filter currencies for picker
+  const filteredCurrencies = CURRENCIES.filter(c => 
+    c.code.toLowerCase().includes(currencySearch.toLowerCase()) ||
+    c.name.toLowerCase().includes(currencySearch.toLowerCase())
+  );
+  const popularCurrencies = filteredCurrencies.filter(c => c.popular);
+  const otherCurrencies = filteredCurrencies.filter(c => !c.popular);
 
   return (
     <>
@@ -243,7 +347,6 @@ export default function MobileTradingPage() {
           .tradingview-widget-copyright {
             display: none !important;
           }
-          /* Reposition chat widget to lower-right with safe spacing */
           [class*="chat-widget"],
           [id*="chat-widget"],
           [class*="ChatWidget"],
@@ -258,7 +361,7 @@ export default function MobileTradingPage() {
         width: '100%',
         background: '#020617',
         minHeight: '100vh',
-        paddingBottom: '80px'
+        paddingBottom: '100px'
       }}>
         {/* Header with Back Button */}
         <div style={{
@@ -269,8 +372,7 @@ export default function MobileTradingPage() {
           position: 'sticky',
           top: 0,
           background: 'linear-gradient(180deg, #020617 0%, #030A15 100%)',
-          zIndex: 10,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.4)'
+          zIndex: 10
         }}>
           <button
             onClick={() => navigate('/markets')}
@@ -280,511 +382,603 @@ export default function MobileTradingPage() {
               color: '#0FF2F2',
               fontSize: '24px',
               cursor: 'pointer',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              padding: '8px'
             }}
           >
             <IoArrowBack />
           </button>
+          <div style={{ flex: 1, marginLeft: '8px' }}>
+            <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>
+              {coinName} / {quoteCurrency}
+            </div>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+              Spot Trading
+            </div>
+          </div>
         </div>
 
-        {/* PAIR HEADER - Binance Style */}
+        {/* PAIR HEADER */}
         <div style={{
-          margin: '12px 16px 16px 16px',
+          margin: '12px 16px',
           padding: '16px',
-          borderRadius: '0',
+          borderRadius: '12px',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-          border: '1px solid rgba(15,242,242,0.15)',
-          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(15,242,242,0.1)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '14px'
+          border: '1px solid rgba(15,242,242,0.15)'
         }}>
-          {/* Official Crypto Logo */}
-          <img
-            src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
-            alt={coinBase}
-            style={{
-              width: '32px',
-              height: '32px',
-              objectFit: 'contain',
-              marginLeft: '12px',
-              flexShrink: 0
-            }}
-          />
-
-          {/* Pair Info */}
-          <div style={{ flex: 1 }}>
-            <div style={{
-              fontSize: '16px',
-              fontWeight: '700',
-              color: '#FFFFFF',
-              marginBottom: '4px',
-              letterSpacing: '0.3px'
-            }}>
-              {coinName} / USD
-            </div>
-            <div style={{
-              fontSize: '22px',
-              fontWeight: '800',
-              color: '#FFFFFF',
-              letterSpacing: '-0.5px'
-            }}>
-              ${marketStats.lastPrice > 0 
-                ? marketStats.lastPrice >= 1
-                  ? marketStats.lastPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : marketStats.lastPrice.toFixed(6)
-                : '—'}
-            </div>
-          </div>
-
-          {/* 24h Change Badge */}
-          <div style={{
-            padding: '8px 12px',
-            borderRadius: '10px',
-            background: marketStats.change24h >= 0 
-              ? 'rgba(0,255,148,0.15)'
-              : 'rgba(255,75,75,0.15)',
-            border: marketStats.change24h >= 0
-              ? '1px solid rgba(0,255,148,0.3)'
-              : '1px solid rgba(255,75,75,0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            flexShrink: 0
-          }}>
-            {marketStats.change24h >= 0 ? (
-              <IoTrendingUp style={{ fontSize: '16px', color: '#00FF94' }} />
-            ) : (
-              <IoTrendingDown style={{ fontSize: '16px', color: '#FF4B4B' }} />
-            )}
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '700',
-              color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B'
-            }}>
-              {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
-            </span>
-          </div>
-        </div>
-
-        {/* TRADINGVIEW CHART */}
-        <div style={{
-          height: '440px',
-          margin: '0',
-          borderRadius: '0',
-          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-          border: '1px solid rgba(15,242,242,0.2)',
-          boxShadow: '0 0 32px rgba(15,242,242,0.12), inset 0 1px 0 rgba(15,242,242,0.1)',
-          overflow: 'hidden'
-        }}>
-          <div 
-            id="tradingview-chart-mobile" 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              background: 'transparent' 
-            }}
-          ></div>
-        </div>
-
-        {/* MARKET INFO BOX */}
-        <div style={{
-          margin: '0',
-          background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          boxShadow: '0 0 24px rgba(15,242,242,0.1), inset 0 1px 0 rgba(255,255,255,0.05)',
-          borderRadius: '0',
-          padding: '16px'
-        }}>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '1fr 1fr', 
-            gap: '14px', 
-            marginBottom: '16px' 
-          }}>
-            <div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: 'rgba(255,255,255,0.5)', 
-                marginBottom: '5px',
-                fontWeight: '600'
-              }}>24h High</div>
-              <div style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '700' }}>
-                ${marketStats.high24h > 0
-                  ? marketStats.high24h >= 1
-                    ? marketStats.high24h.toLocaleString('en-US', { maximumFractionDigits: 2 })
-                    : marketStats.high24h.toFixed(6)
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <img
+              src={`/crypto-logos/${coinBase.toLowerCase()}.png`}
+              alt={coinBase}
+              style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '24px', fontWeight: '800', color: '#fff' }}>
+                {currency.symbol}{priceInQuote > 0 
+                  ? priceInQuote >= 1
+                    ? priceInQuote.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    : priceInQuote.toFixed(6)
                   : '—'}
               </div>
-            </div>
-            <div>
               <div style={{ 
-                fontSize: '11px', 
-                color: 'rgba(255,255,255,0.5)', 
-                marginBottom: '5px',
+                fontSize: '13px', 
+                color: marketStats.change24h >= 0 ? '#00FF94' : '#FF4B4B',
                 fontWeight: '600'
-              }}>24h Low</div>
-              <div style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '700' }}>
-                ${marketStats.low24h > 0
-                  ? marketStats.low24h >= 1
-                    ? marketStats.low24h.toLocaleString('en-US', { maximumFractionDigits: 2 })
-                    : marketStats.low24h.toFixed(6)
-                  : '—'}
+              }}>
+                {marketStats.change24h >= 0 ? '+' : ''}{marketStats.change24h.toFixed(2)}%
               </div>
             </div>
-            <div>
-              <div style={{ 
-                fontSize: '11px', 
-                color: 'rgba(255,255,255,0.5)', 
-                marginBottom: '5px',
-                fontWeight: '600'
-              }}>24h Volume</div>
-              <div style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '700' }}>
-                {marketStats.volume24h >= 1e9 
-                  ? `$${(marketStats.volume24h / 1e9).toFixed(2)}B`
-                  : marketStats.volume24h >= 1e6 
-                    ? `$${(marketStats.volume24h / 1e6).toFixed(2)}M`
-                    : marketStats.volume24h >= 1e3
-                      ? `$${(marketStats.volume24h / 1e3).toFixed(1)}K`
-                      : `$${marketStats.volume24h.toFixed(0)}`}
-              </div>
-            </div>
-            {marketStats.marketCap > 0 && (
-              <div>
-                <div style={{ 
-                  fontSize: '11px', 
-                  color: 'rgba(255,255,255,0.5)', 
-                  marginBottom: '5px',
-                  fontWeight: '600'
-                }}>Market Cap</div>
-                <div style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: '700' }}>
-                  {marketStats.marketCap >= 1e9 
-                    ? `$${(marketStats.marketCap / 1e9).toFixed(2)}B`
-                    : marketStats.marketCap >= 1e6 
-                      ? `$${(marketStats.marketCap / 1e6).toFixed(2)}M`
-                      : `$${marketStats.marketCap.toLocaleString()}`}
-                </div>
-              </div>
-            )}
           </div>
-
-          {/* 24h Range Bar - Brand Theme Colors */}
-          <div>
+          
+          {/* 24h Range - INFORMATIONAL ONLY */}
+          <div style={{ marginTop: '16px' }}>
             <div style={{ 
               fontSize: '11px', 
               color: 'rgba(255,255,255,0.5)', 
-              marginBottom: '10px',
-              fontWeight: '600'
-            }}>24h Price Range</div>
+              marginBottom: '8px',
+              display: 'flex',
+              justifyContent: 'space-between'
+            }}>
+              <span>24h Range</span>
+              <span>{currency.symbol}{low24hInQuote.toFixed(2)} — {currency.symbol}{high24hInQuote.toFixed(2)}</span>
+            </div>
             <div style={{
               position: 'relative',
-              height: '10px',
-              borderRadius: '5px',
-              background: 'linear-gradient(90deg, #FF4B4B 0%, #FFD700 50%, #00FF94 100%)',
-              overflow: 'visible'
+              height: '6px',
+              borderRadius: '3px',
+              background: 'rgba(255,255,255,0.1)'
             }}>
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                height: '100%',
+                width: `${rangePercentage}%`,
+                background: 'linear-gradient(90deg, #FF4B4B, #FFD700, #00FF94)',
+                borderRadius: '3px'
+              }} />
               <div style={{
                 position: 'absolute',
                 left: `${rangePercentage}%`,
                 top: '50%',
                 transform: 'translate(-50%, -50%)',
-                width: '14px',
-                height: '14px',
+                width: '10px',
+                height: '10px',
                 background: '#0FF2F2',
                 borderRadius: '50%',
-                border: '3px solid #020617',
-                boxShadow: '0 0 16px rgba(15,242,242,0.8)'
-              }}></div>
+                border: '2px solid #020617'
+              }} />
             </div>
           </div>
         </div>
 
-        {/* ORDER TYPE TABS */}
-        <div style={{
-          margin: '0',
-          display: 'flex',
-          gap: '8px'
-        }}>
-          <button
-            onClick={() => setOrderType('market')}
-            style={{
-              flex: 1,
-              height: '38px',
-              borderRadius: '12px',
-              background: orderType === 'market'
-                ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
-                : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
-              color: orderType === 'market' ? '#020617' : '#0FF2F2',
-              border: orderType === 'market' ? 'none' : '1px solid rgba(15,242,242,0.3)',
-              fontSize: '14px',
-              fontWeight: orderType === 'market' ? '700' : '600',
-              cursor: 'pointer',
-              transition: 'all 200ms ease',
-              boxShadow: orderType === 'market' 
-                ? '0 0 30px rgba(15,242,242,0.6), 0 0 50px rgba(15,242,242,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
-                : '0 0 12px rgba(15,242,242,0.2), inset 0 0 8px rgba(15,242,242,0.05)'
-            }}
-          >
-            Market
-          </button>
-          <button
-            onClick={() => setOrderType('limit')}
-            style={{
-              flex: 1,
-              height: '38px',
-              borderRadius: '12px',
-              background: orderType === 'limit'
-                ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
-                : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
-              color: orderType === 'limit' ? '#020617' : '#0FF2F2',
-              border: orderType === 'limit' ? 'none' : '1px solid rgba(15,242,242,0.3)',
-              fontSize: '14px',
-              fontWeight: orderType === 'limit' ? '700' : '600',
-              cursor: 'pointer',
-              transition: 'all 200ms ease',
-              boxShadow: orderType === 'limit' 
-                ? '0 0 30px rgba(15,242,242,0.6), 0 0 50px rgba(15,242,242,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
-                : '0 0 12px rgba(15,242,242,0.2), inset 0 0 8px rgba(15,242,242,0.05)'
-            }}
-          >
-            Limit
-          </button>
+        {/* CHART */}
+        <div style={{ height: '200px', margin: '0 16px 16px 16px', background: '#050812', borderRadius: '12px', overflow: 'hidden' }}>
+          <div id="tradingview_chart" style={{ height: '100%', width: '100%' }} />
         </div>
 
-        {/* BUY/SELL BOX */}
+        {/* ORDER FORM */}
         <div style={{
-          margin: '0',
+          margin: '0 16px',
           background: 'linear-gradient(180deg, #0A0F1F 0%, #050812 100%)',
           border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: '0',
-          padding: '18px',
-          boxShadow: '0 0 24px rgba(15,242,242,0.08), inset 0 1px 0 rgba(255,255,255,0.05)'
+          borderRadius: '16px',
+          padding: '16px'
         }}>
+          {/* Market / Limit Toggle */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <button
+              onClick={() => setOrderType('market')}
+              style={{
+                flex: 1,
+                height: '40px',
+                borderRadius: '10px',
+                background: orderType === 'market'
+                  ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
+                  : 'rgba(15,242,242,0.1)',
+                color: orderType === 'market' ? '#020617' : '#0FF2F2',
+                border: orderType === 'market' ? 'none' : '1px solid rgba(15,242,242,0.3)',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Market
+            </button>
+            <button
+              onClick={() => setOrderType('limit')}
+              style={{
+                flex: 1,
+                height: '40px',
+                borderRadius: '10px',
+                background: orderType === 'limit'
+                  ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)'
+                  : 'rgba(15,242,242,0.1)',
+                color: orderType === 'limit' ? '#020617' : '#0FF2F2',
+                border: orderType === 'limit' ? 'none' : '1px solid rgba(15,242,242,0.3)',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer'
+              }}
+            >
+              Limit
+            </button>
+          </div>
+
+          {/* Quote Currency Selector */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>Quote Currency</div>
+            <button
+              onClick={() => setShowCurrencyPicker(true)}
+              style={{
+                width: '100%',
+                height: '44px',
+                borderRadius: '10px',
+                background: '#0F172A',
+                border: '1px solid rgba(15,242,242,0.3)',
+                color: '#fff',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 14px'
+              }}
+            >
+              <span>{currency.symbol} {quoteCurrency} — {currency.name}</span>
+              <IoChevronDown color="#0FF2F2" />
+            </button>
+          </div>
+
           {/* Balance Display */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
-            marginBottom: '14px',
+            marginBottom: '12px',
             fontSize: '12px',
             color: 'rgba(255,255,255,0.6)'
           }}>
-            <div>Available: {balance.usd.toFixed(2)} USD</div>
-            <div>Available: {balance.coin.toFixed(6)} {coinBase}</div>
+            <div>Available: {currency.symbol}{getQuoteBalance().toFixed(2)} {quoteCurrency}</div>
+            <div>Available: {balance.base.toFixed(6)} {coinBase}</div>
           </div>
 
-          {/* Limit Price Input */}
-          {orderType === 'limit' && (
-            <input
-              type="number"
-              placeholder="Limit Price (USD)"
-              value={limitPrice}
-              onChange={(e) => setLimitPrice(e.target.value)}
-              style={{
-                width: '100%',
-                height: '48px',
-                borderRadius: '14px',
-                background: '#0F172A',
-                border: '1px solid rgba(255,255,255,0.12)',
-                padding: '0 16px',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                marginBottom: '12px',
-                outline: 'none'
-              }}
-            />
-          )}
+          {/* ORDER TYPE SPECIFIC FIELDS */}
+          {orderType === 'market' ? (
+            // MARKET ORDER FIELDS
+            <>
+              {/* Spend/Receive Toggle */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                <button
+                  onClick={() => setMarketMode('spend')}
+                  style={{
+                    flex: 1,
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: marketMode === 'spend' ? 'rgba(15,242,242,0.2)' : 'transparent',
+                    border: `1px solid ${marketMode === 'spend' ? 'rgba(15,242,242,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                    color: marketMode === 'spend' ? '#0FF2F2' : 'rgba(255,255,255,0.5)',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Spend ({quoteCurrency})
+                </button>
+                <button
+                  onClick={() => setMarketMode('receive')}
+                  style={{
+                    flex: 1,
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: marketMode === 'receive' ? 'rgba(15,242,242,0.2)' : 'transparent',
+                    border: `1px solid ${marketMode === 'receive' ? 'rgba(15,242,242,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                    color: marketMode === 'receive' ? '#0FF2F2' : 'rgba(255,255,255,0.5)',
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Receive ({coinBase})
+                </button>
+              </div>
 
-          {/* Currency Selector */}
-          <div style={{ marginBottom: '12px', display: 'flex', gap: '8px' }}>
-            {['USD', 'GBP', 'EUR'].map(curr => (
-              <button
-                key={curr}
-                onClick={() => setInputCurrency(curr)}
-                style={{
-                  flex: 1,
-                  height: '36px',
-                  borderRadius: '10px',
-                  background: inputCurrency === curr ? 'linear-gradient(135deg, #0FF2F2 0%, #00B8D4 100%)' : 'linear-gradient(135deg, rgba(15,242,242,0.1) 0%, rgba(0,184,212,0.1) 100%)',
-                  color: inputCurrency === curr ? '#020617' : '#0FF2F2',
-                  border: inputCurrency === curr ? 'none' : '1px solid rgba(15,242,242,0.3)',
-                  fontSize: '13px',
-                  fontWeight: inputCurrency === curr ? '700' : '600',
-                  cursor: 'pointer',
-                  boxShadow: inputCurrency === curr ? '0 0 24px rgba(15,242,242,0.6), 0 0 40px rgba(15,242,242,0.3)' : '0 0 10px rgba(15,242,242,0.2)',
-                  transition: 'all 200ms ease'
-                }}
-              >
-                {curr}
-              </button>
-            ))}
-          </div>
-
-          {/* Amount Input with Currency */}
-          <div style={{ position: 'relative', marginBottom: '12px' }}>
-            <input
-              type="number"
-              placeholder={`Amount in ${inputCurrency}`}
-              value={currencyAmount}
-              onChange={(e) => {
-                setCurrencyAmount(e.target.value);
-                // Auto-convert to coin amount
-                if (e.target.value && marketStats.lastPrice > 0) {
-                  let usdValue = parseFloat(e.target.value);
-                  if (inputCurrency === 'GBP') usdValue = usdValue / exchangeRates.GBP;
-                  if (inputCurrency === 'EUR') usdValue = usdValue / exchangeRates.EUR;
-                  setAmount((usdValue / marketStats.lastPrice).toFixed(6));
-                } else {
-                  setAmount('');
-                }
-              }}
-              style={{
-                width: '100%',
-                height: '48px',
-                borderRadius: '14px',
-                background: '#0F172A',
-                border: '1px solid rgba(255,255,255,0.12)',
-                padding: '0 16px 0 48px',
-                color: '#FFFFFF',
-                fontSize: '15px',
-                outline: 'none'
-              }}
-            />
-            <span style={{
-              position: 'absolute',
-              left: '16px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#0FF2F2',
-              fontSize: '15px',
-              fontWeight: '700'
-            }}>
-              {inputCurrency === 'USD' ? '$' : inputCurrency === 'GBP' ? '£' : '€'}
-            </span>
-          </div>
-
-          {/* Calculated Coin Amount Display */}
-          {amount && parseFloat(amount) > 0 && (
-            <div style={{
-              marginBottom: '12px',
-              padding: '12px',
-              background: 'rgba(15,242,242,0.08)',
-              borderRadius: '10px',
-              fontSize: '13px',
-              color: '#0FF2F2'
-            }}>
-              ≈ {amount} {coinBase}
-            </div>
-          )}
-
-          {/* Quick Amount Buttons */}
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            marginBottom: '14px'
-          }}>
-            {[25, 50, 75, 100].map(percent => (
-              <button
-                key={percent}
-                onClick={() => {
-                  // Calculate based on USD balance
-                  const availableUSD = balance.usd;
-                  const targetUSD = (availableUSD * percent) / 100;
-                  
-                  // Convert to selected currency
-                  let displayAmount = targetUSD;
-                  if (inputCurrency === 'GBP') displayAmount = targetUSD * exchangeRates.GBP;
-                  if (inputCurrency === 'EUR') displayAmount = targetUSD * exchangeRates.EUR;
-                  
-                  setCurrencyAmount(displayAmount.toFixed(2));
-                  
-                  // Calculate coin amount
-                  if (marketStats.lastPrice > 0) {
-                    setAmount((targetUSD / marketStats.lastPrice).toFixed(6));
-                  }
-                }}
-                style={{
-                  flex: 1,
-                  height: '32px',
-                  borderRadius: '8px',
-                  background: 'linear-gradient(135deg, rgba(15,242,242,0.15) 0%, rgba(0,184,212,0.15) 100%)',
-                  border: '1px solid rgba(15,242,242,0.4)',
+              {/* Amount Input */}
+              <div style={{ position: 'relative', marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>
+                  {marketMode === 'spend' ? `Spend (${quoteCurrency})` : `Receive (${coinBase})`}
+                </div>
+                <input
+                  type="number"
+                  placeholder={marketMode === 'spend' ? `0.00` : `0.000000`}
+                  value={marketMode === 'spend' ? spendAmount : receiveAmount}
+                  onChange={(e) => {
+                    if (marketMode === 'spend') {
+                      setSpendAmount(e.target.value);
+                      setReceiveAmount('');
+                    } else {
+                      setReceiveAmount(e.target.value);
+                      setSpendAmount('');
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    borderRadius: '10px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '0 60px 0 16px',
+                    color: '#fff',
+                    fontSize: '16px',
+                    outline: 'none'
+                  }}
+                />
+                <span style={{
+                  position: 'absolute',
+                  right: '16px',
+                  bottom: '14px',
                   color: '#0FF2F2',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 200ms ease',
-                  boxShadow: '0 0 12px rgba(15,242,242,0.3), inset 0 0 8px rgba(15,242,242,0.1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, rgba(15,242,242,0.3) 0%, rgba(0,184,212,0.3) 100%)';
-                  e.target.style.transform = 'scale(1.05)';
-                  e.target.style.boxShadow = '0 0 20px rgba(15,242,242,0.5), inset 0 0 12px rgba(15,242,242,0.2)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, rgba(15,242,242,0.15) 0%, rgba(0,184,212,0.15) 100%)';
-                  e.target.style.transform = 'scale(1)';
-                  e.target.style.boxShadow = '0 0 12px rgba(15,242,242,0.3), inset 0 0 8px rgba(15,242,242,0.1)';
-                }}
-              >
-                {percent}%
-              </button>
-            ))}
-          </div>
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  {marketMode === 'spend' ? quoteCurrency : coinBase}
+                </span>
+              </div>
 
-          {/* Order Summary */}
-          {amount && parseFloat(amount) > 0 && (
-            <div style={{
-              background: 'rgba(15,242,242,0.05)',
-              border: '1px solid rgba(15,242,242,0.15)',
-              borderRadius: '12px',
-              padding: '12px',
-              marginBottom: '14px',
-              fontSize: '13px'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ color: 'rgba(255,255,255,0.6)' }}>Subtotal:</span>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>${subtotal.toFixed(2)}</span>
+              {/* Market Estimates */}
+              {(spendAmount || receiveAmount) && marketEstimates.baseAmount > 0 && (
+                <div style={{
+                  padding: '12px',
+                  background: 'rgba(15,242,242,0.08)',
+                  borderRadius: '10px',
+                  marginBottom: '12px',
+                  fontSize: '13px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>Est. Price:</span>
+                    <span style={{ color: '#fff' }}>{currency.symbol}{priceInQuote.toFixed(2)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>Est. {coinBase}:</span>
+                    <span style={{ color: '#0FF2F2' }}>{marketEstimates.baseAmount.toFixed(6)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>Fee ({tradingFee}%):</span>
+                    <span style={{ color: '#fff' }}>{currency.symbol}{marketEstimates.fee.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            // LIMIT ORDER FIELDS
+            <>
+              {/* Limit Price */}
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>
+                  Limit Price ({quoteCurrency})
+                </div>
+                <input
+                  type="number"
+                  placeholder={priceInQuote.toFixed(2)}
+                  value={limitPrice}
+                  onChange={(e) => setLimitPrice(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    borderRadius: '10px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '0 60px 0 16px',
+                    color: '#fff',
+                    fontSize: '16px',
+                    outline: 'none'
+                  }}
+                />
+                <span style={{
+                  position: 'absolute',
+                  right: '32px',
+                  marginTop: '-34px',
+                  color: '#0FF2F2',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  {quoteCurrency}
+                </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <span style={{ color: 'rgba(255,255,255,0.6)' }}>Fee ({tradingFee}%):</span>
-                <span style={{ color: '#FFFFFF', fontWeight: '600' }}>${fee.toFixed(2)}</span>
+
+              {/* Amount (Base) */}
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginBottom: '6px' }}>
+                  Amount ({coinBase})
+                </div>
+                <input
+                  type="number"
+                  placeholder="0.000000"
+                  value={limitAmount}
+                  onChange={(e) => setLimitAmount(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '48px',
+                    borderRadius: '10px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    padding: '0 60px 0 16px',
+                    color: '#fff',
+                    fontSize: '16px',
+                    outline: 'none'
+                  }}
+                />
+                <span style={{
+                  position: 'absolute',
+                  right: '32px',
+                  marginTop: '-34px',
+                  color: '#0FF2F2',
+                  fontSize: '14px',
+                  fontWeight: '600'
+                }}>
+                  {coinBase}
+                </span>
               </div>
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                paddingTop: '8px',
-                borderTop: '1px solid rgba(255,255,255,0.1)'
-              }}>
-                <span style={{ color: '#0FF2F2', fontWeight: '700' }}>Total:</span>
-                <span style={{ color: '#0FF2F2', fontWeight: '700' }}>${total.toFixed(2)}</span>
-              </div>
-            </div>
+
+              {/* Total (Read-only) */}
+              {limitPrice && limitAmount && (
+                <div style={{
+                  padding: '12px',
+                  background: 'rgba(15,242,242,0.08)',
+                  borderRadius: '10px',
+                  marginBottom: '12px',
+                  fontSize: '13px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>Subtotal:</span>
+                    <span style={{ color: '#fff' }}>{currency.symbol}{limitCalc.subtotal.toFixed(2)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.6)' }}>Fee ({tradingFee}%):</span>
+                    <span style={{ color: '#fff' }}>{currency.symbol}{limitCalc.fee.toFixed(2)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '6px' }}>
+                    <span style={{ color: '#0FF2F2', fontWeight: '700' }}>Total ({quoteCurrency}):</span>
+                    <span style={{ color: '#0FF2F2', fontWeight: '700' }}>{currency.symbol}{limitCalc.total.toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
-          {/* BUY and SELL Buttons - PREMIUM NEON STYLE */}
-          <TradingButtonsContainer isMobile={true}>
-            <BuyButton
-              onClick={() => handleTrade('buy')}
-              disabled={isLoading}
-              loading={isLoading}
-              label={`Buy ${coinBase}`}
-              isMobile={true}
-            />
-            <SellButton
-              onClick={() => handleTrade('sell')}
-              disabled={isLoading}
-              loading={isLoading}
-              label={`Sell ${coinBase}`}
-              isMobile={true}
-            />
-          </TradingButtonsContainer>
-        </div>
+          {/* Percent Buttons */}
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', marginBottom: '6px', textAlign: 'center' }}>
+              {orderSide === 'buy' ? `Using % of ${quoteCurrency} balance` : `Using % of ${coinBase} balance`}
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {[25, 50, 75, 100].map(percent => (
+                <button
+                  key={percent}
+                  onClick={() => handlePercentClick(percent)}
+                  style={{
+                    flex: 1,
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: 'rgba(15,242,242,0.1)',
+                    border: '1px solid rgba(15,242,242,0.3)',
+                    color: '#0FF2F2',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {percent}%
+                </button>
+              ))}
+            </div>
+          </div>
 
-        {/* Footer is provided by global Layout - do not add local footer */}
+          {/* ============================================================
+              ⛔ VISUAL LOCK ACTIVE - DO NOT MODIFY ⛔
+              Password required to change: 21083
+              ============================================================ */}
+          
+          {/* BUY and SELL Buttons */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => { setOrderSide('buy'); handleTrade('buy'); }}
+              disabled={isLoading}
+              style={{
+                flex: 1,
+                height: '48px',
+                borderRadius: '12px',
+                background: 'linear-gradient(180deg, rgba(32, 227, 162, 0.15) 0%, rgba(32, 227, 162, 0.35) 100%)',
+                border: '1px solid rgba(32, 227, 162, 0.5)',
+                color: '#20E3A2',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.3)',
+                opacity: isLoading ? 0.6 : 1
+              }}
+            >
+              {isLoading ? 'Processing...' : `Buy ${coinBase}`}
+            </button>
+            <button
+              onClick={() => { setOrderSide('sell'); handleTrade('sell'); }}
+              disabled={isLoading}
+              style={{
+                flex: 1,
+                height: '48px',
+                borderRadius: '12px',
+                background: 'linear-gradient(180deg, rgba(255, 50, 80, 0.15) 0%, rgba(255, 50, 80, 0.45) 100%)',
+                border: '1px solid rgba(255, 50, 80, 0.5)',
+                color: '#ff3250',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 15px rgba(255, 50, 80, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3)',
+                opacity: isLoading ? 0.6 : 1
+              }}
+            >
+              {isLoading ? 'Processing...' : `Sell ${coinBase}`}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Currency Picker Modal */}
+      {showCurrencyPicker && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.8)',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <div style={{
+            background: '#0A0F1F',
+            borderRadius: '16px 16px 0 0',
+            marginTop: 'auto',
+            maxHeight: '70vh',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Header */}
+            <div style={{
+              padding: '16px',
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <span style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>Select Currency</span>
+              <button
+                onClick={() => setShowCurrencyPicker(false)}
+                style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer' }}
+              >
+                <IoClose />
+              </button>
+            </div>
+
+            {/* Search */}
+            <div style={{ padding: '12px 16px' }}>
+              <div style={{ position: 'relative' }}>
+                <IoSearch style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)' }} />
+                <input
+                  type="text"
+                  placeholder="Search currency"
+                  value={currencySearch}
+                  onChange={(e) => setCurrencySearch(e.target.value)}
+                  style={{
+                    width: '100%',
+                    height: '44px',
+                    borderRadius: '10px',
+                    background: '#0F172A',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    padding: '0 16px 0 40px',
+                    color: '#fff',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Currency List */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px 16px' }}>
+              {popularCurrencies.length > 0 && (
+                <>
+                  <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px', fontWeight: '600' }}>POPULAR</div>
+                  {popularCurrencies.map(c => (
+                    <button
+                      key={c.code}
+                      onClick={() => {
+                        setQuoteCurrency(c.code);
+                        setShowCurrencyPicker(false);
+                        setCurrencySearch('');
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        background: quoteCurrency === c.code ? 'rgba(15,242,242,0.15)' : 'transparent',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        marginBottom: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}
+                    >
+                      <span style={{ fontSize: '18px', width: '24px' }}>{c.symbol}</span>
+                      <span style={{ fontWeight: '600' }}>{c.code}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>{c.name}</span>
+                    </button>
+                  ))}
+                </>
+              )}
+              {otherCurrencies.length > 0 && (
+                <>
+                  <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', marginBottom: '8px', marginTop: '16px', fontWeight: '600' }}>ALL CURRENCIES</div>
+                  {otherCurrencies.map(c => (
+                    <button
+                      key={c.code}
+                      onClick={() => {
+                        setQuoteCurrency(c.code);
+                        setShowCurrencyPicker(false);
+                        setCurrencySearch('');
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        background: quoteCurrency === c.code ? 'rgba(15,242,242,0.15)' : 'transparent',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#fff',
+                        fontSize: '14px',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        marginBottom: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px'
+                      }}
+                    >
+                      <span style={{ fontSize: '18px', width: '24px' }}>{c.symbol}</span>
+                      <span style={{ fontWeight: '600' }}>{c.code}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>{c.name}</span>
+                    </button>
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
