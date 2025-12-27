@@ -556,31 +556,12 @@ function P2PMarketplace() {
     setCryptoAmount('');
   };
 
-  // Handle crypto amount change (SELL mode - "You sell")
-  // Uses SELECTED OFFER PRICE, not global ticker or averages
+  // Handle crypto amount change - FILTER ONLY for SELL mode
   const handleCryptoAmountChange = (value) => {
     setCryptoAmount(value);
     setAmountError('');
-    
-    if (!selectedOffer) {
-      // No offer selected yet
-      setFiatAmount('');
-      return;
-    }
-    
-    const offerPrice = parseFloat(selectedOffer.price_per_unit || selectedOffer.price || 0);
-    if (offerPrice > 0 && value) {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && numValue > 0) {
-        // SELL: fiat_amount = crypto_amount * offer.price
-        const fiat = numValue * offerPrice;
-        setFiatAmount(fiat.toFixed(2));
-      } else {
-        setFiatAmount('');
-      }
-    } else {
-      setFiatAmount('');
-    }
+    // Never calculate fiat here - that happens only when Sell is clicked
+    setFiatAmount('');
   };
 
   // Handle fiat chip click (BUY mode)
