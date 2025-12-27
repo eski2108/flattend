@@ -97,8 +97,13 @@ function P2PMarketplace() {
   const sellerProfileCache = useRef(new Map());
   const [offerSellerProfiles, setOfferSellerProfiles] = useState({});
   
-  // Fiat currencies available
-  const fiatCurrencies = ['GBP', 'USD', 'EUR'];
+  // Fiat currencies - expanded for international support
+  const fiatCurrencies = [
+    'GBP', 'USD', 'EUR', 'AUD', 'CAD', 'CHF', 'JPY', 'CNY', 
+    'INR', 'SGD', 'HKD', 'NZD', 'SEK', 'NOK', 'DKK', 'ZAR',
+    'BRL', 'MXN', 'AED', 'SAR', 'THB', 'MYR', 'PHP', 'IDR',
+    'KRW', 'TWD', 'PLN', 'TRY', 'RUB', 'NGN', 'KES', 'GHS'
+  ];
   
   // Quick chips based on mode
   const fiatChips = [50, 100, 250, 500, 1000];
