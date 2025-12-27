@@ -1485,7 +1485,7 @@ function P2PMarketplace() {
             </button>
           </div>
 
-          {/* BUY/SELL Toggle Row - BINANCE SPEC */}
+          {/* BUY/SELL Toggle - EXACT TRADING PAGE MATCH */}
           <div style={{ 
             display: 'flex', 
             gap: '10px',
@@ -1498,21 +1498,27 @@ function P2PMarketplace() {
               style={{
                 flex: 1,
                 height: '48px',
-                background: activeTab === 'buy' 
-                  ? 'linear-gradient(135deg, #16C784 0%, #0ECB81 100%)' 
-                  : 'transparent',
-                border: activeTab === 'buy' 
-                  ? 'none' 
-                  : '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '12px',
-                color: activeTab === 'buy' ? '#0B1F17' : 'rgba(255,255,255,0.45)',
-                fontWeight: activeTab === 'buy' ? '600' : '500',
+                background: activeTab === 'buy' ? '#16C784' : '#1C2430',
+                border: 'none',
+                borderRadius: '10px',
+                color: activeTab === 'buy' ? '#0B1F14' : '#7A8599',
+                fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'buy' 
-                  ? '0 4px 14px rgba(22,199,132,0.30)' 
+                  ? '0 0 0 1px rgba(22,199,132,0.35), 0 4px 18px rgba(22,199,132,0.45)' 
                   : 'none',
                 transition: 'all 150ms ease'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab === 'buy') {
+                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(22,199,132,0.55), 0 6px 24px rgba(22,199,132,0.6)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab === 'buy') {
+                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(22,199,132,0.35), 0 4px 18px rgba(22,199,132,0.45)';
+                }
               }}
             >
               BUY
@@ -1522,39 +1528,31 @@ function P2PMarketplace() {
               style={{
                 flex: 1,
                 height: '48px',
-                background: activeTab === 'sell' 
-                  ? 'linear-gradient(135deg, #F6465D 0%, #CF304A 100%)' 
-                  : 'transparent',
-                border: activeTab === 'sell' 
-                  ? 'none' 
-                  : '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '12px',
-                color: activeTab === 'sell' ? '#0B1F17' : 'rgba(255,255,255,0.45)',
-                fontWeight: activeTab === 'sell' ? '600' : '500',
+                background: activeTab === 'sell' ? '#F6465D' : '#1C2430',
+                border: 'none',
+                borderRadius: '10px',
+                color: activeTab === 'sell' ? '#0B1F14' : '#7A8599',
+                fontWeight: '600',
                 fontSize: '14px',
                 cursor: 'pointer',
                 boxShadow: activeTab === 'sell' 
-                  ? '0 4px 14px rgba(246,70,93,0.30)' 
+                  ? '0 0 0 1px rgba(246,70,93,0.35), 0 4px 18px rgba(246,70,93,0.45)' 
                   : 'none',
                 transition: 'all 150ms ease'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab === 'sell') {
+                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(246,70,93,0.55), 0 6px 24px rgba(246,70,93,0.6)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab === 'sell') {
+                  e.currentTarget.style.boxShadow = '0 0 0 1px rgba(246,70,93,0.35), 0 4px 18px rgba(246,70,93,0.45)';
+                }
               }}
             >
               SELL
             </button>
-          </div>
-          
-          {/* Helper text for BUY/SELL */}
-          <div style={{ 
-            marginBottom: '6px', 
-            padding: '0 8px',
-            fontSize: '12px',
-            color: 'rgba(255, 255, 255, 0.5)',
-            fontWeight: '400'
-          }}>
-            {activeTab === 'buy' 
-              ? '💡 Showing users who are selling ' + selectedCrypto + ' to you.'
-              : '💡 Showing users who want to buy ' + selectedCrypto + ' from you.'
-            }
           </div>
 
           {/* ========== AMOUNT INPUT WIDGET (BINANCE-STYLE - COMPACT) ========== */}
