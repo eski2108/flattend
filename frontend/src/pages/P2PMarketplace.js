@@ -1776,7 +1776,19 @@ function P2PMarketplace() {
                 />
                 <select
                   value={activeTab === 'buy' ? selectedInputFiat : selectedCrypto}
-                  onChange={(e) => activeTab === 'buy' ? setSelectedInputFiat(e.target.value) : setSelectedCrypto(e.target.value)}
+                  onChange={(e) => {
+                    if (activeTab === 'buy') {
+                      if (e.target.value !== selectedInputFiat) {
+                        resetTradeState('fiat_currency_change');
+                        setSelectedInputFiat(e.target.value);
+                      }
+                    } else {
+                      if (e.target.value !== selectedCrypto) {
+                        resetTradeState('crypto_change_in_sell');
+                        setSelectedCrypto(e.target.value);
+                      }
+                    }
+                  }}
                   style={{
                     width: '80px',
                     height: '44px',
