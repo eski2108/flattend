@@ -13355,7 +13355,10 @@ async def login_user(login_req: LoginRequest, request: Request):
             "email": user["email"],
             "full_name": user.get("full_name", f"{user.get('first_name', '')} {user.get('last_name', '')}").strip(),
             "wallet_address": user.get("wallet_address"),
-            "role": user.get("role", "user")
+            "role": user.get("role", "user"),
+            "email_verified": user.get("email_verified", False),
+            "phone_verified": user.get("phone_verified", False),
+            "kyc_verified": user.get("kyc_verified", False)
         },
         "message": "Login successful",
         "security": {
