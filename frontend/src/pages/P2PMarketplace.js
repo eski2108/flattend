@@ -3537,68 +3537,166 @@ function P2PMarketplace() {
               )}
 
               {/* 5. ACTION BUTTONS */}
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={() => setShowConfirmModal(false)}
-                  style={{
-                    flex: 1,
-                    padding: '16px',
-                    background: 'rgba(143, 155, 179, 0.15)',
-                    border: '1px solid rgba(143, 155, 179, 0.3)',
-                    borderRadius: '14px',
-                    color: '#8F9BB3',
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmTrade}
-                  disabled={confirmProcessing || !fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError}
-                  style={{
-                    flex: 2,
-                    padding: '16px',
-                    background: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
-                      ? 'rgba(143, 155, 179, 0.3)'
-                      : activeTab === 'buy'
-                        ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
-                        : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-                    border: 'none',
-                    borderRadius: '14px',
-                    color: '#FFFFFF',
-                    fontSize: '15px',
-                    fontWeight: '700',
-                    cursor: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError) ? 'not-allowed' : 'pointer',
-                    boxShadow: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
-                      ? 'none'
-                      : activeTab === 'buy'
-                        ? '0 0 25px rgba(16, 185, 129, 0.5)'
-                        : '0 0 25px rgba(239, 68, 68, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  {confirmProcessing ? (
-                    <>
-                      <div style={{
-                        width: '16px',
-                        height: '16px',
-                        border: '2px solid rgba(255,255,255,0.3)',
-                        borderTopColor: '#fff',
-                        borderRadius: '50%',
-                        animation: 'spin 1s linear infinite'
-                      }} />
-                      Processing...
-                    </>
-                  ) : (
-                    `Confirm ${activeTab === 'buy' ? 'Buy' : 'Sell'}`
-                  )}
-                </button>
-              </div>
+              {/* Buyer Verification Gate */}
+              {buyerVerification.checked && (!buyerVerification.email_verified || !buyerVerification.phone_verified) ? (
+                <div style={{
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '14px',
+                  padding: '20px',
+                  marginBottom: '16px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      background: 'rgba(239, 68, 68, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IoShield size={20} color="#EF4444" />
+                    </div>
+                    <div>
+                      <div style={{ color: '#EF4444', fontWeight: '700', fontSize: '15px' }}>
+                        Verification Required
+                      </div>
+                      <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '13px' }}>
+                        Complete verification to trade
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {!buyerVerification.email_verified && (
+                      <button
+                        onClick={() => navigate('/settings/security')}
+                        style={{
+                          padding: '12px 16px',
+                          background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
+                          border: 'none',
+                          borderRadius: '10px',
+                          color: '#fff',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <CheckCircle size={16} />
+                        Verify Email
+                      </button>
+                    )}
+                    {!buyerVerification.phone_verified && (
+                      <button
+                        onClick={() => navigate('/settings/security')}
+                        style={{
+                          padding: '12px 16px',
+                          background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
+                          border: 'none',
+                          borderRadius: '10px',
+                          color: '#fff',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px'
+                        }}
+                      >
+                        <CheckCircle size={16} />
+                        Verify Phone
+                      </button>
+                    )}
+                  </div>
+                  
+                  <button
+                    onClick={() => setShowConfirmModal(false)}
+                    style={{
+                      width: '100%',
+                      marginTop: '12px',
+                      padding: '12px',
+                      background: 'transparent',
+                      border: '1px solid rgba(143, 155, 179, 0.3)',
+                      borderRadius: '10px',
+                      color: '#8F9BB3',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={() => setShowConfirmModal(false)}
+                    style={{
+                      flex: 1,
+                      padding: '16px',
+                      background: 'rgba(143, 155, 179, 0.15)',
+                      border: '1px solid rgba(143, 155, 179, 0.3)',
+                      borderRadius: '14px',
+                      color: '#8F9BB3',
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmTrade}
+                    disabled={confirmProcessing || !fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError}
+                    style={{
+                      flex: 2,
+                      padding: '16px',
+                      background: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
+                        ? 'rgba(143, 155, 179, 0.3)'
+                        : activeTab === 'buy'
+                          ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                          : 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                      border: 'none',
+                      borderRadius: '14px',
+                      color: '#FFFFFF',
+                      fontSize: '15px',
+                      fontWeight: '700',
+                      cursor: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError) ? 'not-allowed' : 'pointer',
+                      boxShadow: (!fiatAmount || parseFloat(fiatAmount) <= 0 || !!amountError)
+                        ? 'none'
+                        : activeTab === 'buy'
+                          ? '0 0 25px rgba(16, 185, 129, 0.5)'
+                          : '0 0 25px rgba(239, 68, 68, 0.5)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    {confirmProcessing ? (
+                      <>
+                        <div style={{
+                          width: '16px',
+                          height: '16px',
+                          border: '2px solid rgba(255,255,255,0.3)',
+                          borderTopColor: '#fff',
+                          borderRadius: '50%',
+                          animation: 'spin 1s linear infinite'
+                        }} />
+                        Processing...
+                      </>
+                    ) : (
+                      `Confirm ${activeTab === 'buy' ? 'Buy' : 'Sell'}`
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
