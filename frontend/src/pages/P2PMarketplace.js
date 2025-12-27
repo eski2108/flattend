@@ -2513,7 +2513,7 @@ function P2PMarketplace() {
                       }}>
                         <span style={{ fontSize: '10px', color: 'rgba(255, 255, 255, 0.5)' }}>Limits:</span>
                         <span style={{ fontSize: '12px', color: '#fff', fontWeight: '600' }}>
-                          £{offer.min_order_limit} - £{offer.max_order_limit}
+                          {getFiatSymbol(offer.fiat_currency || selectedInputFiat)}{Math.round((offer.min_order_limit || 0) * (offer.price_per_unit || offer.price || 0))} - {getFiatSymbol(offer.fiat_currency || selectedInputFiat)}{Math.round((offer.max_order_limit || 0) * (offer.price_per_unit || offer.price || 0))}
                         </span>
                       </div>
                     </div>
