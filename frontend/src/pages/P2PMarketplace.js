@@ -1559,45 +1559,11 @@ function P2PMarketplace() {
               isMobile={isMobile}
             />
           </div>
-
-          {/* Helper text for BUY/SELL */}
-                padding: isMobile ? '10px 16px' : '12px 24px',
-                background: 'linear-gradient(135deg, #00F0FF 0%, #A855F7 100%)',
-                border: 'none',
-                borderRadius: '14px',
-                color: '#fff',
-                fontWeight: '700',
-                fontSize: isMobile ? '12px' : '14px',
-                cursor: 'pointer',
-                display: isMobile ? 'none' : 'flex', // Hide on mobile, show in header instead
-                alignItems: 'center',
-                gap: '8px',
-                flexShrink: 0,
-                boxShadow: '0 0 30px rgba(0, 240, 255, 0.5)',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                zIndex: 9999,
-                pointerEvents: 'auto',
-                animation: 'pulseGlow 10s infinite'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.04) translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 40px rgba(0, 240, 255, 0.7)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1) translateY(0)';
-                e.currentTarget.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.5)';
-              }}
-            >
-              <TrendingUp size={18} />
-              Become a Seller
-            </button>
-          </div>
           
           {/* Helper text for BUY/SELL */}
           <div style={{ 
-            marginTop: '-16px', 
-            marginBottom: '24px', 
+            marginTop: '-8px', 
+            marginBottom: '16px', 
             padding: '0 8px',
             fontSize: '12px',
             color: 'rgba(255, 255, 255, 0.5)',
